@@ -57,6 +57,24 @@ modalin-fe/
    ```
    *Hasil build siap deploy akan diletakkan di dalam folder `dist/`.*
 
+---
+
+## Menjalankan dengan Docker Compose
+
+1. **Jalankan Container**:
+   ```bash
+   docker compose up -d --build
+   ```
+   *Perintah ini akan membangun image frontend Vue, menyuntikkan environment variables ke dalam bundle Vite, dan menjalankannya di dalam web server Nginx.*
+
+2. **Akses Aplikasi**:
+   Aplikasi akan berjalan dan dapat diakses di [http://localhost:3000](http://localhost:3000).
+
+3. **Matikan Container**:
+   ```bash
+   docker compose down
+   ```
+
 ## Standar Integrasi API & Penanganan Error
 
 1. **Axios Client**: Instance Axios dikonfigurasi di dalam [src/services/api.js](file:///c:/Vinneth/Comp/modalin/modalin-fe/src/services/api.js). File ini secara otomatis melampirkan JWT Authorization Token dari `localStorage` jika tersedia.
