@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap');
 
+@import "tailwindcss";
+
 :root {
   --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --font-serif: 'Old Standard TT', Georgia, serif;
