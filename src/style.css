@@ -1,39 +1,151 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap');
 
 @import "tailwindcss";
 
-:root {
-  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-serif: 'Old Standard TT', Georgia, serif;
+/* Style Guide */
+@theme {
+  --font-inter: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-newsreader: 'Newsreader', Georgia, serif;
 
-  --color-bg: #ffffff;
-  --color-text: #111827;
+  --color-primary-10: #CFE2DD;
+  --color-primary-20: #AFCFC7;
+  --color-primary-30: #87B6AA;
+  --color-primary-40: #5F9E8E;
+  --color-primary-50: #378672;
+  --color-primary-base: #0F6E56;
+  --color-primary-60: #0D5C48;
+  --color-primary-70: #0A4939;
+  --color-primary-80: #08372B;
+  --color-primary-90: #05251D;
+  --color-primary-100: #031611;
 
-  font-family: var(--font-sans);
-  font-size: 16px;
-  line-height: 1.5;
-  letter-spacing: -0.04em; /* letter-spacing -4% */
-  color: var(--color-text);
-  background-color: var(--color-bg);
+  --color-secondary-10: #F0DDCE;
+  --color-secondary-20: #E6C6AD;
+  --color-secondary-30: #D9A984;
+  --color-secondary-40: #CD8C5B;
+  --color-secondary-50: #C07032;
+  --color-secondary-base: #B45309;
+  --color-secondary-60: #964507;
+  --color-secondary-70: #783706;
+  --color-secondary-80: #5A2A05;
+  --color-secondary-90: #3C1C03;
+  --color-secondary-100: #241102;
+
+  --color-neutral-primary: #1F2937;
+  --color-neutral-secondary: #6B7280;
+  --color-neutral-tertiary: #EDF6F4;
+
+  --color-status-success-main: #027A48;
+  --color-status-success-active: #025D37;
+  --color-status-success-surface: #AECBBF;
+  
+  --color-status-warning-main: #EFAF00;
+  --color-status-warning-active: #CE9804;
+  --color-status-warning-surface: #FFE089;
+  
+  --color-status-error-main: #B42318;
+  --color-status-error-active: #9A180E;
+  --color-status-error-surface: #FF7267;
+
+  --color-status-info-main: #175CD3;
+  --color-status-info-active: #1146A0;
+  --color-status-info-surface: #B2C3E0;
+
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #0f172a;
-    --color-text: #f8fafc;
+/* Base Style */
+@layer base {
+
+  body {
+    @apply text-regular-18 font-inter min-h-screen text-neutral-primary bg-primary-10 antialiased;
+  }
+
+  h1 {
+    @apply text-regular-48
+  }
+
+  h2 {
+    @apply text-regular-40
+  }
+
+  h3 {
+    @apply text-regular-32
+  }
+
+  h4 {
+    @apply text-regular-24
+  }
+
+  h5 {
+    @apply text-regular-20
+  }
+  
+  h6 {
+    @apply text-regular-18
+  }
+
+}
+
+@layer components {
+  .button {
+    @apply text-semibold-20 
   }
 }
 
-body {
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-}
+/* Typography Utilities */
+@utility text-regular-48 { font-size: 3rem; font-weight: 400; letter-spacing: -0.003rem; }
+@utility text-medium-48 { font-size: 3rem; font-weight: 500; letter-spacing: -0.003rem; }
+@utility text-semibold-48 { font-size: 3rem; font-weight: 600; letter-spacing: -0.003rem; }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-serif);
-  font-weight: 700;
-  margin-top: 0;
-  letter-spacing: -0.04em;
-  color: var(--color-text);
-}
+@utility text-regular-40 { font-size: 2.5rem; font-weight: 400; letter-spacing: -0.003rem; }
+@utility text-medium-40 { font-size: 2.5rem; font-weight: 500; letter-spacing: -0.003rem; }
+@utility text-semibold-40 { font-size: 2.5rem; font-weight: 600; letter-spacing: -0.003rem; }
+
+@utility text-regular-32 { font-size: 2rem; font-weight: 400; letter-spacing: -0.003rem; }
+@utility text-medium-32 { font-size: 2rem; font-weight: 500; letter-spacing: -0.003rem; }
+@utility text-semibold-32 { font-size: 2rem; font-weight: 600; letter-spacing: -0.003rem; }
+
+@utility text-regular-24 { font-size: 1.5rem; font-weight: 400; letter-spacing: -0.003rem; }
+@utility text-medium-24 { font-size: 1.5rem; font-weight: 500; letter-spacing: -0.003rem; }
+@utility text-semibold-24 { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.003rem; }
+
+@utility text-regular-20 { font-size: 1.25rem; font-weight: 400; letter-spacing: -0.003rem; }
+@utility text-medium-20 { font-size: 1.25rem; font-weight: 500; letter-spacing: -0.003rem; }
+@utility text-semibold-20 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.003rem; }
+
+@utility text-regular-18 { font-size: 1.125rem; font-weight: 400; letter-spacing: -0.003rem; }
+@utility text-medium-18 { font-size: 1.125rem; font-weight: 500; letter-spacing: -0.003rem; }
+@utility text-semibold-18 { font-size: 1.125rem; font-weight: 600; letter-spacing: -0.003rem; }
+
+@utility text-regular-16 { font-size: 1rem; font-weight: 400; letter-spacing: -0.003rem; }
+@utility text-medium-16 { font-size: 1rem; font-weight: 500; letter-spacing: -0.003rem; }
+@utility text-semibold-16 { font-size: 1rem; font-weight: 600; letter-spacing: -0.003rem; }
+
+/* Typography Utilities (Italic) */
+@utility text-italic-regular-48 { font-size: 3rem; font-weight: 400; letter-spacing: -0.003rem; font-style: italic; }
+@utility text-italic-medium-48 { font-size: 3rem; font-weight: 500; letter-spacing: -0.003rem; font-style: italic; }
+@utility text-italic-semibold-48 { font-size: 3rem; font-weight: 600; letter-spacing: -0.003rem; font-style: italic; }
+
+@utility text-italic-regular-40 { font-size: 2.5rem; font-weight: 400; letter-spacing: -0.003rem; font-style: italic; }
+@utility text-italic-medium-40 { font-size: 2.5rem; font-weight: 500; letter-spacing: -0.003rem; font-style: italic; }
+@utility text-italic-semibold-40 { font-size: 2.5rem; font-weight: 600; letter-spacing: -0.003rem; font-style: italic; }
+
+@utility text-italic-regular-32 { font-size: 2rem; font-weight: 400; letter-spacing: -0.003rem; font-style: italic; }
+@utility text-italic-medium-32 { font-size: 2rem; font-weight: 500; letter-spacing: -0.003rem; font-style: italic; }
+@utility text-italic-semibold-32 { font-size: 2rem; font-weight: 600; letter-spacing: -0.003rem; font-style: italic; }
+
+@utility text-italic-regular-24 { font-size: 1.5rem; font-weight: 400; letter-spacing: -0.003rem; font-style: italic; }
+@utility text-italic-medium-24 { font-size: 1.5rem; font-weight: 500; letter-spacing: -0.003rem; font-style: italic; }
+@utility text-italic-semibold-24 { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.003rem; font-style: italic; }
+
+@utility text-italic-regular-20 { font-size: 1.25rem; font-weight: 400; letter-spacing: -0.003rem; font-style: italic; }
+@utility text-italic-medium-20 { font-size: 1.25rem; font-weight: 500; letter-spacing: -0.003rem; font-style: italic; }
+@utility text-italic-semibold-20 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.003rem; font-style: italic; }
+
+@utility text-italic-regular-18 { font-size: 1.125rem; font-weight: 400; letter-spacing: -0.003rem; font-style: italic; }
+@utility text-italic-medium-18 { font-size: 1.125rem; font-weight: 500; letter-spacing: -0.003rem; font-style: italic; }
+@utility text-italic-semibold-18 { font-size: 1.125rem; font-weight: 600; letter-spacing: -0.003rem; font-style: italic; }
+
+@utility text-italic-regular-16 { font-size: 1rem; font-weight: 400; letter-spacing: -0.003rem; font-style: italic; }
+@utility text-italic-medium-16 { font-size: 1rem; font-weight: 500; letter-spacing: -0.003rem; font-style: italic; }
+@utility text-italic-semibold-16 { font-size: 1rem; font-weight: 600; letter-spacing: -0.003rem; font-style: italic; }
