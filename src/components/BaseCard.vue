@@ -4,23 +4,22 @@ import { computed } from 'vue'
 const props = defineProps({
   variant: {
     type: String,
-    default: 'default', // 'default' | 'primary-light' | 'bordered' | 'flat'
+    default: 'default',
     validator: (v) => ['default', 'primary-light', 'bordered', 'flat'].includes(v)
   },
   padding: {
     type: String,
-    default: 'md' // 'sm' | 'md' | 'lg' | 'none'
+    default: 'md'
   },
   rounded: {
     type: String,
-    default: 'md' // 'sm' | 'md' | 'lg' | 'xl'
+    default: 'md'
   }
 })
 
 const cardClasses = computed(() => {
   let style = 'transition-all duration-200 font-inter'
 
-  // Variant
   switch (props.variant) {
     case 'default':
       style += ' bg-white shadow-sm border border-primary-base/10 text-neutral-primary'
@@ -36,7 +35,6 @@ const cardClasses = computed(() => {
       break
   }
 
-  // Padding
   switch (props.padding) {
     case 'none': style += ' p-0'; break
     case 'sm': style += ' p-4'; break
@@ -44,7 +42,6 @@ const cardClasses = computed(() => {
     case 'lg': style += ' p-8'; break
   }
 
-  // Rounded
   switch (props.rounded) {
     case 'sm': style += ' rounded-lg'; break
     case 'md': style += ' rounded-xl'; break

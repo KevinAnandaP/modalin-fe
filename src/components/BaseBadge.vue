@@ -4,7 +4,7 @@ import { computed } from 'vue'
 const props = defineProps({
   variant: {
     type: String,
-    default: 'primary', // 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'outline'
+    default: 'primary',
     validator: (v) => ['primary', 'secondary', 'success', 'warning', 'error', 'outline'].includes(v)
   },
   active: {

@@ -4,12 +4,12 @@ import { computed } from 'vue'
 const props = defineProps({
   variant: {
     type: String,
-    default: 'primary', // 'primary' | 'secondary' | 'outline' | 'dark' | 'ghost'
+    default: 'primary',
     validator: (v) => ['primary', 'secondary', 'outline', 'dark', 'ghost'].includes(v)
   },
   size: {
     type: String,
-    default: 'md', // 'sm' | 'md' | 'lg'
+    default: 'md',
     validator: (v) => ['sm', 'md', 'lg'].includes(v)
   },
   rounded: {

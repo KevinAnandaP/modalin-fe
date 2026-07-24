@@ -40,7 +40,7 @@ const props = defineProps({
   },
   variant: {
     type: String,
-    default: 'boxed' // 'boxed' | 'underline'
+    default: 'boxed'
   }
 })
 
@@ -51,7 +51,6 @@ const inputClasses = computed(() => {
   if (props.variant === 'underline') {
     return `${base} py-2 border-b border-neutral-primary focus:border-primary-base rounded-none ${props.error ? 'border-status-error-main!' : ''}`
   }
-  // boxed
   return `${base} px-4 py-2.5 bg-white border border-primary-base/20 rounded-lg focus:border-primary-base focus:ring-2 focus:ring-primary-base/15 ${props.error ? 'border-status-error-main!' : ''}`
 })
 </script>
