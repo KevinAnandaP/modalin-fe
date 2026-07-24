@@ -3,93 +3,30 @@ import { RouterLink } from 'vue-router'
 </script>
 
 <template>
-  <div class="auth-layout">
+  <div class="flex flex-col min-h-screen bg-neutral-tertiary font-inter text-neutral-primary">
     <!-- Header -->
-    <header class="auth-header">
-      <div class="auth-container header-content">
-        <RouterLink to="/" class="brand-logo">
-          <span class="logo-text">Modalin</span>
+    <header class="py-6">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+        <RouterLink to="/" class="no-underline">
+          <span class="text-semibold-32 text-primary-base">Modalin</span>
         </RouterLink>
-        <RouterLink to="/" class="back-link">
+
+        <RouterLink to="/" class="text-medium-16 text-primary-base hover:opacity-80 transition-opacity no-underline">
           &larr; Kembali ke Beranda
         </RouterLink>
       </div>
     </header>
 
     <!-- Main Content Container -->
-    <main class="auth-main">
-      <div class="auth-container">
+    <main class="flex-1 flex items-center justify-center py-8">
+      <div class="w-full max-w-md px-4">
         <slot />
       </div>
     </main>
 
-    <!-- Footer Footer Minimalist -->
-    <footer class="auth-footer">
+    <!-- Minimalist Footer -->
+    <footer class="py-6 text-center text-regular-16 text-neutral-secondary">
       <p>&copy; 2026 Modalin. Seluruh Hak Cipta Dilindungi.</p>
     </footer>
   </div>
 </template>
-
-<style scoped>
-.auth-layout {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background-color: var(--color-neutral-tertiary, #EDF6F4);
-}
-
-.auth-container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
-}
-
-.auth-header {
-  padding: 1.5rem 0;
-}
-
-.header-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.brand-logo {
-  text-decoration: none;
-}
-
-.logo-text {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--color-primary-base, #0F6E56);
-  letter-spacing: -0.02em;
-}
-
-.back-link {
-  text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: var(--color-primary-base, #0F6E56);
-  transition: opacity 0.2s ease;
-}
-
-.back-link:hover {
-  opacity: 0.8;
-}
-
-.auth-main {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 0;
-}
-
-.auth-footer {
-  text-align: center;
-  padding: 1.5rem 0;
-  font-size: 0.85rem;
-  color: var(--color-neutral-secondary, #6B7280);
-}
-</style>

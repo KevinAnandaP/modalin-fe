@@ -27,15 +27,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div id="app-root">
+  <div id="app-root" class="min-h-screen flex flex-col bg-neutral-tertiary font-inter text-neutral-primary antialiased">
     <router-view />
   </div>
 </template>
-
-<style scoped>
-#app-root {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-</style>
