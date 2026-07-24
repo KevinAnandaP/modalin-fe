@@ -1,15 +1,32 @@
 <script setup>
+import DefaultLayout from '@/layouts/DefaultLayout.vue'
 </script>
 
 <template>
-  <div class="home-view">
-    <h1 class="text-semibold-32 text-primary-base">Landing Page Placeholder</h1>
-    <p class="text-regular-16 text-neutral-secondary mt-2">Halaman utama Modalin.</p>
-  </div>
+  <DefaultLayout>
+    <div class="home-hero">
+      <div class="container hero-content">
+        <h1 class="text-semibold-48 text-primary-base">Solusi Pendanaan UMKM Indonesia</h1>
+        <p class="text-regular-18 text-neutral-secondary hero-sub">
+          Modalin menghubungkan pemilik usaha potensial dengan pendana untuk pertumbuhan ekonomi yang inklusif.
+        </p>
+      </div>
+    </div>
+  </DefaultLayout>
 </template>
 
 <style scoped>
-.home-view {
-  padding: 2rem;
+.home-hero {
+  padding: 5rem 0;
+  text-align: center;
+}
+
+.hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero-sub {
+  margin-top: 1rem;
 }
 </style>
