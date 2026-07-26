@@ -1,35 +1,33 @@
 <script setup>
-// Fresh Vue 3 Template. Import client: import api from '@/services/api' when needed.
+import { onMounted, onUnmounted } from 'vue'
+import Lenis from 'lenis'
+
+let lenis = null
+let rafId = null
+
+onMounted(() => {
+  lenis = new Lenis({
+    duration: 1.2,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    smoothWheel: true
+  })
+
+  function raf(time) {
+    lenis?.raf(time)
+    rafId = requestAnimationFrame(raf)
+  }
+
+  rafId = requestAnimationFrame(raf)
+})
+
+onUnmounted(() => {
+  if (rafId) cancelAnimationFrame(rafId)
+  if (lenis) lenis.destroy()
+})
 </script>
 
 <template>
-  <main class="welcome-container">
-    <h1>Modalin</h1>
-    <p>Selamat datang di Modalin Frontend. Mulai kembangkan antarmuka aplikasi Anda di sini sesuai desain Figma.</p>
-  </main>
+  <div id="app-root" class="min-h-screen flex flex-col bg-neutral-tertiary font-inter text-neutral-primary antialiased">
+    <router-view />
+  </div>
 </template>
-
-<style scoped>
-.welcome-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  text-align: center;
-  padding: 2rem;
-  box-sizing: border-box;
-}
-
-h1 {
-  font-size: 3.5rem;
-  margin-bottom: 1rem;
-}
-
-p {
-  font-size: 1.1rem;
-  max-width: 600px;
-  line-height: 1.6;
-  margin: 0;
-}
-</style>
