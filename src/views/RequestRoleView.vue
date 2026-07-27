@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import BaseInput from '@/components/BaseInput.vue'
+import BaseFileUpload from '@/components/BaseFileUpload.vue'
 import { authService } from '@/services/auth'
 import { Store, Coins, ShieldCheck, AlertCircle } from '@lucide/vue'
 
@@ -214,12 +215,10 @@ const handleRoleSubmit = async () => {
                 </div>
 
                 <div v-if="selectedRole === 'lender' || selectedRole === 'verifier'" class="space-y-4">
-                  <BaseInput
+                  <BaseFileUpload
                     v-model="form.identityCardUrl"
-                    type="text"
-                    label="Foto / URL Identitas (KTP)"
-                    placeholder="https://..."
-                    variant="mint"
+                    label="Dokumen Identitas (KTP)"
+                    accept="image/*,.pdf"
                     :disabled="isLoading"
                     required
                   />

@@ -3,12 +3,13 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import BaseInput from '@/components/BaseInput.vue'
+import BaseFileUpload from '@/components/BaseFileUpload.vue'
 import { businessService } from '@/services/business'
-import { Store, MapPin, FileText, CheckCircle2, ChevronLeft, ChevronRight, AlertCircle, Sparkles } from '@lucide/vue'
+import { Store, MapPin, CheckCircle2, ChevronLeft, ChevronRight, AlertCircle, Sparkles, ShieldAlert } from '@lucide/vue'
 
 const router = useRouter()
 
-const currentStep = ref(1)
+const currentStep = ref(1) // 1: Info Utama, 2: Lokasi & Detail, 3: Review
 
 const form = ref({
   businessName: '',
@@ -41,16 +42,14 @@ const categories = [
 const isLoading = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
+const isForbidden = ref(false)
 
 const isStep1Valid = computed(() => {
   return form.value.businessName.trim() !== '' && form.value.description.trim() !== ''
 })
 
 const isStep2Valid = computed(() => {
-  return form.value.locationAddress.trim() !== ''
-})
-
-const isStep3Valid = computed(() => {
+  if (form.value.locationAddress.trim() === '') return false
   if (form.value.businessType === 'starter') {
     return (
       form.value.targetMarket.trim() !== '' &&
@@ -69,14 +68,10 @@ const nextStep = () => {
     return
   }
   if (currentStep.value === 2 && !isStep2Valid.value) {
-    errorMessage.value = 'Alamat lengkap lokasi usaha wajib diisi.'
+    errorMessage.value = 'Lengkapi Alamat Usaha' + (form.value.businessType === 'starter' ? ' dan Detail Modal Rintisan.' : '.')
     return
   }
-  if (currentStep.value === 3 && !isStep3Valid.value) {
-    errorMessage.value = 'Lengkapi seluruh syarat detail modal rintisan & komitmen.'
-    return
-  }
-  if (currentStep.value < 4) {
+  if (currentStep.value < 3) {
     currentStep.value++
   }
 }
@@ -123,7 +118,12 @@ const handleSubmit = async () => {
       router.push('/business/detail')
     }, 1500)
   } catch (err) {
-    errorMessage.value = err.message || 'Gagal membuat profil bisnis. Periksa kembali kelengkapan data Anda.'
+    if (err?.status === 403) {
+      isForbidden.value = true
+      errorMessage.value = 'Akses Peran Peminjam Modal belum disetujui oleh Admin.'
+    } else {
+      errorMessage.value = err.message || 'Gagal membuat profil bisnis. Periksa kembali kelengkapan data Anda.'
+    }
   } finally {
     isLoading.value = false
   }
@@ -134,22 +134,22 @@ const handleSubmit = async () => {
   <AuthLayout>
     <div class="bg-white p-8 sm:p-10 rounded-xl border border-[#0F6E56]/40 shadow-xs w-full max-w-3xl mx-auto font-inter my-8">
       
-      <!-- Wizard Title Header -->
+      <!-- Title Header (Removed word Wizard) -->
       <div class="mb-8 text-center border-b border-gray-100 pb-6">
         <h2 class="text-3xl sm:text-[36px] font-semibold text-[#1F2937] font-newsreader leading-tight">
-          Wizard Profil Bisnis
+          Profil Bisnis
         </h2>
         <p class="text-sm sm:text-base text-[#52605D] mt-2">
           Lengkapi profil usaha Anda untuk menentukan limit pinjaman dan membuka akses pengajuan modal.
         </p>
       </div>
 
-      <!-- Step Progress Bar -->
-      <div class="mb-8 flex items-center justify-between relative px-2">
-        <div class="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-1 bg-gray-200 z-0"></div>
+      <!-- 3-Step Progress Bar -->
+      <div class="mb-8 flex items-center justify-between relative px-6">
+        <div class="absolute left-10 right-10 top-1/2 -translate-y-1/2 h-1 bg-gray-200 z-0"></div>
         <div
-          class="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-[#0F6E56] transition-all duration-300 z-0"
-          :style="{ width: `${((currentStep - 1) / 3) * 100}%` }"
+          class="absolute left-10 top-1/2 -translate-y-1/2 h-1 bg-[#0F6E56] transition-all duration-300 z-0"
+          :style="{ width: `${((currentStep - 1) / 2) * 80}%` }"
         ></div>
 
         <!-- Step 1 Indicator -->
@@ -157,7 +157,7 @@ const handleSubmit = async () => {
           <div :class="['w-9 h-9 rounded-full flex items-center justify-center font-semibold text-xs transition-colors', currentStep >= 1 ? 'bg-[#0F6E56] text-white' : 'bg-gray-200 text-[#52605D]']">
             1
           </div>
-          <span class="text-xs font-medium text-[#1F2937] hidden sm:block">Info Utama</span>
+          <span class="text-xs font-medium text-[#1F2937]">Info Utama</span>
         </div>
 
         <!-- Step 2 Indicator -->
@@ -165,32 +165,38 @@ const handleSubmit = async () => {
           <div :class="['w-9 h-9 rounded-full flex items-center justify-center font-semibold text-xs transition-colors', currentStep >= 2 ? 'bg-[#0F6E56] text-white' : 'bg-gray-200 text-[#52605D]']">
             2
           </div>
-          <span class="text-xs font-medium text-[#1F2937] hidden sm:block">Lokasi & Kontak</span>
+          <span class="text-xs font-medium text-[#1F2937]">Lokasi & Detail</span>
         </div>
 
         <!-- Step 3 Indicator -->
-        <div class="relative z-10 flex flex-col items-center gap-1.5 cursor-pointer" @click="currentStep >= 3 ? currentStep = 3 : null">
-          <div :class="['w-9 h-9 rounded-full flex items-center justify-center font-semibold text-xs transition-colors', currentStep >= 3 ? 'bg-[#0F6E56] text-white' : 'bg-gray-200 text-[#52605D]']">
+        <div class="relative z-10 flex flex-col items-center gap-1.5 cursor-pointer" @click="currentStep === 3 ? null : null">
+          <div :class="['w-9 h-9 rounded-full flex items-center justify-center font-semibold text-xs transition-colors', currentStep === 3 ? 'bg-[#0F6E56] text-white' : 'bg-gray-200 text-[#52605D]']">
             3
           </div>
-          <span class="text-xs font-medium text-[#1F2937] hidden sm:block">Detail Rintisan</span>
-        </div>
-
-        <!-- Step 4 Indicator -->
-        <div class="relative z-10 flex flex-col items-center gap-1.5 cursor-pointer" @click="currentStep === 4 ? null : null">
-          <div :class="['w-9 h-9 rounded-full flex items-center justify-center font-semibold text-xs transition-colors', currentStep === 4 ? 'bg-[#0F6E56] text-white' : 'bg-gray-200 text-[#52605D]']">
-            4
-          </div>
-          <span class="text-xs font-medium text-[#1F2937] hidden sm:block">Review</span>
+          <span class="text-xs font-medium text-[#1F2937]">Review</span>
         </div>
       </div>
 
-      <div v-if="errorMessage" class="mb-6 p-3.5 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg flex items-center gap-2">
+      <!-- Error / Forbidden Banner -->
+      <div v-if="isForbidden" class="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl text-left space-y-2">
+        <div class="flex items-center gap-2 text-amber-900 font-semibold text-sm">
+          <ShieldAlert class="w-5 h-5 text-amber-700 shrink-0" />
+          <span>Akses Peran Peminjam Membutuhkan Persetujuan Admin</span>
+        </div>
+        <p class="text-xs text-amber-800">
+          Pengajuan peran Peminjam Modal Anda masih dalam status peninjauan (*under review*). Setelah Admin menyetujui peran Anda, Anda dapat menyimpan profil bisnis.
+        </p>
+        <button @click="router.push('/role-status')" class="px-3.5 py-1.5 bg-[#0F6E56] text-white text-xs font-semibold rounded-lg hover:bg-[#0A5744] cursor-pointer">
+          Cek Status Pengajuan Peran
+        </button>
+      </div>
+
+      <div v-else-if="errorMessage" class="mb-6 p-3.5 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg flex items-center gap-2 text-left">
         <AlertCircle class="w-5 h-5 shrink-0 text-red-600" />
         <span class="font-medium">{{ errorMessage }}</span>
       </div>
 
-      <div v-if="successMessage" class="mb-6 p-3.5 bg-emerald-50 border border-emerald-200 text-[#0F6E56] text-sm rounded-lg flex items-center gap-2">
+      <div v-if="successMessage" class="mb-6 p-3.5 bg-emerald-50 border border-emerald-200 text-[#0F6E56] text-sm rounded-lg flex items-center gap-2 text-left">
         <CheckCircle2 class="w-5 h-5 shrink-0" />
         <span class="font-medium">{{ successMessage }}</span>
       </div>
@@ -284,10 +290,10 @@ const handleSubmit = async () => {
           />
         </div>
 
-        <!-- STEP 2: LOKASI & KONTAK -->
+        <!-- STEP 2: LOKASI & DETAIL USAHA -->
         <div v-else-if="currentStep === 2" class="space-y-5 text-left">
           <h3 class="text-lg font-semibold text-[#1F2937] border-b border-gray-100 pb-2">
-            Langkah 2: Lokasi & Media Usaha
+            Langkah 2: Lokasi & Detail Usaha
           </h3>
 
           <div class="flex flex-col gap-1.5">
@@ -320,25 +326,18 @@ const handleSubmit = async () => {
             />
           </div>
 
-          <BaseInput
+          <BaseFileUpload
             v-model="form.photoUrl"
-            type="text"
-            label="Foto Usaha / Produk / Lapak (URL)"
-            placeholder="https://..."
-            variant="mint"
+            label="Unggah Foto Usaha / Produk / Lapak"
+            accept="image/*"
             :disabled="isLoading"
           />
-        </div>
 
-        <!-- STEP 3: DETAIL RINTISAN (OR RUNNING DETAILS) -->
-        <div v-else-if="currentStep === 3" class="space-y-5 text-left">
-          <h3 class="text-lg font-semibold text-[#1F2937] border-b border-gray-100 pb-2">
-            Langkah 3: Detail {{ form.businessType === 'starter' ? 'Persyaratan Modal Rintisan' : 'Pengajuan Usaha Berjalan' }}
-          </h3>
-
-          <div v-if="form.businessType === 'starter'" class="space-y-4">
-            <div class="p-4 bg-[#FEF3C7]/40 border border-[#B45309]/20 rounded-lg text-xs text-[#B45309]">
-              Sesuai skema <strong>Modal Rintisan</strong>, Anda wajib menyertakan target pasar awal, supplier barang, serta komitmen pencatatan keuangan bulanan setelah dana cair.
+          <!-- Integrated Starter Business Requirements in Step 2 if Modal Rintisan -->
+          <div v-if="form.businessType === 'starter'" class="space-y-4 pt-4 border-t border-gray-100">
+            <h4 class="font-semibold text-base text-[#1F2937]">Persyaratan Modal Rintisan</h4>
+            <div class="p-3.5 bg-[#FEF3C7]/40 border border-[#B45309]/20 rounded-lg text-xs text-[#B45309]">
+              Isi target pembeli, supplier, dan estimasi harga jual untuk mempercepat peninjauan modal rintisan.
             </div>
 
             <BaseInput
@@ -371,12 +370,10 @@ const handleSubmit = async () => {
               required
             />
 
-            <BaseInput
+            <BaseFileUpload
               v-model="form.readinessProofUrl"
-              type="text"
-              label="Bukti Kesiapan Sederhana (URL Foto/Chat Supplier/Tempat)"
-              placeholder="https://..."
-              variant="mint"
+              label="Bukti Kesiapan Sederhana (Foto produk/lapak/dokumen)"
+              accept="image/*,.pdf"
               :disabled="isLoading"
             />
 
@@ -394,19 +391,12 @@ const handleSubmit = async () => {
               </label>
             </div>
           </div>
-
-          <div v-else class="p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-sm text-[#0F6E56] space-y-2">
-            <p class="font-semibold">Skema Usaha Berjalan Siap!</p>
-            <p class="text-xs">
-              Setelah profil bisnis disimpan, Anda dapat langsung mengunggah catatan keuangan bulanan untuk meningkatkan skor kepercayaan (*trust score*) dan membuka limit pinjaman hingga Rp15.000.000.
-            </p>
-          </div>
         </div>
 
-        <!-- STEP 4: REVIEW & SUBMIT -->
-        <div v-else-if="currentStep === 4" class="space-y-5 text-left">
+        <!-- STEP 3: REVIEW & SUBMIT -->
+        <div v-else-if="currentStep === 3" class="space-y-5 text-left">
           <h3 class="text-lg font-semibold text-[#1F2937] border-b border-gray-100 pb-2">
-            Langkah 4: Review Ringkasan Profil Bisnis
+            Langkah 3: Review Ringkasan Profil Bisnis
           </h3>
 
           <div class="p-5 bg-[#F9FAFB] rounded-xl border border-gray-200 space-y-3 text-sm">
@@ -437,7 +427,7 @@ const handleSubmit = async () => {
           </div>
         </div>
 
-        <!-- Wizard Navigation Buttons -->
+        <!-- Navigation Buttons -->
         <div class="mt-8 flex items-center justify-between pt-4 border-t border-gray-100">
           <button
             v-if="currentStep > 1"
@@ -452,7 +442,7 @@ const handleSubmit = async () => {
           <div v-else></div>
 
           <button
-            v-if="currentStep < 4"
+            v-if="currentStep < 3"
             type="button"
             @click="nextStep"
             class="px-6 py-2.5 bg-[#0F6E56] hover:bg-[#0A5744] text-white font-semibold text-sm rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs"

@@ -3,10 +3,11 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import BaseInput from '@/components/BaseInput.vue'
+import BaseFileUpload from '@/components/BaseFileUpload.vue'
 import { businessService } from '@/services/business'
 import { 
   TrendingUp, TrendingDown, DollarSign, PlusCircle, Filter, 
-  Trash2, FileText, CheckCircle2, Clock, AlertCircle, RefreshCw, Upload
+  Trash2, FileText, CheckCircle2, Clock, AlertCircle, RefreshCw, Upload, ShieldAlert
 } from '@lucide/vue'
 
 const router = useRouter()
@@ -27,6 +28,7 @@ const showAddModal = ref(false)
 const isSubmitting = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
+const isForbidden = ref(false)
 
 const months = [
   { value: 1, name: 'Januari' },
@@ -47,8 +49,8 @@ const years = [2026, 2025, 2024]
 
 const form = ref({
   recordDate: new Date().toISOString().split('T')[0],
-  incomeAmount: 0,
-  expenseAmount: 0,
+  incomeAmount: null,
+  expenseAmount: null,
   note: '',
   proofType: 'receipt', // 'receipt' | 'invoice' | 'photo' | 'transfer' | 'other'
   proofUrl: 'https://via.placeholder.com/600x800.png?text=Bukti+Nota+Usaha'
@@ -57,6 +59,8 @@ const form = ref({
 const fetchFinancialData = async () => {
   isLoading.value = true
   errorMessage.value = ''
+  isForbidden.value = false
+
   try {
     const [recordsRes, summaryRes] = await Promise.all([
       businessService.getFinancialRecords({ month: selectedMonth.value, year: selectedYear.value }),
@@ -65,7 +69,9 @@ const fetchFinancialData = async () => {
     records.value = recordsRes?.data || []
     summary.value = summaryRes?.data || { total_income: 0, total_expense: 0, net_amount: 0, record_count: 0 }
   } catch (err) {
-    if (err?.status === 404) {
+    if (err?.status === 403 || err?.response?.status === 403) {
+      isForbidden.value = true
+    } else if (err?.status === 404 || err?.response?.status === 404) {
       router.push('/business/wizard')
     } else {
       errorMessage.value = err.message || 'Gagal memuat catatan keuangan.'
@@ -80,8 +86,11 @@ onMounted(() => {
 })
 
 const handleCreateRecord = async () => {
-  if (form.value.incomeAmount <= 0 && form.value.expenseAmount <= 0) {
-    errorMessage.value = 'Salah satu antara Pemasukan atau Pengeluaran harus lebih besar dari 0.'
+  const inc = Number(form.value.incomeAmount) || 0
+  const exp = Number(form.value.expenseAmount) || 0
+
+  if (inc <= 0 && exp <= 0) {
+    errorMessage.value = 'Salah satu antara Pemasukan atau Pengeluaran harus diisi lebih dari 0.'
     return
   }
 
@@ -91,8 +100,8 @@ const handleCreateRecord = async () => {
 
   const payload = {
     record_date: new Date(form.value.recordDate).toISOString(),
-    income_amount: Number(form.value.incomeAmount),
-    expense_amount: Number(form.value.expenseAmount),
+    income_amount: inc,
+    expense_amount: exp,
     note: form.value.note || null,
     proofs: []
   }
@@ -101,7 +110,7 @@ const handleCreateRecord = async () => {
     payload.proofs.push({
       file_url: form.value.proofUrl.trim(),
       proof_type: form.value.proofType,
-      amount: form.value.incomeAmount > 0 ? Number(form.value.incomeAmount) : Number(form.value.expenseAmount)
+      amount: inc > 0 ? inc : exp
     })
   }
 
@@ -109,9 +118,9 @@ const handleCreateRecord = async () => {
     await businessService.createFinancialRecord(payload)
     successMessage.value = 'Catatan keuangan berhasil ditambahkan!'
     showAddModal.value = false
-    // Reset form
-    form.value.incomeAmount = 0
-    form.value.expenseAmount = 0
+    // Reset form to null for placeholder appearance
+    form.value.incomeAmount = null
+    form.value.expenseAmount = null
     form.value.note = ''
     fetchFinancialData()
   } catch (err) {
@@ -167,8 +176,22 @@ const formatDate = (dateStr) => {
         </div>
       </div>
 
+      <!-- FORBIDDEN (403) BANNER -->
+      <div v-if="isForbidden" class="mb-6 p-5 bg-amber-50 border border-amber-200 rounded-xl text-left space-y-2">
+        <div class="flex items-center gap-2 text-amber-900 font-semibold text-sm">
+          <ShieldAlert class="w-5 h-5 text-amber-700 shrink-0" />
+          <span>Akses Peran Peminjam Membutuhkan Persetujuan Admin</span>
+        </div>
+        <p class="text-xs text-amber-800">
+          Status pengajuan peran Peminjam Modal Anda masih dalam proses peninjauan oleh Tim Admin. Anda dapat melihat status pengajuan peran Anda di bawah ini.
+        </p>
+        <button @click="router.push('/role-status')" class="px-4 py-2 bg-[#0F6E56] text-white text-xs font-semibold rounded-lg cursor-pointer">
+          Cek Status Pengajuan Peran
+        </button>
+      </div>
+
       <!-- Notification Banners -->
-      <div v-if="errorMessage" class="mb-6 p-3.5 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg flex items-center gap-2">
+      <div v-else-if="errorMessage" class="mb-6 p-3.5 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg flex items-center gap-2">
         <AlertCircle class="w-5 h-5 shrink-0 text-red-600" />
         <span class="font-medium">{{ errorMessage }}</span>
       </div>
@@ -337,12 +360,13 @@ const formatDate = (dateStr) => {
               required
             />
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Parallel 2-Column Income and Expense Inputs with items-start alignment -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
               <BaseInput
                 v-model="form.incomeAmount"
                 type="number"
                 min="0"
-                label="Nominal Pemasukan / Omzet (Rp)"
+                label="Pemasukan / Omzet (Rp)"
                 placeholder="0"
                 variant="mint"
                 :disabled="isSubmitting"
@@ -351,7 +375,7 @@ const formatDate = (dateStr) => {
                 v-model="form.expenseAmount"
                 type="number"
                 min="0"
-                label="Nominal Pengeluaran (Rp)"
+                label="Pengeluaran (Rp)"
                 placeholder="0"
                 variant="mint"
                 :disabled="isSubmitting"
@@ -380,12 +404,10 @@ const formatDate = (dateStr) => {
                 </select>
               </div>
 
-              <BaseInput
+              <BaseFileUpload
                 v-model="form.proofUrl"
-                type="text"
-                label="URL Bukti Foto / Dokumentasi"
-                placeholder="https://..."
-                variant="mint"
+                label="Unggah Foto Bukti Transaksi (Struk/Nota/Invoice)"
+                accept="image/*,.pdf"
                 :disabled="isSubmitting"
               />
             </div>
