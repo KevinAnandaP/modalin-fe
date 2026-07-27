@@ -49,6 +49,14 @@ export const authService = {
   },
 
   /**
+   * Request a new role (borrower, lender, verifier)
+   * Endpoint target: http://localhost:8080/api/v1/auth/roles
+   */
+  async requestRole(payload) {
+    return await apiClient.post('/auth/roles', payload);
+  },
+
+  /**
    * Logout user and clear tokens
    */
   logout() {
