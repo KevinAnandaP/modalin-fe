@@ -4,6 +4,8 @@ import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import RequestRoleView from '@/views/RequestRoleView.vue'
 import RoleStatusView from '@/views/RoleStatusView.vue'
+import BusinessWizardView from '@/views/BusinessWizardView.vue'
+import BusinessDetailView from '@/views/BusinessDetailView.vue'
 
 const routes = [
   {
@@ -30,6 +32,16 @@ const routes = [
     path: '/role-status',
     name: 'role-status',
     component: RoleStatusView
+  },
+  {
+    path: '/business/wizard',
+    name: 'business-wizard',
+    component: BusinessWizardView
+  },
+  {
+    path: '/business/detail',
+    name: 'business-detail',
+    component: BusinessDetailView
   }
 ]
 
@@ -42,4 +54,5 @@ const router = createRouter({
 })
 
 export default router
+
 

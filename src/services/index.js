@@ -1,5 +1,6 @@
 import api, { apiClient, http, getAuthToken, setAuthToken, removeAuthToken } from './api';
 import authService from './auth';
+import businessService from './business';
 
 export {
   api,
@@ -8,8 +9,10 @@ export {
   getAuthToken,
   setAuthToken,
   removeAuthToken,
-  authService
+  authService,
+  businessService
 };
 
 export default api;
+
 
