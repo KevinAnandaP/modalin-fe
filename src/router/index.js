@@ -6,6 +6,7 @@ import RequestRoleView from '@/views/RequestRoleView.vue'
 import RoleStatusView from '@/views/RoleStatusView.vue'
 import BusinessWizardView from '@/views/BusinessWizardView.vue'
 import BusinessDetailView from '@/views/BusinessDetailView.vue'
+import FinancialRecordsView from '@/views/FinancialRecordsView.vue'
 
 const routes = [
   {
@@ -42,6 +43,11 @@ const routes = [
     path: '/business/detail',
     name: 'business-detail',
     component: BusinessDetailView
+  },
+  {
+    path: '/financial-records',
+    name: 'financial-records',
+    component: FinancialRecordsView
   }
 ]
 
@@ -54,5 +60,6 @@ const router = createRouter({
 })
 
 export default router
+
 
 
