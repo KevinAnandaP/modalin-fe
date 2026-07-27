@@ -1,4 +1,5 @@
 import api, { apiClient, http, getAuthToken, setAuthToken, removeAuthToken } from './api';
+import authService from './auth';
 
 export {
   api,
@@ -6,7 +7,9 @@ export {
   http,
   getAuthToken,
   setAuthToken,
-  removeAuthToken
+  removeAuthToken,
+  authService
 };
 
 export default api;
+

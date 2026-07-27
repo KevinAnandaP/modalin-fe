@@ -3,25 +3,53 @@ import { ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import BaseInput from '@/components/BaseInput.vue'
+import { authService } from '@/services/auth'
 
 const router = useRouter()
 const form = ref({
   nama: '',
   email: '',
   telepon: '',
+  city: '',
+  address: '',
   password: '',
   confirmPassword: '',
   agreeTerms: false
 })
 
-const handleRegister = () => {
+const isLoading = ref(false)
+const errorMessage = ref('')
+const successMessage = ref('')
+
+const handleRegister = async () => {
   if (form.value.password !== form.value.confirmPassword) {
-    alert('Kata sandi dan konfirmasi kata sandi tidak cocok!')
+    errorMessage.value = 'Kata sandi dan konfirmasi kata sandi tidak cocok!'
     return
   }
-  if (form.value.email && form.value.nama) {
-    alert(`Pendaftaran berhasil untuk ${form.value.nama}`)
-    router.push('/login')
+
+  isLoading.value = true
+  errorMessage.value = ''
+  successMessage.value = ''
+
+  try {
+    await authService.register({
+      full_name: form.value.nama,
+      email: form.value.email,
+      phone: form.value.telepon,
+      city: form.value.city,
+      address: form.value.address,
+      password: form.value.password,
+      terms_accepted: form.value.agreeTerms
+    })
+
+    successMessage.value = 'Pendaftaran berhasil! Silakan masuk dengan akun Anda.'
+    setTimeout(() => {
+      router.push('/login')
+    }, 1500)
+  } catch (err) {
+    errorMessage.value = err.message || 'Pendaftaran gagal. Silakan periksa kembali data Anda.'
+  } finally {
+    isLoading.value = false
   }
 }
 </script>
@@ -38,6 +66,14 @@ const handleRegister = () => {
         </p>
       </div>
 
+      <div v-if="errorMessage" class="mb-5 p-3.5 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg flex items-center gap-2">
+        <span class="font-medium">{{ errorMessage }}</span>
+      </div>
+
+      <div v-if="successMessage" class="mb-5 p-3.5 bg-emerald-50 border border-emerald-200 text-[#0F6E56] text-sm rounded-lg flex items-center gap-2">
+        <span class="font-medium">{{ successMessage }}</span>
+      </div>
+
       <form @submit.prevent="handleRegister" class="space-y-4">
         <BaseInput
           v-model="form.nama"
@@ -45,6 +81,7 @@ const handleRegister = () => {
           label="Nama Lengkap"
           placeholder="Masukkan nama lengkap"
           variant="mint"
+          :disabled="isLoading"
           required
         />
 
@@ -54,6 +91,7 @@ const handleRegister = () => {
           label="Email"
           placeholder="username@gmail.com"
           variant="mint"
+          :disabled="isLoading"
           required
         />
 
@@ -63,6 +101,27 @@ const handleRegister = () => {
           label="Nomor Telepon / WhatsApp"
           placeholder="08123456789"
           variant="mint"
+          :disabled="isLoading"
+          required
+        />
+
+        <BaseInput
+          v-model="form.city"
+          type="text"
+          label="Kota / Kabupaten"
+          placeholder="Contoh: Jakarta Selatan"
+          variant="mint"
+          :disabled="isLoading"
+          required
+        />
+
+        <BaseInput
+          v-model="form.address"
+          type="text"
+          label="Alamat Lengkap"
+          placeholder="Nama jalan, RT/RW, Kelurahan"
+          variant="mint"
+          :disabled="isLoading"
           required
         />
 
@@ -72,6 +131,7 @@ const handleRegister = () => {
           label="Kata Sandi"
           placeholder="********************"
           variant="mint"
+          :disabled="isLoading"
           required
         />
 
@@ -81,6 +141,7 @@ const handleRegister = () => {
           label="Konfirmasi Kata Sandi"
           placeholder="********************"
           variant="mint"
+          :disabled="isLoading"
           required
         />
 
@@ -88,6 +149,7 @@ const handleRegister = () => {
           <input
             v-model="form.agreeTerms"
             type="checkbox"
+            :disabled="isLoading"
             required
             class="mt-1 rounded border-[#0F6E56]/30 text-[#0F6E56] focus:ring-[#0F6E56] cursor-pointer shrink-0"
           />
@@ -99,9 +161,14 @@ const handleRegister = () => {
         <div class="pt-3">
           <button
             type="submit"
-            class="w-full py-3.5 bg-[#0F6E56] hover:bg-[#0A5744] text-white font-semibold text-base rounded-lg transition-colors cursor-pointer shadow-xs text-center"
+            :disabled="isLoading"
+            class="w-full py-3.5 bg-[#0F6E56] hover:bg-[#0A5744] text-white font-semibold text-base rounded-lg transition-colors cursor-pointer shadow-xs text-center disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            Daftar
+            <svg v-if="isLoading" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>{{ isLoading ? 'Mendaftarkan...' : 'Daftar' }}</span>
           </button>
         </div>
       </form>
@@ -115,4 +182,5 @@ const handleRegister = () => {
     </div>
   </AuthLayout>
 </template>
+
 
