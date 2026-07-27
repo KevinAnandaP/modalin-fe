@@ -2,11 +2,9 @@
 import { ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import AuthLayout from '@/layouts/AuthLayout.vue'
-import BaseButton from '@/components/BaseButton.vue'
 import BaseInput from '@/components/BaseInput.vue'
 
 const router = useRouter()
-const role = ref('peminjam')
 const form = ref({
   nama: '',
   email: '',
@@ -22,7 +20,7 @@ const handleRegister = () => {
     return
   }
   if (form.value.email && form.value.nama) {
-    alert(`Pendaftaran berhasil untuk ${form.value.nama} sebagai ${role.value === 'peminjam' ? 'Peminjam UMKM' : 'Pemberi Modal'}`)
+    alert(`Pendaftaran berhasil untuk ${form.value.nama}`)
     router.push('/login')
   }
 }
@@ -30,41 +28,14 @@ const handleRegister = () => {
 
 <template>
   <AuthLayout>
-    <div class="bg-white p-8 sm:p-10 rounded-2xl shadow-xs border border-primary-base/10 max-w-lg w-full mx-auto font-inter">
-      <div class="text-center mb-6">
-        <h2 class="text-semibold-32 text-neutral-primary font-newsreader">Buat Akun Modalin</h2>
-        <p class="text-regular-16 text-neutral-secondary mt-2">Daftar sekarang untuk memulai pendanaan atau mengajukan modal.</p>
-      </div>
-
-      <div class="relative bg-primary-10/60 p-1.5 rounded-lg inline-flex items-center justify-center border border-primary-base/10 w-full mb-6">
-        <div
-          class="absolute top-1.5 bottom-1.5 bg-white rounded-md shadow-xs transition-all duration-300 ease-in-out"
-          :style="{
-            left: role === 'peminjam' ? '0.375rem' : 'calc(50% + 0.1875rem)',
-            width: 'calc(50% - 0.5625rem)'
-          }"
-        ></div>
-
-        <button
-          type="button"
-          @click="role = 'peminjam'"
-          :class="[
-            'relative z-10 flex-1 px-4 py-2 text-medium-16 font-semibold transition-colors duration-300 cursor-pointer text-center select-none whitespace-nowrap',
-            role === 'peminjam' ? 'text-primary-base' : 'text-neutral-secondary hover:text-neutral-primary'
-          ]"
-        >
-          Peminjam (UMKM)
-        </button>
-        <button
-          type="button"
-          @click="role = 'pemberi'"
-          :class="[
-            'relative z-10 flex-1 px-4 py-2 text-medium-16 font-semibold transition-colors duration-300 cursor-pointer text-center select-none whitespace-nowrap',
-            role === 'pemberi' ? 'text-primary-base' : 'text-neutral-secondary hover:text-neutral-primary'
-          ]"
-        >
-          Pemberi Modal
-        </button>
+    <div class="bg-white p-8 sm:p-10 rounded-xl border border-[#0F6E56]/40 shadow-xs w-full font-inter my-8">
+      <div class="mb-6 text-center">
+        <h2 class="text-3xl sm:text-[36px] font-semibold text-[#1F2937] font-newsreader leading-tight">
+          Buat Akun Modalin
+        </h2>
+        <p class="text-sm sm:text-base text-[#52605D] mt-2">
+          Daftar sekarang untuk memulai pendanaan atau mengajukan modal.
+        </p>
       </div>
 
       <form @submit.prevent="handleRegister" class="space-y-4">
@@ -72,7 +43,8 @@ const handleRegister = () => {
           v-model="form.nama"
           type="text"
           label="Nama Lengkap"
-          placeholder="Nama Lengkap"
+          placeholder="Masukkan nama lengkap"
+          variant="mint"
           required
         />
 
@@ -80,7 +52,8 @@ const handleRegister = () => {
           v-model="form.email"
           type="email"
           label="Email"
-          placeholder="nama@email.com"
+          placeholder="username@gmail.com"
+          variant="mint"
           required
         />
 
@@ -89,6 +62,7 @@ const handleRegister = () => {
           type="tel"
           label="Nomor Telepon / WhatsApp"
           placeholder="08123456789"
+          variant="mint"
           required
         />
 
@@ -96,7 +70,8 @@ const handleRegister = () => {
           v-model="form.password"
           type="password"
           label="Kata Sandi"
-          placeholder="••••••••"
+          placeholder="********************"
+          variant="mint"
           required
         />
 
@@ -104,41 +79,40 @@ const handleRegister = () => {
           v-model="form.confirmPassword"
           type="password"
           label="Konfirmasi Kata Sandi"
-          placeholder="••••••••"
+          placeholder="********************"
+          variant="mint"
           required
         />
 
-        <div class="flex items-start gap-2 pt-1 text-regular-14">
+        <div class="flex items-start gap-2 pt-1 text-sm">
           <input
             v-model="form.agreeTerms"
             type="checkbox"
             required
-            class="mt-1 rounded border-primary-base/20 text-primary-base focus:ring-primary-base cursor-pointer shrink-0"
+            class="mt-1 rounded border-[#0F6E56]/30 text-[#0F6E56] focus:ring-[#0F6E56] cursor-pointer shrink-0"
           />
-          <label class="cursor-pointer select-none text-neutral-secondary">
-            Saya menyetujui <a href="#" class="text-primary-base underline">Syarat & Ketentuan</a> serta <a href="#" class="text-primary-base underline">Kebijakan Privasi</a> Modalin.
+          <label class="cursor-pointer select-none text-[#52605D]">
+            Saya menyetujui <a href="#" class="text-[#0F6E56] underline font-medium">Syarat & Ketentuan</a> serta <a href="#" class="text-[#0F6E56] underline font-medium">Kebijakan Privasi</a> Modalin.
           </label>
         </div>
 
         <div class="pt-3">
-          <BaseButton
+          <button
             type="submit"
-            variant="primary"
-            size="lg"
-            rounded
-            class="w-full justify-center"
+            class="w-full py-3.5 bg-[#0F6E56] hover:bg-[#0A5744] text-white font-semibold text-base rounded-lg transition-colors cursor-pointer shadow-xs text-center"
           >
             Daftar
-          </BaseButton>
+          </button>
         </div>
       </form>
 
-      <div class="mt-6 pt-5 border-t border-neutral-primary/10 text-center text-regular-14 text-neutral-secondary">
+      <div class="mt-6 text-center text-sm text-[#52605D]">
         Sudah punya akun?
-        <RouterLink to="/login" class="text-primary-base font-semibold hover:underline ml-1">
+        <RouterLink to="/login" class="text-[#0F6E56] font-semibold hover:underline ml-1">
           Masuk di sini
         </RouterLink>
       </div>
     </div>
   </AuthLayout>
 </template>
+
