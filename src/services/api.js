@@ -13,11 +13,17 @@ export const setAuthToken = (token, remember = true) => {
   } else {
     sessionStorage.setItem(TOKEN_KEY, token);
   }
+  if (token) {
+    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  } else {
+    delete api.defaults.headers.common['Authorization'];
+  }
 };
 
 export const removeAuthToken = () => {
   localStorage.removeItem(TOKEN_KEY);
   sessionStorage.removeItem(TOKEN_KEY);
+  delete api.defaults.headers.common['Authorization'];
 };
 
 export const api = axios.create({

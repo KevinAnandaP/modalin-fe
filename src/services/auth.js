@@ -57,6 +57,33 @@ export const authService = {
   },
 
   /**
+   * Google OAuth authenticate
+   * Endpoint target: http://localhost:8080/api/v1/auth/google
+   * @param {Object} payload { google_id, email, full_name }
+   */
+  async googleAuth(payload) {
+    const response = await apiClient.post('/auth/google', payload);
+    const token = response?.data?.token || response?.data?.login_result?.token;
+    if (token) {
+      setAuthToken(token, true);
+    }
+    return response;
+  },
+
+  /**
+   * Complete Google Registration for new user
+   * Endpoint target: http://localhost:8080/api/v1/auth/google/complete
+   * @param {Object} payload { temp_token, phone, city, address, terms_accepted }
+   */
+  async completeGoogleAuth(payload) {
+    const response = await apiClient.post('/auth/google/complete', payload);
+    if (response?.data?.token) {
+      setAuthToken(response.data.token, true);
+    }
+    return response;
+  },
+
+  /**
    * Logout user and clear tokens
    */
   logout() {
@@ -65,3 +92,4 @@ export const authService = {
 };
 
 export default authService;
+
