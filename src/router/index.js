@@ -10,6 +10,7 @@ import FinancialRecordsView from '@/views/FinancialRecordsView.vue'
 import CampaignCatalogView from '@/views/CampaignCatalogView.vue'
 import CampaignDetailView from '@/views/CampaignDetailView.vue'
 import CampaignWizardView from '@/views/CampaignWizardView.vue'
+import AdminDashboardView from '@/views/AdminDashboardView.vue'
 
 import { getAuthToken } from '@/services/api'
 
@@ -73,6 +74,13 @@ const routes = [
     path: '/campaign/wizard',
     name: 'campaign-wizard',
     component: CampaignWizardView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/admin',
+    name: 'admin-dashboard',
+    component: AdminDashboardView,
+    alias: ['/admin/campaigns/review', '/admin/roles/review', '/admin/business/verification', '/admin/disbursements', '/admin/analytics'],
     meta: { requiresAuth: true }
   }
 ]
