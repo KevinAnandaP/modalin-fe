@@ -148,6 +148,14 @@ onUnmounted(() => {
               </RouterLink>
 
               <RouterLink
+                to="/campaign/wizard"
+                class="text-regular-16 text-neutral-primary hover:text-primary-base transition-colors no-underline"
+                :class="{ 'font-semibold text-primary-base': route.path === '/campaign/wizard' }"
+              >
+                Ajukan Pendanaan
+              </RouterLink>
+
+              <RouterLink
                 to="/business/detail"
                 @click="handleDashboardClick"
                 class="text-regular-16 text-neutral-primary hover:text-primary-base transition-colors no-underline"
