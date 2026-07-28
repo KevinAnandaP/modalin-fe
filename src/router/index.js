@@ -8,6 +8,7 @@ import BusinessWizardView from '@/views/BusinessWizardView.vue'
 import BusinessDetailView from '@/views/BusinessDetailView.vue'
 import FinancialRecordsView from '@/views/FinancialRecordsView.vue'
 import CampaignCatalogView from '@/views/CampaignCatalogView.vue'
+import CampaignDetailView from '@/views/CampaignDetailView.vue'
 
 import { getAuthToken } from '@/services/api'
 
@@ -61,6 +62,11 @@ const routes = [
     path: '/campaigns',
     name: 'campaign-catalog',
     component: CampaignCatalogView
+  },
+  {
+    path: '/campaigns/:id',
+    name: 'campaign-detail',
+    component: CampaignDetailView
   }
 ]
 
