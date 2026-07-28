@@ -7,6 +7,9 @@ import RoleStatusView from '@/views/RoleStatusView.vue'
 import BusinessWizardView from '@/views/BusinessWizardView.vue'
 import BusinessDetailView from '@/views/BusinessDetailView.vue'
 import FinancialRecordsView from '@/views/FinancialRecordsView.vue'
+import CampaignCatalogView from '@/views/CampaignCatalogView.vue'
+
+import { getAuthToken } from '@/services/api'
 
 const routes = [
   {
@@ -27,27 +30,37 @@ const routes = [
   {
     path: '/request-role',
     name: 'request-role',
-    component: RequestRoleView
+    component: RequestRoleView,
+    meta: { requiresAuth: true }
   },
   {
     path: '/role-status',
     name: 'role-status',
-    component: RoleStatusView
+    component: RoleStatusView,
+    meta: { requiresAuth: true }
   },
   {
     path: '/business/wizard',
     name: 'business-wizard',
-    component: BusinessWizardView
+    component: BusinessWizardView,
+    meta: { requiresAuth: true }
   },
   {
     path: '/business/detail',
     name: 'business-detail',
-    component: BusinessDetailView
+    component: BusinessDetailView,
+    meta: { requiresAuth: true }
   },
   {
     path: '/financial-records',
     name: 'financial-records',
-    component: FinancialRecordsView
+    component: FinancialRecordsView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/campaigns',
+    name: 'campaign-catalog',
+    component: CampaignCatalogView
   }
 ]
 
@@ -56,6 +69,14 @@ const router = createRouter({
   routes,
   scrollBehavior() {
     return { top: 0 }
+  }
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.requiresAuth && !getAuthToken()) {
+    next({ name: 'login' })
+  } else {
+    next()
   }
 })
 
