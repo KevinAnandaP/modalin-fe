@@ -9,6 +9,7 @@ import BusinessDetailView from '@/views/BusinessDetailView.vue'
 import FinancialRecordsView from '@/views/FinancialRecordsView.vue'
 import CampaignCatalogView from '@/views/CampaignCatalogView.vue'
 import CampaignDetailView from '@/views/CampaignDetailView.vue'
+import CampaignWizardView from '@/views/CampaignWizardView.vue'
 
 import { getAuthToken } from '@/services/api'
 
@@ -67,6 +68,12 @@ const routes = [
     path: '/campaigns/:id',
     name: 'campaign-detail',
     component: CampaignDetailView
+  },
+  {
+    path: '/campaign/wizard',
+    name: 'campaign-wizard',
+    component: CampaignWizardView,
+    meta: { requiresAuth: true }
   }
 ]
 

@@ -137,10 +137,17 @@ const formatRupiah = (val) => {
             </div>
           </div>
 
-          <div class="flex items-center gap-2">
+          <div class="flex flex-wrap items-center gap-2">
+            <button
+              @click="router.push('/campaign/wizard')"
+              class="px-4 py-2.5 bg-primary-base hover:bg-[#0A5744] text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs"
+            >
+              <PlusCircle class="w-4 h-4" />
+              <span>Ajukan Campaign Pendanaan</span>
+            </button>
             <button
               @click="router.push('/financial-records')"
-              class="px-4 py-2.5 bg-primary-base hover:bg-[#0A5744] text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs"
+              class="px-4 py-2.5 border border-primary-base text-primary-base hover:bg-primary-10 text-xs font-semibold rounded-lg transition-colors cursor-pointer flex items-center gap-1.5"
             >
               <PlusCircle class="w-4 h-4" />
               <span>Input Catatan Keuangan</span>
