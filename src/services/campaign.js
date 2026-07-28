@@ -1,0 +1,164 @@
+import { apiClient } from './api';
+
+export const campaignService = {
+  /**
+   * Get public campaign catalog with search and filters
+   * Endpoint: GET /api/v1/campaigns
+   * @param {Object} params { search, category, risk_level, min_amount, max_amount }
+   */
+  async getCatalog(params = {}) {
+    return await apiClient.get('/campaigns', params);
+  },
+
+  /**
+   * Create a new campaign (Borrower)
+   * Endpoint: POST /api/v1/campaigns
+   * @param {Object} payload { title, description, category, target_amount, tenor_months, interest_rate }
+   */
+  async createCampaign(payload) {
+    return await apiClient.post('/campaigns', payload);
+  },
+
+  /**
+   * Get borrower's own campaigns
+   * Endpoint: GET /api/v1/campaigns/me
+   */
+  async getMyCampaigns() {
+    return await apiClient.get('/campaigns/me');
+  },
+
+  /**
+   * Get borrower's campaign by ID
+   * Endpoint: GET /api/v1/campaigns/:id
+   * @param {string} id
+   */
+  async getCampaignById(id) {
+    return await apiClient.get(`/campaigns/${id}`);
+  },
+
+  /**
+   * Update borrower's campaign
+   * Endpoint: PUT /api/v1/campaigns/:id
+   * @param {string} id
+   * @param {Object} payload
+   */
+  async updateCampaign(id, payload) {
+    return await apiClient.put(`/campaigns/${id}`, payload);
+  },
+
+  /**
+   * Delete campaign draft
+   * Endpoint: DELETE /api/v1/campaigns/:id
+   * @param {string} id
+   */
+  async deleteCampaign(id) {
+    return await apiClient.delete(`/campaigns/${id}`);
+  },
+
+  /**
+   * Submit campaign for admin review
+   * Endpoint: POST /api/v1/campaigns/:id/submit
+   * @param {string} id
+   */
+  async submitCampaign(id) {
+    return await apiClient.post(`/campaigns/${id}/submit`);
+  },
+
+  // --- Budget Items (RAB) ---
+
+  /**
+   * List budget items for a campaign
+   * Endpoint: GET /api/v1/campaigns/:id/budget-items
+   * @param {string} campaignId
+   */
+  async getBudgetItems(campaignId) {
+    return await apiClient.get(`/campaigns/${campaignId}/budget-items`);
+  },
+
+  /**
+   * Create budget item (RAB)
+   * Endpoint: POST /api/v1/campaigns/:id/budget-items
+   * @param {string} campaignId
+   * @param {Object} payload { item_name, quantity, unit_price, category }
+   */
+  async createBudgetItem(campaignId, payload) {
+    return await apiClient.post(`/campaigns/${campaignId}/budget-items`, payload);
+  },
+
+  /**
+   * Update budget item (RAB)
+   * Endpoint: PUT /api/v1/campaigns/:id/budget-items/:budgetId
+   * @param {string} campaignId
+   * @param {string} budgetId
+   * @param {Object} payload
+   */
+  async updateBudgetItem(campaignId, budgetId, payload) {
+    return await apiClient.put(`/campaigns/${campaignId}/budget-items/${budgetId}`, payload);
+  },
+
+  /**
+   * Delete budget item (RAB)
+   * Endpoint: DELETE /api/v1/campaigns/:id/budget-items/:budgetId
+   * @param {string} campaignId
+   * @param {string} budgetId
+   */
+  async deleteBudgetItem(campaignId, budgetId) {
+    return await apiClient.delete(`/campaigns/${campaignId}/budget-items/${budgetId}`);
+  },
+
+  // --- Milestones ---
+
+  /**
+   * List milestones for a campaign
+   * Endpoint: GET /api/v1/campaigns/:id/milestones
+   * @param {string} campaignId
+   */
+  async getMilestones(campaignId) {
+    return await apiClient.get(`/campaigns/${campaignId}/milestones`);
+  },
+
+  /**
+   * Create milestone for a campaign
+   * Endpoint: POST /api/v1/campaigns/:id/milestones
+   * @param {string} campaignId
+   * @param {Object} payload { title, description, target_amount, order_number }
+   */
+  async createMilestone(campaignId, payload) {
+    return await apiClient.post(`/campaigns/${campaignId}/milestones`, payload);
+  },
+
+  /**
+   * Update milestone
+   * Endpoint: PUT /api/v1/campaigns/:id/milestones/:milestoneId
+   * @param {string} campaignId
+   * @param {string} milestoneId
+   * @param {Object} payload
+   */
+  async updateMilestone(campaignId, milestoneId, payload) {
+    return await apiClient.put(`/campaigns/${campaignId}/milestones/${milestoneId}`, payload);
+  },
+
+  /**
+   * Delete milestone
+   * Endpoint: DELETE /api/v1/campaigns/:id/milestones/:milestoneId
+   * @param {string} campaignId
+   * @param {string} milestoneId
+   */
+  async deleteMilestone(campaignId, milestoneId) {
+    return await apiClient.delete(`/campaigns/${campaignId}/milestones/${milestoneId}`);
+  },
+
+  // --- Admin Review ---
+
+  /**
+   * Review campaign (Admin)
+   * Endpoint: POST /api/v1/admin/campaigns/:id/review
+   * @param {string} campaignId
+   * @param {string} decision "published" | "rejected" | "draft"
+   */
+  async reviewCampaign(campaignId, decision) {
+    return await apiClient.post(`/admin/campaigns/${campaignId}/review`, { decision });
+  }
+};
+
+export default campaignService;
