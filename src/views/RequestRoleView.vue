@@ -75,10 +75,10 @@ const handleRoleSubmit = async () => {
 
 <template>
   <AuthLayout>
-    <div class="bg-white p-8 sm:p-10 rounded-xl border border-[#0F6E56]/40 shadow-xs w-full max-w-5xl mx-auto font-inter my-8">
+    <div class="bg-white p-8 sm:p-10 rounded-xl border border-primary-base/40 shadow-xs w-full max-w-5xl mx-auto font-inter my-8">
       <!-- Header -->
       <div class="mb-8 text-center border-b border-gray-100 pb-6">
-        <h2 class="text-3xl sm:text-[36px] font-semibold text-[#1F2937] font-newsreader leading-tight">
+        <h2 class="text-3xl sm:text-[36px] font-semibold text-neutral-primary font-newsreader leading-tight">
           Pengajuan Peran Akun Modalin
         </h2>
         <p class="text-sm sm:text-base text-[#52605D] mt-2">
@@ -91,7 +91,7 @@ const handleRoleSubmit = async () => {
         <span class="font-medium">{{ errorMessage }}</span>
       </div>
 
-      <div v-if="successMessage" class="mb-6 p-3.5 bg-emerald-50 border border-emerald-200 text-[#0F6E56] text-sm rounded-lg flex items-center gap-2">
+      <div v-if="successMessage" class="mb-6 p-3.5 bg-emerald-50 border border-emerald-200 text-primary-base text-sm rounded-lg flex items-center gap-2">
         <span class="font-medium">{{ successMessage }}</span>
       </div>
 
@@ -101,7 +101,7 @@ const handleRoleSubmit = async () => {
           
           <!-- LEFT SIDE: Opsi Peran (Column span 5) -->
           <div class="lg:col-span-5 space-y-3.5">
-            <h3 class="text-sm font-semibold text-[#1F2937] uppercase tracking-wider mb-2 text-left">
+            <h3 class="text-sm font-semibold text-neutral-primary uppercase tracking-wider mb-2 text-left">
               Pilihan Peran Akun
             </h3>
 
@@ -111,16 +111,16 @@ const handleRoleSubmit = async () => {
               :class="[
                 'p-4 rounded-xl border-2 transition-all cursor-pointer flex items-center justify-between gap-3 text-left select-none',
                 selectedRole === 'borrower'
-                  ? 'border-[#0F6E56] bg-[#D7EAE3]/30 shadow-xs'
-                  : 'border-gray-200 hover:border-[#0F6E56]/50 bg-white'
+                  ? 'border-primary-base bg-[#D7EAE3]/30 shadow-xs'
+                  : 'border-gray-200 hover:border-primary-base/50 bg-white'
               ]"
             >
               <div class="flex items-center gap-3">
-                <div :class="['w-10 h-10 rounded-lg flex items-center justify-center shrink-0', selectedRole === 'borrower' ? 'bg-[#0F6E56] text-white' : 'bg-gray-100 text-[#52605D]']">
+                <div :class="['w-10 h-10 rounded-lg flex items-center justify-center shrink-0', selectedRole === 'borrower' ? 'bg-primary-base text-white' : 'bg-gray-100 text-[#52605D]']">
                   <Store class="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 class="font-semibold text-sm text-[#1F2937]">Peminjam Modal</h4>
+                  <h4 class="font-semibold text-sm text-neutral-primary">Peminjam Modal</h4>
                   <p class="text-xs text-[#52605D] mt-0.5">UMKM Berjalan atau Usaha Rintisan</p>
                 </div>
               </div>
@@ -129,7 +129,7 @@ const handleRoleSubmit = async () => {
                 name="role"
                 value="borrower"
                 :checked="selectedRole === 'borrower'"
-                class="w-4 h-4 text-[#0F6E56] focus:ring-[#0F6E56] shrink-0"
+                class="w-4 h-4 text-primary-base focus:ring-primary-base shrink-0"
               />
             </div>
 
@@ -139,16 +139,16 @@ const handleRoleSubmit = async () => {
               :class="[
                 'p-4 rounded-xl border-2 transition-all cursor-pointer flex items-center justify-between gap-3 text-left select-none',
                 selectedRole === 'lender'
-                  ? 'border-[#0F6E56] bg-[#D7EAE3]/30 shadow-xs'
-                  : 'border-gray-200 hover:border-[#0F6E56]/50 bg-white'
+                  ? 'border-primary-base bg-[#D7EAE3]/30 shadow-xs'
+                  : 'border-gray-200 hover:border-primary-base/50 bg-white'
               ]"
             >
               <div class="flex items-center gap-3">
-                <div :class="['w-10 h-10 rounded-lg flex items-center justify-center shrink-0', selectedRole === 'lender' ? 'bg-[#0F6E56] text-white' : 'bg-gray-100 text-[#52605D]']">
+                <div :class="['w-10 h-10 rounded-lg flex items-center justify-center shrink-0', selectedRole === 'lender' ? 'bg-primary-base text-white' : 'bg-gray-100 text-[#52605D]']">
                   <Coins class="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 class="font-semibold text-sm text-[#1F2937]">Pemberi Modal</h4>
+                  <h4 class="font-semibold text-sm text-neutral-primary">Pemberi Modal</h4>
                   <p class="text-xs text-[#52605D] mt-0.5">Pendanaan kampanye & imbal hasil</p>
                 </div>
               </div>
@@ -157,7 +157,7 @@ const handleRoleSubmit = async () => {
                 name="role"
                 value="lender"
                 :checked="selectedRole === 'lender'"
-                class="w-4 h-4 text-[#0F6E56] focus:ring-[#0F6E56] shrink-0"
+                class="w-4 h-4 text-primary-base focus:ring-primary-base shrink-0"
               />
             </div>
 
@@ -167,16 +167,16 @@ const handleRoleSubmit = async () => {
               :class="[
                 'p-4 rounded-xl border-2 transition-all cursor-pointer flex items-center justify-between gap-3 text-left select-none',
                 selectedRole === 'verifier'
-                  ? 'border-[#0F6E56] bg-[#D7EAE3]/30 shadow-xs'
-                  : 'border-gray-200 hover:border-[#0F6E56]/50 bg-white'
+                  ? 'border-primary-base bg-[#D7EAE3]/30 shadow-xs'
+                  : 'border-gray-200 hover:border-primary-base/50 bg-white'
               ]"
             >
               <div class="flex items-center gap-3">
-                <div :class="['w-10 h-10 rounded-lg flex items-center justify-center shrink-0', selectedRole === 'verifier' ? 'bg-[#0F6E56] text-white' : 'bg-gray-100 text-[#52605D]']">
+                <div :class="['w-10 h-10 rounded-lg flex items-center justify-center shrink-0', selectedRole === 'verifier' ? 'bg-primary-base text-white' : 'bg-gray-100 text-[#52605D]']">
                   <ShieldCheck class="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 class="font-semibold text-sm text-[#1F2937]">Verifikator Lapangan</h4>
+                  <h4 class="font-semibold text-sm text-neutral-primary">Verifikator Lapangan</h4>
                   <p class="text-xs text-[#52605D] mt-0.5">Verifikasi fisik lokasi UMKM</p>
                 </div>
               </div>
@@ -185,7 +185,7 @@ const handleRoleSubmit = async () => {
                 name="role"
                 value="verifier"
                 :checked="selectedRole === 'verifier'"
-                class="w-4 h-4 text-[#0F6E56] focus:ring-[#0F6E56] shrink-0"
+                class="w-4 h-4 text-primary-base focus:ring-primary-base shrink-0"
               />
             </div>
           </div>
@@ -193,23 +193,23 @@ const handleRoleSubmit = async () => {
           <!-- RIGHT SIDE: Syarat Ketentuan & Form Submit (Column span 7) -->
           <div class="lg:col-span-7 flex flex-col justify-between space-y-6 text-left border-l-0 lg:border-l lg:border-gray-100 lg:pl-8">
             <div class="space-y-5">
-              <h3 class="text-sm font-semibold text-[#1F2937] uppercase tracking-wider">
+              <h3 class="text-sm font-semibold text-neutral-primary uppercase tracking-wider">
                 Syarat Ketentuan & Form Pengajuan
               </h3>
 
               <div class="p-5 bg-[#F9FAFB] rounded-xl border border-gray-200 space-y-4">
-                <h4 class="font-semibold text-base text-[#1F2937]">
+                <h4 class="font-semibold text-base text-neutral-primary">
                   Ketentuan Peran {{ selectedRole === 'borrower' ? 'Peminjam Modal' : selectedRole === 'lender' ? 'Pemberi Modal' : 'Verifikator Lapangan' }}
                 </h4>
 
                 <div v-if="selectedRole === 'borrower'" class="text-sm text-[#52605D] space-y-3">
                   <p>Sebagai Peminjam Modal di Modalin, Anda dapat mengajukan pembiayaan usaha:</p>
                   <div class="p-3 bg-white border border-gray-200 rounded-lg text-xs space-y-1.5">
-                    <p class="font-semibold text-[#1F2937]">1. Modal Usaha Berjalan</p>
+                    <p class="font-semibold text-neutral-primary">1. Modal Usaha Berjalan</p>
                     <p>Dibutuhkan untuk usaha yang telah aktif min. 1 bulan dengan melampirkan catatan keuangan bulanan.</p>
                   </div>
                   <div class="p-3 bg-white border border-gray-200 rounded-lg text-xs space-y-1.5">
-                    <p class="font-semibold text-[#1F2937]">2. Modal Rintisan</p>
+                    <p class="font-semibold text-neutral-primary">2. Modal Rintisan</p>
                     <p>Dibutuhkan untuk ide bisnis baru dengan menyertakan rencana usaha, RAB penggunaan dana, & estimasi target pembeli.</p>
                   </div>
                 </div>
@@ -224,7 +224,7 @@ const handleRoleSubmit = async () => {
                   />
 
                   <!-- Lender Terms -->
-                  <div v-if="selectedRole === 'lender'" class="p-3.5 bg-[#FEF3C7]/40 border border-[#B45309]/20 rounded-lg text-xs text-[#B45309] space-y-2">
+                  <div v-if="selectedRole === 'lender'" class="p-3.5 bg-[#FEF3C7]/40 border border-secondary-base/20 rounded-lg text-xs text-secondary-base space-y-2">
                     <p class="font-semibold">Catatan Risiko Pendanaan:</p>
                     <p>Pemberi modal memahami bahwa estimasi return bukan jaminan mutlak dan pendanaan memiliki risiko bisnis. Anda wajib membaca dan menyetujui lembar risiko sebelum mendanai.</p>
 
@@ -235,9 +235,9 @@ const handleRoleSubmit = async () => {
                         id="risk-agreement"
                         :disabled="isLoading"
                         required
-                        class="mt-0.5 rounded border-[#0F6E56]/30 text-[#0F6E56] focus:ring-[#0F6E56] cursor-pointer shrink-0"
+                        class="mt-0.5 rounded border-primary-base/30 text-primary-base focus:ring-primary-base cursor-pointer shrink-0"
                       />
-                      <label for="risk-agreement" class="cursor-pointer select-none font-medium text-[#1F2937]">
+                      <label for="risk-agreement" class="cursor-pointer select-none font-medium text-neutral-primary">
                         Saya memahami dan menyetujui Perjanjian Risiko Pendanaan.
                       </label>
                     </div>
@@ -256,9 +256,9 @@ const handleRoleSubmit = async () => {
                           id="ethics-agreement"
                           :disabled="isLoading"
                           required
-                          class="mt-0.5 rounded border-[#0F6E56]/30 text-[#0F6E56] focus:ring-[#0F6E56] cursor-pointer shrink-0"
+                          class="mt-0.5 rounded border-primary-base/30 text-primary-base focus:ring-primary-base cursor-pointer shrink-0"
                         />
-                        <label for="ethics-agreement" class="cursor-pointer select-none font-medium text-[#1F2937]">
+                        <label for="ethics-agreement" class="cursor-pointer select-none font-medium text-neutral-primary">
                           Saya menyetujui Kode Etik & Independensi Verifikator.
                         </label>
                       </div>
@@ -269,9 +269,9 @@ const handleRoleSubmit = async () => {
                           id="training-completed"
                           :disabled="isLoading"
                           required
-                          class="mt-0.5 rounded border-[#0F6E56]/30 text-[#0F6E56] focus:ring-[#0F6E56] cursor-pointer shrink-0"
+                          class="mt-0.5 rounded border-primary-base/30 text-primary-base focus:ring-primary-base cursor-pointer shrink-0"
                         />
-                        <label for="training-completed" class="cursor-pointer select-none font-medium text-[#1F2937]">
+                        <label for="training-completed" class="cursor-pointer select-none font-medium text-neutral-primary">
                           Saya telah menyelesaikan Mini-Training Verifikator.
                         </label>
                       </div>
@@ -285,7 +285,7 @@ const handleRoleSubmit = async () => {
               <button
                 type="submit"
                 :disabled="isLoading"
-                class="w-full py-3.5 bg-[#0F6E56] hover:bg-[#0A5744] text-white font-semibold text-base rounded-lg transition-colors cursor-pointer shadow-xs text-center disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                class="w-full py-3.5 bg-primary-base hover:bg-[#0A5744] text-white font-semibold text-base rounded-lg transition-colors cursor-pointer shadow-xs text-center disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 <svg v-if="isLoading" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

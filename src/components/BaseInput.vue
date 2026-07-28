@@ -110,7 +110,7 @@ const inputClasses = computed(() => {
         <button
           type="button"
           @click="togglePassword"
-          class="text-[#0F6E56] hover:text-[#0A4939] focus:outline-none transition-colors cursor-pointer"
+          class="text-primary-base hover:text-primary-70 focus:outline-none transition-colors cursor-pointer"
           tabindex="-1"
         >
           <EyeOff v-if="showPassword" class="w-5 h-5" />

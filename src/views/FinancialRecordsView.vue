@@ -152,12 +152,12 @@ const formatDate = (dateStr) => {
 
 <template>
   <AuthLayout>
-    <div class="bg-white p-8 sm:p-10 rounded-xl border border-[#0F6E56]/40 shadow-xs w-full max-w-5xl mx-auto font-inter my-8 text-left">
+    <div class="bg-white p-8 sm:p-10 rounded-xl border border-primary-base/40 shadow-xs w-full max-w-5xl mx-auto font-inter my-8 text-left">
       
       <!-- Page Header -->
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-100 pb-6 mb-8">
         <div>
-          <h2 class="text-3xl font-semibold text-[#1F2937] font-newsreader">
+          <h2 class="text-3xl font-semibold text-neutral-primary font-newsreader">
             Catatan Keuangan Usaha
           </h2>
           <p class="text-sm text-[#52605D] mt-1">
@@ -168,7 +168,7 @@ const formatDate = (dateStr) => {
         <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
           <button
             @click="showAddModal = true"
-            class="px-4 py-2.5 bg-[#0F6E56] hover:bg-[#0A5744] text-white text-sm font-semibold rounded-lg transition-colors cursor-pointer flex items-center gap-2 shadow-xs"
+            class="px-4 py-2.5 bg-primary-base hover:bg-[#0A5744] text-white text-sm font-semibold rounded-lg transition-colors cursor-pointer flex items-center gap-2 shadow-xs"
           >
             <PlusCircle class="w-4 h-4" />
             <span>Tambah Catatan Baru</span>
@@ -185,7 +185,7 @@ const formatDate = (dateStr) => {
         <p class="text-xs text-amber-800">
           Status pengajuan peran Peminjam Modal Anda masih dalam proses peninjauan oleh Tim Admin. Anda dapat melihat status pengajuan peran Anda di bawah ini.
         </p>
-        <button @click="router.push('/role-status')" class="px-4 py-2 bg-[#0F6E56] text-white text-xs font-semibold rounded-lg cursor-pointer">
+        <button @click="router.push('/role-status')" class="px-4 py-2 bg-primary-base text-white text-xs font-semibold rounded-lg cursor-pointer">
           Cek Status Pengajuan Peran
         </button>
       </div>
@@ -196,7 +196,7 @@ const formatDate = (dateStr) => {
         <span class="font-medium">{{ errorMessage }}</span>
       </div>
 
-      <div v-if="successMessage" class="mb-6 p-3.5 bg-emerald-50 border border-emerald-200 text-[#0F6E56] text-sm rounded-lg flex items-center gap-2">
+      <div v-if="successMessage" class="mb-6 p-3.5 bg-emerald-50 border border-emerald-200 text-primary-base text-sm rounded-lg flex items-center gap-2">
         <CheckCircle2 class="w-5 h-5 shrink-0" />
         <span class="font-medium">{{ successMessage }}</span>
       </div>
@@ -242,8 +242,8 @@ const formatDate = (dateStr) => {
 
       <!-- Filter Controls -->
       <div class="flex flex-wrap items-center justify-between gap-4 p-4 bg-[#F9FAFB] rounded-xl border border-gray-200 mb-6">
-        <div class="flex items-center gap-2 text-sm font-semibold text-[#1F2937]">
-          <Filter class="w-4 h-4 text-[#0F6E56]" />
+        <div class="flex items-center gap-2 text-sm font-semibold text-neutral-primary">
+          <Filter class="w-4 h-4 text-primary-base" />
           <span>Filter Periode:</span>
         </div>
 
@@ -251,7 +251,7 @@ const formatDate = (dateStr) => {
           <select
             v-model="selectedMonth"
             @change="fetchFinancialData"
-            class="px-3.5 py-2 bg-white border border-gray-300 rounded-lg text-xs font-medium text-[#1F2937] outline-none focus:border-[#0F6E56]"
+            class="px-3.5 py-2 bg-white border border-gray-300 rounded-lg text-xs font-medium text-neutral-primary outline-none focus:border-primary-base"
           >
             <option v-for="m in months" :key="m.value" :value="m.value">
               {{ m.name }}
@@ -261,7 +261,7 @@ const formatDate = (dateStr) => {
           <select
             v-model="selectedYear"
             @change="fetchFinancialData"
-            class="px-3.5 py-2 bg-white border border-gray-300 rounded-lg text-xs font-medium text-[#1F2937] outline-none focus:border-[#0F6E56]"
+            class="px-3.5 py-2 bg-white border border-gray-300 rounded-lg text-xs font-medium text-neutral-primary outline-none focus:border-primary-base"
           >
             <option v-for="y in years" :key="y" :value="y">
               {{ y }}
@@ -287,7 +287,7 @@ const formatDate = (dateStr) => {
           <tbody>
             <tr v-if="isLoading" class="text-center">
               <td colspan="7" class="p-8 text-[#52605D]">
-                <RefreshCw class="w-5 h-5 animate-spin mx-auto text-[#0F6E56] mb-2" />
+                <RefreshCw class="w-5 h-5 animate-spin mx-auto text-primary-base mb-2" />
                 <span>Memuat data transaksi...</span>
               </td>
             </tr>
@@ -304,7 +304,7 @@ const formatDate = (dateStr) => {
               :key="rec.id"
               class="border-b border-gray-100 hover:bg-gray-50 transition-colors"
             >
-              <td class="p-3.5 font-medium text-[#1F2937] whitespace-nowrap">
+              <td class="p-3.5 font-medium text-neutral-primary whitespace-nowrap">
                 {{ formatDate(rec.record_date) }}
               </td>
               <td class="p-3.5 text-[#52605D]">
@@ -316,7 +316,7 @@ const formatDate = (dateStr) => {
               <td class="p-3.5 text-right font-mono text-rose-700 font-semibold">
                 {{ rec.expense_amount > 0 ? formatRupiah(rec.expense_amount) : '-' }}
               </td>
-              <td :class="['p-3.5 text-right font-mono font-bold', rec.net_amount >= 0 ? 'text-[#0F6E56]' : 'text-rose-700']">
+              <td :class="['p-3.5 text-right font-mono font-bold', rec.net_amount >= 0 ? 'text-primary-base' : 'text-rose-700']">
                 {{ formatRupiah(rec.net_amount) }}
               </td>
               <td class="p-3.5 text-center">
@@ -344,10 +344,10 @@ const formatDate = (dateStr) => {
 
       <!-- Add Record Modal Dialog -->
       <div v-if="showAddModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl border border-[#0F6E56]/40 p-6 sm:p-8 max-w-lg w-full font-inter space-y-5 text-left shadow-lg">
+        <div class="bg-white rounded-xl border border-primary-base/40 p-6 sm:p-8 max-w-lg w-full font-inter space-y-5 text-left shadow-lg">
           <div class="flex items-center justify-between border-b border-gray-100 pb-3">
-            <h3 class="text-xl font-bold text-[#1F2937] font-newsreader">Tambah Catatan Keuangan</h3>
-            <button @click="showAddModal = false" class="text-gray-400 hover:text-[#1F2937] text-lg font-bold">✕</button>
+            <h3 class="text-xl font-bold text-neutral-primary font-newsreader">Tambah Catatan Keuangan</h3>
+            <button @click="showAddModal = false" class="text-gray-400 hover:text-neutral-primary text-lg font-bold">✕</button>
           </div>
 
           <form @submit.prevent="handleCreateRecord" class="space-y-4">
@@ -392,7 +392,7 @@ const formatDate = (dateStr) => {
             />
 
             <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg space-y-3">
-              <span class="text-xs font-semibold text-[#1F2937] block">Lampiran Bukti Transaksi (Nota / Invoice)</span>
+              <span class="text-xs font-semibold text-neutral-primary block">Lampiran Bukti Transaksi (Nota / Invoice)</span>
               
               <div class="flex flex-col gap-1.5">
                 <label class="text-xs font-medium text-[#52605D]">Tipe Bukti</label>
@@ -423,7 +423,7 @@ const formatDate = (dateStr) => {
               <button
                 type="submit"
                 :disabled="isSubmitting"
-                class="px-5 py-2.5 bg-[#0F6E56] hover:bg-[#0A5744] text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs"
+                class="px-5 py-2.5 bg-primary-base hover:bg-[#0A5744] text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs"
               >
                 <svg v-if="isSubmitting" class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

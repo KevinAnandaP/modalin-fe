@@ -59,7 +59,7 @@ const handleDrop = (event) => {
 
 const processFile = (file) => {
   selectedFile.value = file
-  
+
   if (file.type.startsWith('image/')) {
     const reader = new FileReader()
     reader.onload = (e) => {
@@ -85,9 +85,9 @@ const clearFile = () => {
 
 <template>
   <div class="flex flex-col gap-1.5 text-left font-inter">
-    <label v-if="label" class="text-sm font-medium text-[#1F2937] flex items-center justify-between">
+    <label v-if="label" class="text-sm font-medium text-neutral-primary flex items-center justify-between">
       <span>{{ label }} <span v-if="required" class="text-red-500">*</span></span>
-      <span v-if="selectedFile" class="text-xs text-[#0F6E56] font-semibold flex items-center gap-1">
+      <span v-if="selectedFile" class="text-xs text-primary-base font-semibold flex items-center gap-1">
         <Check class="w-3.5 h-3.5" /> Terpilih
       </span>
     </label>
@@ -98,8 +98,8 @@ const clearFile = () => {
       @dragleave.prevent="isDragging = false"
       @drop.prevent="handleDrop"
       :class="[
-        'relative border-2 border-dashed rounded-xl p-4 sm:p-5 transition-all text-center cursor-pointer select-none flex flex-col items-center justify-center min-h-[120px]',
-        isDragging ? 'border-[#0F6E56] bg-[#D7EAE3]/40' : 'border-[#0F6E56]/40 bg-[#D7EAE3]/20 hover:bg-[#D7EAE3]/30',
+        'relative border-2 border-dashed rounded-xl p-4 sm:p-5 transition-all text-center cursor-pointer select-none flex flex-col items-center justify-center min-h-30',
+        isDragging ? 'border-primary-base bg-[#D7EAE3]/40' : 'border-primary-base/40 bg-[#D7EAE3]/20 hover:bg-[#D7EAE3]/30',
         disabled ? 'opacity-60 cursor-not-allowed' : ''
       ]"
     >
@@ -115,7 +115,7 @@ const clearFile = () => {
       <div v-if="previewUrl && previewUrl.startsWith('data:image')" class="relative w-full flex items-center justify-center gap-4">
         <img :src="previewUrl" alt="File Preview" class="w-20 h-20 object-cover rounded-lg border border-gray-200 shadow-xs" />
         <div class="text-left flex-1 min-w-0">
-          <p class="text-xs font-semibold text-[#1F2937] truncate">{{ selectedFile?.name || 'Gambar Terunggah' }}</p>
+          <p class="text-xs font-semibold text-neutral-primary truncate">{{ selectedFile?.name || 'Gambar Terunggah' }}</p>
           <p class="text-[11px] text-[#52605D] mt-0.5" v-if="selectedFile">
             {{ (selectedFile.size / 1024).toFixed(1) }} KB
           </p>
@@ -132,11 +132,11 @@ const clearFile = () => {
       <!-- PREVIEW FILE STATE (Non Image) -->
       <div v-else-if="selectedFile" class="flex items-center gap-3 w-full justify-between px-2">
         <div class="flex items-center gap-2.5 overflow-hidden">
-          <div class="w-10 h-10 rounded-lg bg-[#0F6E56] text-white flex items-center justify-center shrink-0">
+          <div class="w-10 h-10 rounded-lg bg-primary-base text-white flex items-center justify-center shrink-0">
             <FileText class="w-5 h-5" />
           </div>
           <div class="text-left min-w-0">
-            <p class="text-xs font-semibold text-[#1F2937] truncate">{{ selectedFile.name }}</p>
+            <p class="text-xs font-semibold text-neutral-primary truncate">{{ selectedFile.name }}</p>
             <p class="text-[11px] text-[#52605D]">{{ (selectedFile.size / 1024).toFixed(1) }} KB</p>
           </div>
         </div>
@@ -151,11 +151,11 @@ const clearFile = () => {
 
       <!-- INITIAL UPLOAD PROMPT STATE -->
       <div v-else class="flex flex-col items-center gap-1.5 py-1">
-        <div class="w-10 h-10 rounded-full bg-[#0F6E56]/10 text-[#0F6E56] flex items-center justify-center">
+        <div class="w-10 h-10 rounded-full bg-primary-base/10 text-primary-base flex items-center justify-center">
           <UploadCloud class="w-5 h-5" />
         </div>
         <div>
-          <p class="text-xs font-semibold text-[#1F2937]">
+          <p class="text-xs font-semibold text-neutral-primary">
             Klik atau seret file ke sini untuk mengunggah
           </p>
           <p class="text-[11px] text-[#52605D] mt-0.5">

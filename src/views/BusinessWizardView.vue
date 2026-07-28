@@ -132,11 +132,11 @@ const handleSubmit = async () => {
 
 <template>
   <AuthLayout>
-    <div class="bg-white p-8 sm:p-10 rounded-xl border border-[#0F6E56]/40 shadow-xs w-full max-w-3xl mx-auto font-inter my-8">
+    <div class="bg-white p-8 sm:p-10 rounded-xl border border-primary-base/40 shadow-xs w-full max-w-3xl mx-auto font-inter my-8">
       
       <!-- Title Header (Removed word Wizard) -->
       <div class="mb-8 text-center border-b border-gray-100 pb-6">
-        <h2 class="text-3xl sm:text-[36px] font-semibold text-[#1F2937] font-newsreader leading-tight">
+        <h2 class="text-3xl sm:text-[36px] font-semibold text-neutral-primary font-newsreader leading-tight">
           Profil Bisnis
         </h2>
         <p class="text-sm sm:text-base text-[#52605D] mt-2">
@@ -148,32 +148,32 @@ const handleSubmit = async () => {
       <div class="mb-8 flex items-center justify-between relative px-6">
         <div class="absolute left-10 right-10 top-1/2 -translate-y-1/2 h-1 bg-gray-200 z-0"></div>
         <div
-          class="absolute left-10 top-1/2 -translate-y-1/2 h-1 bg-[#0F6E56] transition-all duration-300 z-0"
+          class="absolute left-10 top-1/2 -translate-y-1/2 h-1 bg-primary-base transition-all duration-300 z-0"
           :style="{ width: `${((currentStep - 1) / 2) * 80}%` }"
         ></div>
 
         <!-- Step 1 Indicator -->
         <div class="relative z-10 flex flex-col items-center gap-1.5 cursor-pointer" @click="currentStep = 1">
-          <div :class="['w-9 h-9 rounded-full flex items-center justify-center font-semibold text-xs transition-colors', currentStep >= 1 ? 'bg-[#0F6E56] text-white' : 'bg-gray-200 text-[#52605D]']">
+          <div :class="['w-9 h-9 rounded-full flex items-center justify-center font-semibold text-xs transition-colors', currentStep >= 1 ? 'bg-primary-base text-white' : 'bg-gray-200 text-[#52605D]']">
             1
           </div>
-          <span class="text-xs font-medium text-[#1F2937]">Info Utama</span>
+          <span class="text-xs font-medium text-neutral-primary">Info Utama</span>
         </div>
 
         <!-- Step 2 Indicator -->
         <div class="relative z-10 flex flex-col items-center gap-1.5 cursor-pointer" @click="currentStep >= 2 ? currentStep = 2 : null">
-          <div :class="['w-9 h-9 rounded-full flex items-center justify-center font-semibold text-xs transition-colors', currentStep >= 2 ? 'bg-[#0F6E56] text-white' : 'bg-gray-200 text-[#52605D]']">
+          <div :class="['w-9 h-9 rounded-full flex items-center justify-center font-semibold text-xs transition-colors', currentStep >= 2 ? 'bg-primary-base text-white' : 'bg-gray-200 text-[#52605D]']">
             2
           </div>
-          <span class="text-xs font-medium text-[#1F2937]">Lokasi & Detail</span>
+          <span class="text-xs font-medium text-neutral-primary">Lokasi & Detail</span>
         </div>
 
         <!-- Step 3 Indicator -->
         <div class="relative z-10 flex flex-col items-center gap-1.5 cursor-pointer" @click="currentStep === 3 ? null : null">
-          <div :class="['w-9 h-9 rounded-full flex items-center justify-center font-semibold text-xs transition-colors', currentStep === 3 ? 'bg-[#0F6E56] text-white' : 'bg-gray-200 text-[#52605D]']">
+          <div :class="['w-9 h-9 rounded-full flex items-center justify-center font-semibold text-xs transition-colors', currentStep === 3 ? 'bg-primary-base text-white' : 'bg-gray-200 text-[#52605D]']">
             3
           </div>
-          <span class="text-xs font-medium text-[#1F2937]">Review</span>
+          <span class="text-xs font-medium text-neutral-primary">Review</span>
         </div>
       </div>
 
@@ -186,7 +186,7 @@ const handleSubmit = async () => {
         <p class="text-xs text-amber-800">
           Pengajuan peran Peminjam Modal Anda masih dalam status peninjauan (*under review*). Setelah Admin menyetujui peran Anda, Anda dapat menyimpan profil bisnis.
         </p>
-        <button @click="router.push('/role-status')" class="px-3.5 py-1.5 bg-[#0F6E56] text-white text-xs font-semibold rounded-lg hover:bg-[#0A5744] cursor-pointer">
+        <button @click="router.push('/role-status')" class="px-3.5 py-1.5 bg-primary-base text-white text-xs font-semibold rounded-lg hover:bg-[#0A5744] cursor-pointer">
           Cek Status Pengajuan Peran
         </button>
       </div>
@@ -196,7 +196,7 @@ const handleSubmit = async () => {
         <span class="font-medium">{{ errorMessage }}</span>
       </div>
 
-      <div v-if="successMessage" class="mb-6 p-3.5 bg-emerald-50 border border-emerald-200 text-[#0F6E56] text-sm rounded-lg flex items-center gap-2 text-left">
+      <div v-if="successMessage" class="mb-6 p-3.5 bg-emerald-50 border border-emerald-200 text-primary-base text-sm rounded-lg flex items-center gap-2 text-left">
         <CheckCircle2 class="w-5 h-5 shrink-0" />
         <span class="font-medium">{{ successMessage }}</span>
       </div>
@@ -205,24 +205,24 @@ const handleSubmit = async () => {
         
         <!-- STEP 1: INFO UTAMA -->
         <div v-if="currentStep === 1" class="space-y-5 text-left">
-          <h3 class="text-lg font-semibold text-[#1F2937] border-b border-gray-100 pb-2">
+          <h3 class="text-lg font-semibold text-neutral-primary border-b border-gray-100 pb-2">
             Langkah 1: Informasi Utama Usaha
           </h3>
 
           <!-- Business Type Selector -->
           <div class="space-y-2">
-            <label class="text-sm font-medium text-[#1F2937]">Jalur Pengajuan Usaha</label>
+            <label class="text-sm font-medium text-neutral-primary">Jalur Pengajuan Usaha</label>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div
                 @click="form.businessType = 'running'"
                 :class="[
                   'p-4 rounded-xl border-2 transition-all cursor-pointer select-none text-left',
-                  form.businessType === 'running' ? 'border-[#0F6E56] bg-[#D7EAE3]/30' : 'border-gray-200 bg-white'
+                  form.businessType === 'running' ? 'border-primary-base bg-[#D7EAE3]/30' : 'border-gray-200 bg-white'
                 ]"
               >
                 <div class="flex items-center gap-2.5">
-                  <Store class="w-5 h-5 text-[#0F6E56]" />
-                  <span class="font-semibold text-sm text-[#1F2937]">Usaha Berjalan</span>
+                  <Store class="w-5 h-5 text-primary-base" />
+                  <span class="font-semibold text-sm text-neutral-primary">Usaha Berjalan</span>
                 </div>
                 <p class="text-xs text-[#52605D] mt-1.5">
                   Untuk usaha aktif min. 1 bulan. Limit pinjaman Rp500rb - Rp15jt.
@@ -233,12 +233,12 @@ const handleSubmit = async () => {
                 @click="form.businessType = 'starter'"
                 :class="[
                   'p-4 rounded-xl border-2 transition-all cursor-pointer select-none text-left',
-                  form.businessType === 'starter' ? 'border-[#0F6E56] bg-[#D7EAE3]/30' : 'border-gray-200 bg-white'
+                  form.businessType === 'starter' ? 'border-primary-base bg-[#D7EAE3]/30' : 'border-gray-200 bg-white'
                 ]"
               >
                 <div class="flex items-center gap-2.5">
-                  <Sparkles class="w-5 h-5 text-[#0F6E56]" />
-                  <span class="font-semibold text-sm text-[#1F2937]">Modal Rintisan</span>
+                  <Sparkles class="w-5 h-5 text-primary-base" />
+                  <span class="font-semibold text-sm text-neutral-primary">Modal Rintisan</span>
                 </div>
                 <p class="text-xs text-[#52605D] mt-1.5">
                   Untuk usaha baru dengan rencana jelas. Limit awal Rp300rb - Rp1.5jt.
@@ -258,10 +258,10 @@ const handleSubmit = async () => {
           />
 
           <div class="flex flex-col gap-1.5">
-            <label class="text-sm font-medium text-[#1F2937]">Kategori Usaha</label>
+            <label class="text-sm font-medium text-neutral-primary">Kategori Usaha</label>
             <select
               v-model="form.categoryId"
-              class="w-full px-4 py-3 bg-[#D7EAE3] border border-[#0F6E56]/40 rounded-lg text-[#1F2937] outline-none focus:border-[#0F6E56]"
+              class="w-full px-4 py-3 bg-[#D7EAE3] border border-primary-base/40 rounded-lg text-neutral-primary outline-none focus:border-primary-base"
             >
               <option v-for="cat in categories" :key="cat.id" :value="cat.id">
                 {{ cat.name }}
@@ -270,12 +270,12 @@ const handleSubmit = async () => {
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <label class="text-sm font-medium text-[#1F2937]">Deskripsi Usaha / Proyek</label>
+            <label class="text-sm font-medium text-neutral-primary">Deskripsi Usaha / Proyek</label>
             <textarea
               v-model="form.description"
               rows="3"
               placeholder="Jelaskan produk, layanan, atau gambaran usaha Anda..."
-              class="w-full px-4 py-3 bg-[#D7EAE3] border border-[#0F6E56]/40 rounded-lg text-[#1F2937] outline-none focus:border-[#0F6E56] placeholder-[#67887F]"
+              class="w-full px-4 py-3 bg-[#D7EAE3] border border-primary-base/40 rounded-lg text-neutral-primary outline-none focus:border-primary-base placeholder-[#67887F]"
               required
             ></textarea>
           </div>
@@ -292,17 +292,17 @@ const handleSubmit = async () => {
 
         <!-- STEP 2: LOKASI & DETAIL USAHA -->
         <div v-else-if="currentStep === 2" class="space-y-5 text-left">
-          <h3 class="text-lg font-semibold text-[#1F2937] border-b border-gray-100 pb-2">
+          <h3 class="text-lg font-semibold text-neutral-primary border-b border-gray-100 pb-2">
             Langkah 2: Lokasi & Detail Usaha
           </h3>
 
           <div class="flex flex-col gap-1.5">
-            <label class="text-sm font-medium text-[#1F2937]">Alamat Lengkap Lokasi Usaha / Lapak</label>
+            <label class="text-sm font-medium text-neutral-primary">Alamat Lengkap Lokasi Usaha / Lapak</label>
             <textarea
               v-model="form.locationAddress"
               rows="3"
               placeholder="Nama jalan, RT/RW, Kelurahan, Kecamatan, Kota..."
-              class="w-full px-4 py-3 bg-[#D7EAE3] border border-[#0F6E56]/40 rounded-lg text-[#1F2937] outline-none focus:border-[#0F6E56] placeholder-[#67887F]"
+              class="w-full px-4 py-3 bg-[#D7EAE3] border border-primary-base/40 rounded-lg text-neutral-primary outline-none focus:border-primary-base placeholder-[#67887F]"
               required
             ></textarea>
           </div>
@@ -335,8 +335,8 @@ const handleSubmit = async () => {
 
           <!-- Integrated Starter Business Requirements in Step 2 if Modal Rintisan -->
           <div v-if="form.businessType === 'starter'" class="space-y-4 pt-4 border-t border-gray-100">
-            <h4 class="font-semibold text-base text-[#1F2937]">Persyaratan Modal Rintisan</h4>
-            <div class="p-3.5 bg-[#FEF3C7]/40 border border-[#B45309]/20 rounded-lg text-xs text-[#B45309]">
+            <h4 class="font-semibold text-base text-neutral-primary">Persyaratan Modal Rintisan</h4>
+            <div class="p-3.5 bg-[#FEF3C7]/40 border border-secondary-base/20 rounded-lg text-xs text-secondary-base">
               Isi target pembeli, supplier, dan estimasi harga jual untuk mempercepat peninjauan modal rintisan.
             </div>
 
@@ -384,9 +384,9 @@ const handleSubmit = async () => {
                 id="commitment-checked"
                 :disabled="isLoading"
                 required
-                class="mt-0.5 rounded border-[#0F6E56]/30 text-[#0F6E56] focus:ring-[#0F6E56] cursor-pointer shrink-0"
+                class="mt-0.5 rounded border-primary-base/30 text-primary-base focus:ring-primary-base cursor-pointer shrink-0"
               />
-              <label for="commitment-checked" class="cursor-pointer select-none font-medium text-[#1F2937]">
+              <label for="commitment-checked" class="cursor-pointer select-none font-medium text-neutral-primary">
                 Saya berkomitmen untuk rajin mencatat pengeluaran & omzet bulanan setelah pencairan dana.
               </label>
             </div>
@@ -395,34 +395,34 @@ const handleSubmit = async () => {
 
         <!-- STEP 3: REVIEW & SUBMIT -->
         <div v-else-if="currentStep === 3" class="space-y-5 text-left">
-          <h3 class="text-lg font-semibold text-[#1F2937] border-b border-gray-100 pb-2">
+          <h3 class="text-lg font-semibold text-neutral-primary border-b border-gray-100 pb-2">
             Langkah 3: Review Ringkasan Profil Bisnis
           </h3>
 
           <div class="p-5 bg-[#F9FAFB] rounded-xl border border-gray-200 space-y-3 text-sm">
             <div class="flex justify-between border-b border-gray-200 pb-2">
               <span class="text-[#52605D]">Nama Usaha:</span>
-              <span class="font-semibold text-[#1F2937]">{{ form.businessName }}</span>
+              <span class="font-semibold text-neutral-primary">{{ form.businessName }}</span>
             </div>
             <div class="flex justify-between border-b border-gray-200 pb-2">
               <span class="text-[#52605D]">Jalur Usaha:</span>
-              <span class="font-semibold text-[#1F2937] capitalize">{{ form.businessType === 'starter' ? 'Modal Rintisan' : 'Usaha Berjalan' }}</span>
+              <span class="font-semibold text-neutral-primary capitalize">{{ form.businessType === 'starter' ? 'Modal Rintisan' : 'Usaha Berjalan' }}</span>
             </div>
             <div class="flex justify-between border-b border-gray-200 pb-2">
               <span class="text-[#52605D]">Kategori:</span>
-              <span class="font-semibold text-[#1F2937]">{{ categories.find(c => c.id === Number(form.categoryId))?.name }}</span>
+              <span class="font-semibold text-neutral-primary">{{ categories.find(c => c.id === Number(form.categoryId))?.name }}</span>
             </div>
             <div class="flex justify-between border-b border-gray-200 pb-2">
               <span class="text-[#52605D]">Alamat Usaha:</span>
-              <span class="font-semibold text-[#1F2937]">{{ form.locationAddress }}</span>
+              <span class="font-semibold text-neutral-primary">{{ form.locationAddress }}</span>
             </div>
             <div v-if="form.businessType === 'starter'" class="flex justify-between">
               <span class="text-[#52605D]">Limit Awal Simulasi:</span>
-              <span class="font-semibold text-[#0F6E56]">Rp 300.000</span>
+              <span class="font-semibold text-primary-base">Rp 300.000</span>
             </div>
             <div v-else class="flex justify-between">
               <span class="text-[#52605D]">Limit Awal Simulasi:</span>
-              <span class="font-semibold text-[#0F6E56]">Rp 500.000</span>
+              <span class="font-semibold text-primary-base">Rp 500.000</span>
             </div>
           </div>
         </div>
@@ -434,7 +434,7 @@ const handleSubmit = async () => {
             type="button"
             @click="prevStep"
             :disabled="isLoading"
-            class="px-5 py-2.5 border border-gray-300 text-[#52605D] hover:text-[#1F2937] font-semibold text-sm rounded-lg transition-colors cursor-pointer flex items-center gap-1.5"
+            class="px-5 py-2.5 border border-gray-300 text-[#52605D] hover:text-neutral-primary font-semibold text-sm rounded-lg transition-colors cursor-pointer flex items-center gap-1.5"
           >
             <ChevronLeft class="w-4 h-4" />
             <span>Kembali</span>
@@ -445,7 +445,7 @@ const handleSubmit = async () => {
             v-if="currentStep < 3"
             type="button"
             @click="nextStep"
-            class="px-6 py-2.5 bg-[#0F6E56] hover:bg-[#0A5744] text-white font-semibold text-sm rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs"
+            class="px-6 py-2.5 bg-primary-base hover:bg-[#0A5744] text-white font-semibold text-sm rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs"
           >
             <span>Selanjutnya</span>
             <ChevronRight class="w-4 h-4" />
@@ -455,7 +455,7 @@ const handleSubmit = async () => {
             v-else
             type="submit"
             :disabled="isLoading"
-            class="px-8 py-3 bg-[#0F6E56] hover:bg-[#0A5744] text-white font-semibold text-sm rounded-lg transition-colors cursor-pointer flex items-center gap-2 shadow-xs disabled:opacity-60 disabled:cursor-not-allowed"
+            class="px-8 py-3 bg-primary-base hover:bg-[#0A5744] text-white font-semibold text-sm rounded-lg transition-colors cursor-pointer flex items-center gap-2 shadow-xs disabled:opacity-60 disabled:cursor-not-allowed"
           >
             <svg v-if="isLoading" class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

@@ -127,8 +127,8 @@ onUnmounted(() => {
 
     <!-- Global Google Completion Modal -->
     <div v-if="showGoogleModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div class="bg-white rounded-xl border border-[#0F6E56]/40 p-6 max-w-md w-full text-left space-y-4 shadow-lg font-inter">
-        <h3 class="text-xl font-bold text-[#1F2937] font-newsreader">Lengkapi Profil Google</h3>
+      <div class="bg-white rounded-xl border border-primary-base/40 p-6 max-w-md w-full text-left space-y-4 shadow-lg font-inter">
+        <h3 class="text-xl font-bold text-neutral-primary font-newsreader">Lengkapi Profil Google</h3>
         <p class="text-xs text-[#52605D]">
           Akun Google Anda terdeteksi baru. Mohon isi nomor HP, kota, dan alamat untuk menyelesaikan pendaftaran.
         </p>
@@ -176,7 +176,7 @@ onUnmounted(() => {
             <button
               type="submit"
               :disabled="isCompletingGoogle"
-              class="px-4 py-2 bg-[#0F6E56] text-white text-xs font-semibold rounded-lg hover:bg-[#0A5744]"
+              class="px-4 py-2 bg-primary-base text-white text-xs font-semibold rounded-lg hover:bg-[#0A5744]"
             >
               Selesaikan Pendaftaran
             </button>

@@ -138,14 +138,14 @@ const getSlotStyle = (index) => {
 
             <div class="lg:col-span-6">
               <div class="grid grid-cols-2 gap-4 items-stretch">
-                <div class="h-[430px] overflow-hidden rounded-sm shadow-xs">
+                <div class="h-107.5 overflow-hidden rounded-sm shadow-xs">
                   <img :src="headerImg1" alt="Meeting UMKM" class="w-full h-full object-cover" />
                 </div>
                 <div class="flex flex-col gap-4">
-                  <div class="h-[207px] overflow-hidden rounded-sm shadow-xs">
+                  <div class="h-51.75 overflow-hidden rounded-sm shadow-xs">
                     <img :src="headerImg2" alt="Tim Diskusi" class="w-full h-full object-cover" />
                   </div>
-                  <div class="h-[207px] overflow-hidden rounded-sm shadow-xs">
+                  <div class="h-51.75 overflow-hidden rounded-sm shadow-xs">
                     <img :src="headerImg3" alt="Mitra Bisnis" class="w-full h-full object-cover" />
                   </div>
                 </div>
@@ -184,7 +184,7 @@ const getSlotStyle = (index) => {
             <h2 class="font-newsreader text-regular-40 text-neutral-primary font-normal">Cara Kerja Modalin</h2>
             <p class="text-regular-16 text-neutral-secondary mt-2 mb-8">Proses yang sederhana, transparan, dan terukur.</p>
             
-            <div class="relative bg-primary-10/60 p-1.5 rounded-lg inline-flex items-center justify-center border border-primary-base/10 min-w-[400px] sm:min-w-[440px]">
+            <div class="relative bg-primary-10/60 p-1.5 rounded-lg inline-flex items-center justify-center border border-primary-base/10 min-w-100 sm:min-w-110">
               <div
                 class="absolute top-1.5 bottom-1.5 bg-white rounded-md shadow-xs transition-all duration-300 ease-in-out"
                 :style="{
@@ -437,9 +437,9 @@ const getSlotStyle = (index) => {
 
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <!-- Left Side: Avatars centered directly on the arc path -->
-            <div class="lg:col-span-5 relative h-[270px] flex items-center pl-8">
+            <div class="lg:col-span-5 relative h-67.5 flex items-center pl-8">
               <!-- Green Arc Line SVG -->
-              <svg class="absolute -left-2 top-0 h-[270px] w-32 pointer-events-none" fill="none" viewBox="0 0 100 270">
+              <svg class="absolute -left-2 top-0 h-67.5 w-32 pointer-events-none" fill="none" viewBox="0 0 100 270">
                 <path d="M 10 10 C 90 70, 90 200, 10 260" stroke="#0F6E56" stroke-width="1.5" fill="none" />
               </svg>
 
@@ -567,7 +567,7 @@ const getSlotStyle = (index) => {
                     </div>
                   </div>
 
-                  <div class="border-l border-b border-neutral-primary p-4 min-h-[140px]">
+                  <div class="border-l border-b border-neutral-primary p-4 min-h-35">
                     <textarea
                       v-model="contactForm.pesan"
                       placeholder="Pesan"

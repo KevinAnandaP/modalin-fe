@@ -146,7 +146,7 @@ import logoWhiteUrl from '@/assets/Logo-White.svg'
 
       </div>
 
-      <div class="mx-4 sm:mx-8 lg:mx-16 relative overflow-hidden h-[100px] sm:h-[150px] md:h-[180px] flex justify-center items-start pt-1">
+      <div class="mx-4 sm:mx-8 lg:mx-16 relative overflow-hidden h-25 sm:h-37.5 md:h-45 flex justify-center items-start pt-1">
         <svg viewBox="0 0 1000 240" class="w-full h-auto select-none pointer-events-none">
           <defs>
             <linearGradient id="modalinGradient" x1="0%" y1="0%" x2="0%" y2="100%">

@@ -162,9 +162,9 @@ const handleCompleteGoogleAuth = async () => {
 
 <template>
   <AuthLayout>
-    <div class="bg-white p-8 sm:p-10 rounded-xl border border-[#0F6E56]/40 shadow-xs w-full max-w-md mx-auto font-inter">
+    <div class="bg-white p-8 sm:p-10 rounded-xl border border-primary-base/40 shadow-xs w-full max-w-md mx-auto font-inter">
       <div class="mb-6 text-center">
-        <h2 class="text-3xl sm:text-[36px] font-semibold text-[#1F2937] font-newsreader leading-tight">
+        <h2 class="text-3xl sm:text-[36px] font-semibold text-neutral-primary font-newsreader leading-tight">
           Masuk ke Modalin
         </h2>
         <p class="text-sm sm:text-base text-[#52605D] mt-2">
@@ -198,23 +198,23 @@ const handleCompleteGoogleAuth = async () => {
         />
 
         <div class="flex items-center justify-between text-sm pt-1">
-          <label class="flex items-center gap-2 cursor-pointer select-none text-[#1F2937]">
+          <label class="flex items-center gap-2 cursor-pointer select-none text-neutral-primary">
             <input
               v-model="form.rememberMe"
               type="checkbox"
               :disabled="isLoading"
-              class="w-4 h-4 rounded border-[#0F6E56]/30 text-[#0F6E56] focus:ring-[#0F6E56] cursor-pointer"
+              class="w-4 h-4 rounded border-primary-base/30 text-primary-base focus:ring-primary-base cursor-pointer"
             />
             Ingat saya
           </label>
-          <a href="#" class="text-[#0F6E56] hover:underline font-medium">Lupa password?</a>
+          <a href="#" class="text-primary-base hover:underline font-medium">Lupa password?</a>
         </div>
 
         <div class="pt-2 space-y-3">
           <button
             type="submit"
             :disabled="isLoading"
-            class="w-full py-3.5 bg-[#0F6E56] hover:bg-[#0A5744] text-white font-semibold text-base rounded-lg transition-colors cursor-pointer shadow-xs text-center disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            class="w-full py-3.5 bg-primary-base hover:bg-[#0A5744] text-white font-semibold text-base rounded-lg transition-colors cursor-pointer shadow-xs text-center disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             <svg v-if="isLoading" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -225,9 +225,9 @@ const handleCompleteGoogleAuth = async () => {
 
           <!-- Divider -->
           <div class="relative flex py-2 items-center">
-            <div class="flex-grow border-t border-gray-200"></div>
-            <span class="flex-shrink mx-4 text-xs text-[#52605D]">atau</span>
-            <div class="flex-grow border-t border-gray-200"></div>
+            <div class="grow border-t border-gray-200"></div>
+            <span class="shrink mx-4 text-xs text-[#52605D]">atau</span>
+            <div class="grow border-t border-gray-200"></div>
           </div>
 
           <!-- Google OAuth Button -->
@@ -235,7 +235,7 @@ const handleCompleteGoogleAuth = async () => {
             type="button"
             @click="triggerGoogleOAuth"
             :disabled="isLoading"
-            class="w-full py-3 bg-white border border-gray-300 hover:bg-gray-50 text-[#1F2937] font-semibold text-sm rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2.5 shadow-xs"
+            class="w-full py-3 bg-white border border-gray-300 hover:bg-gray-50 text-neutral-primary font-semibold text-sm rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2.5 shadow-xs"
           >
             <svg class="w-5 h-5" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -250,8 +250,8 @@ const handleCompleteGoogleAuth = async () => {
 
       <!-- Google Completion Modal -->
       <div v-if="showGoogleModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl border border-[#0F6E56]/40 p-6 max-w-md w-full text-left space-y-4 shadow-lg font-inter">
-          <h3 class="text-xl font-bold text-[#1F2937] font-newsreader">Lengkapi Profil Google</h3>
+        <div class="bg-white rounded-xl border border-primary-base/40 p-6 max-w-md w-full text-left space-y-4 shadow-lg font-inter">
+          <h3 class="text-xl font-bold text-neutral-primary font-newsreader">Lengkapi Profil Google</h3>
           <p class="text-xs text-[#52605D]">
             Akun Google Anda terdeteksi baru. Mohon isi nomor HP, kota, dan alamat untuk menyelesaikan pendaftaran.
           </p>
@@ -295,7 +295,7 @@ const handleCompleteGoogleAuth = async () => {
               <button
                 type="submit"
                 :disabled="isCompletingGoogle"
-                class="px-4 py-2 bg-[#0F6E56] text-white text-xs font-semibold rounded-lg hover:bg-[#0A5744]"
+                class="px-4 py-2 bg-primary-base text-white text-xs font-semibold rounded-lg hover:bg-[#0A5744]"
               >
                 Selesaikan Pendaftaran
               </button>
@@ -306,7 +306,7 @@ const handleCompleteGoogleAuth = async () => {
 
       <div class="mt-8 text-center text-sm text-[#52605D]">
         Belum punya akun?
-        <RouterLink to="/register" class="text-[#0F6E56] font-semibold hover:underline ml-1">
+        <RouterLink to="/register" class="text-primary-base font-semibold hover:underline ml-1">
           Daftar di sini
         </RouterLink>
       </div>
