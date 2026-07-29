@@ -13,6 +13,7 @@ import CampaignWizardView from '@/views/CampaignWizardView.vue'
 import AdminDashboardView from '@/views/AdminDashboardView.vue'
 import VerifierDashboardView from '@/views/VerifierDashboardView.vue'
 import VerifierReportView from '@/views/VerifierReportView.vue'
+import LenderPortfolioView from '@/views/LenderPortfolioView.vue'
 
 import { getAuthToken } from '@/services/api'
 
@@ -96,6 +97,13 @@ const routes = [
     path: '/verifier/report/:id',
     name: 'verifier-report',
     component: VerifierReportView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/lender/portfolio',
+    name: 'lender-portfolio',
+    component: LenderPortfolioView,
+    alias: ['/lender/dashboard'],
     meta: { requiresAuth: true }
   }
 ]

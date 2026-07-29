@@ -239,8 +239,17 @@ export const campaignService = {
    */
   async reviewFundUsageProof(proofID, payload) {
     return await apiClient.post(`/admin/fund-usage-proofs/${proofID}/review`, payload);
+  },
+
+  /**
+   * Get lender return distributions
+   * Endpoint: GET /api/v1/lender/return-distributions
+   */
+  async getLenderReturnDistributions() {
+    return await apiClient.get('/lender/return-distributions');
   }
 };
 
 export default campaignService;
+
 
