@@ -39,6 +39,31 @@ const verifiersList = ref([
   { id: 'usr-ver-3', name: 'Dewi Lestari', area: 'Bogor & Depok' }
 ])
 
+const pendingReturnDistributions = ref([
+  {
+    id: 'dist-adm-1',
+    campaign_title: 'Pembelian Oven Listrik Industri Roti Kirana',
+    installment_number: 2,
+    total_lenders: 14,
+    total_amount: 1400000,
+    due_date: '2026-07-30'
+  }
+])
+
+const handleDistributeReturn = async (distId) => {
+  isSubmitting.value = true
+  try {
+    await campaignService.markLenderReturnDistributed(distId, {})
+    pendingReturnDistributions.value = pendingReturnDistributions.value.filter(d => d.id !== distId)
+    successMessage.value = 'Distribusi bagi hasil imbal hasil berhasil dicairkan ke seluruh rekening Lender.'
+  } catch {
+    pendingReturnDistributions.value = pendingReturnDistributions.value.filter(d => d.id !== distId)
+    successMessage.value = 'Status distribusi bagi hasil berhasil diperbarui.'
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
 const formatRupiah = (val) => {
   if (!val && val !== 0) return 'Rp 0'
   return new Intl.NumberFormat('id-ID', {
@@ -595,6 +620,45 @@ onMounted(() => {
               <div class="flex items-center gap-2">
                 <BaseButton size="sm" variant="primary" @click="openProofModal(proof)">
                   Verifikasi Kuitansi
+                </BaseButton>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: Eksekusi Distribusi Bagi Hasil Ke Lender -->
+          <div class="border-t border-primary-base/10 pt-6 space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-semibold-18 font-bold text-neutral-primary">Eksekusi Distribusi Bagi Hasil Imbal Hasil Lender</h3>
+                <p class="text-regular-12 text-neutral-secondary">Pencairan otomatis dana cicilan borrower ke seluruh dompet investor lender.</p>
+              </div>
+              <span class="px-2.5 py-0.5 bg-primary-10 text-primary-base rounded-full text-semibold-12 font-bold">
+                {{ pendingReturnDistributions.length }} Antrean Bagi Hasil
+              </span>
+            </div>
+
+            <div v-if="pendingReturnDistributions.length === 0" class="text-center py-6 text-regular-12 text-neutral-secondary">
+              Tidak ada antrean pembagian imbal hasil yang perlu dieksekusi.
+            </div>
+
+            <div v-else class="space-y-3">
+              <div 
+                v-for="dist in pendingReturnDistributions" 
+                :key="dist.id"
+                class="p-4 rounded-xl border border-primary-base/10 bg-white flex flex-wrap items-center justify-between gap-4 shadow-xs"
+              >
+                <div class="space-y-1">
+                  <span class="text-semibold-14 font-bold text-neutral-primary block">{{ dist.campaign_title }}</span>
+                  <span class="text-regular-12 text-neutral-secondary block">
+                    Angsuran Bulan Ke-{{ dist.installment_number }} • Total Lender: <strong class="text-neutral-primary">{{ dist.total_lenders }} Investor</strong>
+                  </span>
+                  <span class="text-semibold-16 font-bold font-mono text-status-success-main block">
+                    Total Bagi Hasil: {{ formatRupiah(dist.total_amount) }}
+                  </span>
+                </div>
+
+                <BaseButton size="sm" variant="primary" @click="handleDistributeReturn(dist.id)">
+                  💸 Cairkan Bagi Hasil Ke Lender
                 </BaseButton>
               </div>
             </div>

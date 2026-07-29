@@ -298,9 +298,20 @@ export const campaignService = {
    */
   async getLenderReturnDistributions() {
     return await apiClient.get('/lender/return-distributions');
+  },
+
+  /**
+   * Mark lender return distribution as distributed (Admin)
+   * Endpoint: POST /api/v1/admin/lender-return-distributions/:id/distribute
+   * @param {string} distributionId
+   * @param {Object} payload
+   */
+  async markLenderReturnDistributed(distributionId, payload = {}) {
+    return await apiClient.post(`/admin/lender-return-distributions/${distributionId}/distribute`, payload);
   }
 };
 
 export default campaignService;
+
 
 
