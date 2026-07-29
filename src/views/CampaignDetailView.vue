@@ -7,6 +7,7 @@ import BaseBadge from '@/components/BaseBadge.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import BaseInput from '@/components/BaseInput.vue'
 import Skeleton from '@/components/ui/skeleton/Skeleton.vue'
+import MilestoneTracker from '@/components/MilestoneTracker.vue'
 import campaignService from '@/services/campaign'
 
 const route = useRoute()
@@ -348,30 +349,7 @@ onMounted(() => {
 
             <!-- Tab Content 3: Milestone Pencairan -->
             <div v-else-if="activeTab === 'milestone'" class="bg-white rounded-2xl p-6 sm:p-8 border border-primary-base/10 space-y-6">
-              <h3 class="text-semibold-20 font-bold text-neutral-primary">Tahapan Pencairan Milestone</h3>
-              <p class="text-regular-12 text-neutral-secondary">
-                Dana yang terkumpul akan dicairkan bertahap per milestone setelah borrower mengunggah bukti nota penggunaan dana yang diverifikasi admin.
-              </p>
-
-              <div class="space-y-4">
-                <div 
-                  v-for="ms in milestones" 
-                  :key="ms.id" 
-                  class="p-5 rounded-xl border border-primary-base/10 bg-neutral-tertiary/40 space-y-2"
-                >
-                  <div class="flex items-center justify-between">
-                    <span class="text-semibold-12 text-primary-base">Milestone {{ ms.order_number }}</span>
-                    <span class="px-2.5 py-0.5 rounded-full text-medium-12 bg-primary-10 text-primary-base">
-                      {{ ms.status || 'Pending' }}
-                    </span>
-                  </div>
-                  <h4 class="text-medium-16 font-semibold text-neutral-primary">{{ ms.title }}</h4>
-                  <p class="text-regular-12 text-neutral-secondary">{{ ms.description }}</p>
-                  <div class="pt-2 text-semibold-12 text-neutral-primary">
-                    Target Alokasi: <span class="text-primary-base font-mono">{{ formatRupiah(ms.target_amount) }}</span>
-                  </div>
-                </div>
-              </div>
+              <MilestoneTracker :milestones="milestones" />
             </div>
           </div>
 
