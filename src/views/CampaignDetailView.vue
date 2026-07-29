@@ -11,6 +11,7 @@ import MilestoneTracker from '@/components/MilestoneTracker.vue'
 import FundUsageProofModal from '@/components/FundUsageProofModal.vue'
 import RiskScoreBadge from '@/components/RiskScoreBadge.vue'
 import RiskScoreCard from '@/components/RiskScoreCard.vue'
+import CommunityVoteWidget from '@/components/CommunityVoteWidget.vue'
 import campaignService from '@/services/campaign'
 
 const route = useRoute()
@@ -382,9 +383,13 @@ onMounted(() => {
               />
             </div>
 
-            <!-- Tab Content 4: Analisis Kelayakan Risiko -->
-            <div v-else-if="activeTab === 'risiko'">
+            <!-- Tab Content 4: Analisis Kelayakan Risiko & Dukungan Komunitas -->
+            <div v-else-if="activeTab === 'risiko'" class="space-y-6">
               <RiskScoreCard :risk-assessment="campaign.risk_assessment || campaign.riskAssessment" />
+              <CommunityVoteWidget 
+                :business-id="campaign.business_id || campaign.business?.id || campaignId"
+                :business-name="campaign.business?.name || 'Kedai Roti Kirana'"
+              />
             </div>
           </div>
 
