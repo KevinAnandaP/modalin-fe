@@ -14,6 +14,7 @@ import AdminDashboardView from '@/views/AdminDashboardView.vue'
 import VerifierDashboardView from '@/views/VerifierDashboardView.vue'
 import VerifierReportView from '@/views/VerifierReportView.vue'
 import LenderPortfolioView from '@/views/LenderPortfolioView.vue'
+import RepaymentScheduleView from '@/views/RepaymentScheduleView.vue'
 
 import { getAuthToken } from '@/services/api'
 
@@ -104,6 +105,13 @@ const routes = [
     name: 'lender-portfolio',
     component: LenderPortfolioView,
     alias: ['/lender/dashboard'],
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/borrower/repayments',
+    name: 'borrower-repayments',
+    component: RepaymentScheduleView,
+    alias: ['/campaigns/:id/repayments'],
     meta: { requiresAuth: true }
   }
 ]

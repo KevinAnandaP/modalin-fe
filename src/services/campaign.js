@@ -221,6 +221,25 @@ export const campaignService = {
     return await apiClient.get(`/campaigns/${campaignId}/revenue-reports`);
   },
 
+  /**
+   * List repayment schedules for a campaign
+   * Endpoint: GET /api/v1/campaigns/:id/repayment-schedules
+   */
+  async getRepaymentSchedules(campaignId) {
+    return await apiClient.get(`/campaigns/${campaignId}/repayment-schedules`);
+  },
+
+  /**
+   * Submit repayment cicilan (Borrower)
+   * Endpoint: POST /api/v1/campaigns/:id/repayments
+   */
+  async createRepayment(campaignId, payload) {
+    if (payload instanceof FormData) {
+      return await apiClient.upload(`/campaigns/${campaignId}/repayments`, payload);
+    }
+    return await apiClient.post(`/campaigns/${campaignId}/repayments`, payload);
+  },
+
   // --- Admin Review & Moderation ---
 
   /**
