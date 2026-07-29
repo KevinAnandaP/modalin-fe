@@ -2,6 +2,11 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
+import RequestRoleView from '@/views/RequestRoleView.vue'
+import RoleStatusView from '@/views/RoleStatusView.vue'
+import BusinessWizardView from '@/views/BusinessWizardView.vue'
+import BusinessDetailView from '@/views/BusinessDetailView.vue'
+import FinancialRecordsView from '@/views/FinancialRecordsView.vue'
 
 const routes = [
   {
@@ -18,6 +23,31 @@ const routes = [
     path: '/register',
     name: 'register',
     component: RegisterView
+  },
+  {
+    path: '/request-role',
+    name: 'request-role',
+    component: RequestRoleView
+  },
+  {
+    path: '/role-status',
+    name: 'role-status',
+    component: RoleStatusView
+  },
+  {
+    path: '/business/wizard',
+    name: 'business-wizard',
+    component: BusinessWizardView
+  },
+  {
+    path: '/business/detail',
+    name: 'business-detail',
+    component: BusinessDetailView
+  },
+  {
+    path: '/financial-records',
+    name: 'financial-records',
+    component: FinancialRecordsView
   }
 ]
 
@@ -30,3 +60,6 @@ const router = createRouter({
 })
 
 export default router
+
+
+

@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import BaseBadge from '@/components/BaseBadge.vue'
@@ -31,6 +31,79 @@ const submitContactForm = () => {
     alert(`Terima kasih ${contactForm.value.nama}, pesan Anda telah terkirim!`)
     contactForm.value = { nama: '', email: '', pesan: '' }
   }
+}
+
+const testimonials = [
+  {
+    id: 0,
+    name: 'Anindya Putri Lestari',
+    rating: '4.9',
+    date: '20 Jan 2026',
+    image: testimoniImg3,
+    quote: '“Sebagai pemilik kedai kopi lokal, mencari pendanaan tambahan untuk upgrade mesin espresso dan renovasi area outdoor selalu terbentur modal dingin. Dengan Modalin, prosesnya cepat dan tanpa agunan fisik! Komunitas sangat mendukung usaha kami dan sekarang omzet bulanan kami meningkat 45%.”'
+  },
+  {
+    id: 1,
+    name: 'Kirana Citra Dewi',
+    rating: '4.9',
+    date: '20 Jan 2026',
+    image: testimoniImg1,
+    quote: '“Toko roti saya sudah berjalan hampir 3 tahun, tapi tiap kali mau ekspansi beli mixer industri 30 liter dan oven deck baru selalu tertahan di aliran kas harian. Pinjam ke bank formal pun terbentur persyaratan agunan yang rumit. Beruntung lewat Modalin, karena rekam jejak pembukuan kas toko kami di aplikasi sudah tercatat rapi selama 10 bulan, pengajuan dana Rp12.000.000 bisa langsung disetujui tanpa perlu jaminan aset! Pembelian mesinnya pun langsung diproses transparan via Direct Purchase ke toko mitra. Kapasitas adonan kami sekarang naik 3 kali lipat dan cicilan bulanan terasa ringan karena disesuaikan dengan omzet ril toko.”'
+  },
+  {
+    id: 2,
+    name: 'Rian Aditya Nugroho',
+    rating: '4.9',
+    date: '20 Jan 2026',
+    image: testimoniImg2,
+    quote: '“Saya sudah mendanai lebih dari 15 UMKM di Modalin. Transparansi laporan bulanan dan sistem mitigasi risiko serta proteksi asuransi memberikan rasa aman bagi saya sebagai pendana. Imbal hasilnya juga sangat kompetitif dibandingkan instrumen investasi lainnya.”'
+  }
+]
+
+const activeTestimonialIndex = ref(1)
+const jumpingAvatarId = ref(null)
+
+const currentTestimonial = computed(() => testimonials[activeTestimonialIndex.value])
+
+const getSlot = (index, activeIdx) => {
+  const diff = (index - activeIdx + 3) % 3
+  if (diff === 0) return 1 // Middle
+  if (diff === 1) return 2 // Bottom
+  return 0 // Top
+}
+
+const selectTestimonial = (index) => {
+  if (activeTestimonialIndex.value === index) return
+
+  const prevSlots = testimonials.map(t => getSlot(t.id, activeTestimonialIndex.value))
+  const newSlots = testimonials.map(t => getSlot(t.id, index))
+
+  const jumpingItem = testimonials.find(t => {
+    const p = prevSlots[t.id]
+    const n = newSlots[t.id]
+    return Math.abs(p - n) === 2
+  })
+
+  if (jumpingItem) {
+    jumpingAvatarId.value = jumpingItem.id
+  }
+
+  activeTestimonialIndex.value = index
+
+  setTimeout(() => {
+    jumpingAvatarId.value = null
+  }, 500)
+}
+
+const getSlotStyle = (index) => {
+  const diff = (index - activeTestimonialIndex.value + 3) % 3
+  if (diff === 0) {
+    return { top: '103px', left: '30px', zIndex: 30 }
+  }
+  if (diff === 1) {
+    return { top: '240px', left: '-18px', zIndex: 20 }
+  }
+  return { top: '-10px', left: '-18px', zIndex: 20 }
 }
 </script>
 
@@ -65,14 +138,14 @@ const submitContactForm = () => {
 
             <div class="lg:col-span-6">
               <div class="grid grid-cols-2 gap-4 items-stretch">
-                <div class="h-[430px] overflow-hidden rounded-sm shadow-xs">
+                <div class="h-107.5 overflow-hidden rounded-sm shadow-xs">
                   <img :src="headerImg1" alt="Meeting UMKM" class="w-full h-full object-cover" />
                 </div>
                 <div class="flex flex-col gap-4">
-                  <div class="h-[207px] overflow-hidden rounded-sm shadow-xs">
+                  <div class="h-51.75 overflow-hidden rounded-sm shadow-xs">
                     <img :src="headerImg2" alt="Tim Diskusi" class="w-full h-full object-cover" />
                   </div>
-                  <div class="h-[207px] overflow-hidden rounded-sm shadow-xs">
+                  <div class="h-51.75 overflow-hidden rounded-sm shadow-xs">
                     <img :src="headerImg3" alt="Mitra Bisnis" class="w-full h-full object-cover" />
                   </div>
                 </div>
@@ -111,7 +184,7 @@ const submitContactForm = () => {
             <h2 class="font-newsreader text-regular-40 text-neutral-primary font-normal">Cara Kerja Modalin</h2>
             <p class="text-regular-16 text-neutral-secondary mt-2 mb-8">Proses yang sederhana, transparan, dan terukur.</p>
             
-            <div class="relative bg-primary-10/60 p-1.5 rounded-lg inline-flex items-center justify-center border border-primary-base/10 min-w-[400px] sm:min-w-[440px]">
+            <div class="relative bg-primary-10/60 p-1.5 rounded-lg inline-flex items-center justify-center border border-primary-base/10 min-w-100 sm:min-w-110">
               <div
                 class="absolute top-1.5 bottom-1.5 bg-white rounded-md shadow-xs transition-all duration-300 ease-in-out"
                 :style="{
@@ -229,7 +302,7 @@ const submitContactForm = () => {
         </div>
       </section>
 
-      <section id="terkait" class="py-24 bg-neutral-tertiary border-t border-primary-base/10 w-full">
+      <section id="terkait" class="py-24 bg-neutral-tertiary w-full">
         <div class="w-full px-6 sm:px-12 lg:px-20">
           <h2 class="font-newsreader text-regular-40 text-neutral-primary font-normal text-center mb-16">Kenapa Memilih Modalin?</h2>
 
@@ -303,7 +376,7 @@ const submitContactForm = () => {
         </div>
       </section>
 
-      <section id="tentang" class="py-24 bg-neutral-tertiary border-t border-primary-base/10 w-full">
+      <section id="tentang" class="py-24 bg-neutral-tertiary w-full">
         <div class="w-full px-6 sm:px-12 lg:px-20">
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             <div class="lg:col-span-5 space-y-6">
@@ -357,75 +430,69 @@ const submitContactForm = () => {
         </div>
       </section>
 
-      <section id="testimoni" class="py-24 bg-neutral-tertiary border-t border-primary-base/10 w-full">
+      <!-- APA KATA MEREKA (PERFECTLY CENTERED AVATARS ON ARC LINE) -->
+      <section id="testimoni" class="py-24 bg-neutral-tertiary w-full">
         <div class="w-full px-6 sm:px-12 lg:px-20">
           <h2 class="font-newsreader text-regular-40 text-neutral-primary font-normal mb-16">Apa Kata Mereka?</h2>
 
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div class="lg:col-span-5 relative min-h-[260px] flex flex-col justify-between pl-8">
-              <svg class="absolute -left-2 top-0 h-[260px] w-32 pointer-events-none" fill="none" viewBox="0 0 100 260">
-                <path d="M 10 10 C 90 70, 90 190, 10 250" stroke="#0F6E56" stroke-width="1.5" fill="none" />
+            <!-- Left Side: Avatars centered directly on the arc path -->
+            <div class="lg:col-span-5 relative h-67.5 flex items-center pl-8">
+              <!-- Green Arc Line SVG -->
+              <svg class="absolute -left-2 top-0 h-67.5 w-32 pointer-events-none" fill="none" viewBox="0 0 100 270">
+                <path d="M 10 10 C 90 70, 90 200, 10 260" stroke="#0F6E56" stroke-width="1.5" fill="none" />
               </svg>
 
-              <div class="flex items-center gap-4 relative z-10 py-1">
-                <img
-                  :src="testimoniImg3"
-                  alt="Anindya Putri Lestari"
-                  class="w-10 h-10 rounded-full object-cover"
-                />
-                <div>
-                  <h4 class="text-semibold-16 text-neutral-primary font-semibold">
-                    Anindya Putri Lestari
-                  </h4>
-                  <p class="text-xs text-neutral-secondary flex items-center gap-1">
-                    <span class="text-primary-base font-bold">★ 4.9</span> pada 20 Jan 2026
-                  </p>
-                </div>
-              </div>
-
-              <div class="flex items-center gap-4 relative z-10 py-2 my-2">
-                <img
-                  :src="testimoniImg1"
-                  alt="Kirana Citra Dewi"
-                  class="w-16 h-16 rounded-full object-cover border-2 border-primary-base shadow-md"
-                />
-                <div>
-                  <h4 class="text-semibold-20 text-neutral-primary font-bold">
-                    Kirana Citra Dewi
-                  </h4>
-                  <p class="text-sm text-neutral-secondary flex items-center gap-1">
-                    <span class="text-primary-base font-bold">★ 4.9</span> pada 20 Jan 2026
-                  </p>
-                </div>
-              </div>
-
-              <div class="flex items-center gap-4 relative z-10 py-1">
-                <img
-                  :src="testimoniImg2"
-                  alt="Rian Aditya Nugroho"
-                  class="w-10 h-10 rounded-full object-cover"
-                />
-                <div>
-                  <h4 class="text-semibold-16 text-neutral-primary font-semibold">
-                    Rian Aditya Nugroho
-                  </h4>
-                  <p class="text-xs text-neutral-secondary flex items-center gap-1">
-                    <span class="text-primary-base font-bold">★ 4.9</span> pada 20 Jan 2026
-                  </p>
+              <!-- Avatars Container -->
+              <div class="relative w-full h-full">
+                <div
+                  v-for="(t, index) in testimonials"
+                  :key="t.id"
+                  @click="selectTestimonial(index)"
+                  :style="getSlotStyle(index)"
+                  :class="[
+                    'absolute transition-all duration-500 ease-in-out cursor-pointer flex items-center gap-4 group',
+                    jumpingAvatarId === t.id ? 'sink-emerge-anim' : ''
+                  ]"
+                >
+                  <img
+                    :src="t.image"
+                    :alt="t.name"
+                    :class="[
+                      'rounded-full object-cover transition-all duration-500',
+                      activeTestimonialIndex === index
+                        ? 'w-16 h-16 border-2 border-primary-base shadow-md grayscale-0 opacity-100 scale-105'
+                        : 'w-10 h-10 grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110'
+                    ]"
+                  />
+                  <div class="transition-opacity duration-300">
+                    <h4 :class="[
+                      'font-semibold transition-all duration-300 whitespace-nowrap',
+                      activeTestimonialIndex === index ? 'text-semibold-20 text-neutral-primary font-bold' : 'text-semibold-16 text-neutral-secondary group-hover:text-neutral-primary'
+                    ]">
+                      {{ t.name }}
+                    </h4>
+                    <p class="text-xs text-neutral-secondary flex items-center gap-1">
+                      <span class="text-primary-base font-bold">★ {{ t.rating }}</span> pada {{ t.date }}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
 
+            <!-- Right Side: Active Quote Text with smooth transition -->
             <div class="lg:col-span-7">
-              <blockquote class="text-regular-20 text-neutral-primary italic font-inter leading-[1.65]">
-                “Toko roti saya sudah berjalan hampir 3 tahun, tapi tiap kali mau ekspansi beli mixer industri 30 liter dan oven deck baru selalu tertahan di aliran kas harian. Pinjam ke bank formal pun terbentur persyaratan agunan yang rumit. Beruntung lewat Modalin, karena rekam jejak pembukuan kas toko kami di aplikasi sudah tercatat rapi selama 10 bulan, pengajuan dana Rp12.000.000 bisa langsung disetujui tanpa perlu jaminan aset! Pembelian mesinnya pun langsung diproses transparan via Direct Purchase ke toko mitra. Kapasitas adonan kami sekarang naik 3 kali lipat dan cicilan bulanan terasa ringan karena disesuaikan dengan omzet ril toko.”
-              </blockquote>
+              <Transition name="fade" mode="out-in">
+                <blockquote :key="currentTestimonial.id" class="text-regular-20 text-neutral-primary italic font-inter leading-[1.65]">
+                  {{ currentTestimonial.quote }}
+                </blockquote>
+              </Transition>
             </div>
           </div>
         </div>
       </section>
 
-      <section id="faq" class="py-24 bg-neutral-tertiary border-t border-primary-base/10 w-full">
+      <section id="faq" class="py-24 bg-neutral-tertiary w-full">
         <div class="w-full max-w-4xl mx-auto px-6 sm:px-12">
           <h2 class="font-newsreader text-regular-40 text-neutral-primary font-normal text-center mb-16">Pertanyaan Umum</h2>
 
@@ -449,7 +516,7 @@ const submitContactForm = () => {
         </div>
       </section>
 
-      <section class="py-20 bg-neutral-tertiary text-center border-t border-primary-base/10 w-full">
+      <section class="py-20 bg-neutral-tertiary text-center w-full">
         <div class="max-w-3xl mx-auto px-6">
           <h2 class="text-semibold-32 font-newsreader text-neutral-primary">Siap Tumbuh Bersama Modalin?</h2>
           <p class="text-regular-18 text-neutral-secondary mt-2 mb-8">Mulai langkahmu hari ini, baik sebagai peminjam maupun pemberi modal.</p>
@@ -464,7 +531,7 @@ const submitContactForm = () => {
         </div>
       </section>
 
-      <section class="py-24 bg-neutral-tertiary border-t border-primary-base/10 w-full">
+      <section class="py-24 bg-neutral-tertiary w-full">
         <div class="w-full px-6 sm:px-12 lg:px-20">
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             <div class="lg:col-span-5 space-y-4">
@@ -500,7 +567,7 @@ const submitContactForm = () => {
                     </div>
                   </div>
 
-                  <div class="border-l border-b border-neutral-primary p-4 min-h-[140px]">
+                  <div class="border-l border-b border-neutral-primary p-4 min-h-35">
                     <textarea
                       v-model="contactForm.pesan"
                       placeholder="Pesan"
@@ -529,3 +596,39 @@ const submitContactForm = () => {
     </div>
   </DefaultLayout>
 </template>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fade-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+@keyframes sinkEmerge {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+}
+
+.sink-emerge-anim {
+  animation: sinkEmerge 0.5s ease-in-out forwards !important;
+}
+</style>
