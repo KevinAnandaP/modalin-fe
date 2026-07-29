@@ -134,16 +134,24 @@ const handlePledgeSubmit = async () => {
   isPledging.value = true
   pledgeSuccessMessage.value = ''
   try {
-    pledgeSuccessMessage.value = `Terima kasih! Pendanaan sebesar ${formatRupiah(pledgeAmount.value)} berhasil disalurkan.`
+    const res = await campaignService.pledgeCampaign(campaignId, pledgeAmount.value)
+    const newCollected = res?.data?.collected_amount || (campaign.value ? (campaign.value.collected_amount || 0) + Number(pledgeAmount.value) : Number(pledgeAmount.value))
     if (campaign.value) {
-      campaign.value.collected_amount = (campaign.value.collected_amount || 0) + Number(pledgeAmount.value)
+      campaign.value.collected_amount = newCollected
     }
+    pledgeSuccessMessage.value = `Terima kasih! Pendanaan sebesar ${formatRupiah(pledgeAmount.value)} berhasil disalurkan.`
   } catch (err) {
-    alert(err.message || 'Gagal menyalurkan pendanaan.')
+    const errText = err.message || err.error || 'Gagal menyalurkan pendanaan.'
+    if (err.status === 401) {
+      alert('Silakan login terlebih dahulu sebagai Lender untuk mendanai campaign ini.')
+    } else {
+      alert(`Gagal: ${errText}`)
+    }
   } finally {
     isPledging.value = false
   }
 }
+
 
 onMounted(() => {
   fetchDetailData()
@@ -185,14 +193,14 @@ onMounted(() => {
         <div class="bg-white rounded-2xl p-6 sm:p-8 border border-primary-base/10 shadow-xs space-y-6">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-2">
-              <span class="px-3 py-1 bg-primary-10 text-primary-base rounded-full text-xs font-semibold">
+              <span class="px-3 py-1 bg-primary-10 text-primary-base rounded-full text-semibold-12">
                 {{ campaign.category || 'UMKM' }}
               </span>
-              <span class="px-3 py-1 bg-status-info-surface/40 text-status-info-main rounded-full text-xs font-medium">
+              <span class="px-3 py-1 bg-status-info-surface/40 text-status-info-main rounded-full text-medium-12">
                 {{ campaign.risk_level || 'Tier 2 Risk' }}
               </span>
             </div>
-            <BaseBadge variant="success" class="!text-xs">
+            <BaseBadge variant="success" class="!text-semibold-12">
               {{ campaign.status === 'published' ? 'Penggalangan Aktif' : campaign.status }}
             </BaseBadge>
           </div>
@@ -211,26 +219,26 @@ onMounted(() => {
           <!-- Financial Statistics Bar -->
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-5 bg-neutral-tertiary rounded-xl border border-primary-base/10 text-center">
             <div>
-              <span class="text-xs text-neutral-secondary block">Target Dana</span>
+              <span class="text-regular-12 text-neutral-secondary block">Target Dana</span>
               <span class="text-semibold-18 font-bold text-neutral-primary tabular-nums">{{ formatRupiah(campaign.target_amount) }}</span>
             </div>
             <div>
-              <span class="text-xs text-neutral-secondary block">Terkumpul</span>
+              <span class="text-regular-12 text-neutral-secondary block">Terkumpul</span>
               <span class="text-semibold-18 font-bold text-primary-base tabular-nums">{{ formatRupiah(campaign.collected_amount || 0) }}</span>
             </div>
             <div>
-              <span class="text-xs text-neutral-secondary block">Tenor</span>
+              <span class="text-regular-12 text-neutral-secondary block">Tenor</span>
               <span class="text-semibold-18 font-bold text-neutral-primary">{{ campaign.tenor_months }} Bulan</span>
             </div>
             <div>
-              <span class="text-xs text-neutral-secondary block">Imbal Hasil / Thn</span>
+              <span class="text-regular-12 text-neutral-secondary block">Imbal Hasil / Thn</span>
               <span class="text-semibold-18 font-bold text-secondary-base">{{ campaign.interest_rate }}%</span>
             </div>
           </div>
 
           <!-- Progress Bar -->
           <div class="space-y-2">
-            <div class="flex justify-between items-center text-xs font-semibold">
+            <div class="flex justify-between items-center text-semibold-12">
               <span class="text-neutral-secondary">Pencapaian Pendanaan</span>
               <span class="text-primary-base">{{ progressPercentage }}%</span>
             </div>
@@ -253,7 +261,7 @@ onMounted(() => {
                 type="button"
                 @click="activeTab = 'tentang'"
                 :class="[
-                  'px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap',
+                  'px-4 py-2 rounded-lg text-semibold-12 transition-all cursor-pointer whitespace-nowrap',
                   activeTab === 'tentang' ? 'bg-primary-base text-white' : 'text-neutral-secondary hover:text-neutral-primary'
                 ]"
               >
@@ -264,7 +272,7 @@ onMounted(() => {
                 type="button"
                 @click="activeTab = 'rab'"
                 :class="[
-                  'px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap',
+                  'px-4 py-2 rounded-lg text-semibold-12 transition-all cursor-pointer whitespace-nowrap',
                   activeTab === 'rab' ? 'bg-primary-base text-white' : 'text-neutral-secondary hover:text-neutral-primary'
                 ]"
               >
@@ -275,7 +283,7 @@ onMounted(() => {
                 type="button"
                 @click="activeTab = 'milestone'"
                 :class="[
-                  'px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap',
+                  'px-4 py-2 rounded-lg text-semibold-12 transition-all cursor-pointer whitespace-nowrap',
                   activeTab === 'milestone' ? 'bg-primary-base text-white' : 'text-neutral-secondary hover:text-neutral-primary'
                 ]"
               >
@@ -292,14 +300,14 @@ onMounted(() => {
 
               <div class="border-t border-primary-base/10 pt-6 space-y-4">
                 <h4 class="text-semibold-16 font-semibold text-neutral-primary">Informasi Pemilik Usaha</h4>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-regular-12">
                   <div class="p-4 bg-primary-10/40 rounded-xl">
                     <span class="text-neutral-secondary block">Nama Usaha</span>
-                    <span class="font-bold text-neutral-primary text-sm">{{ campaign.business?.name }}</span>
+                    <span class="font-bold text-neutral-primary text-regular-14">{{ campaign.business?.name }}</span>
                   </div>
                   <div class="p-4 bg-primary-10/40 rounded-xl">
                     <span class="text-neutral-secondary block">Pemilik</span>
-                    <span class="font-bold text-neutral-primary text-sm">{{ campaign.business?.owner || 'Pengelola UMKM' }}</span>
+                    <span class="font-bold text-neutral-primary text-regular-14">{{ campaign.business?.owner || 'Pengelola UMKM' }}</span>
                   </div>
                 </div>
               </div>
@@ -309,11 +317,11 @@ onMounted(() => {
             <div v-else-if="activeTab === 'rab'" class="bg-white rounded-2xl p-6 sm:p-8 border border-primary-base/10 space-y-6">
               <div class="flex justify-between items-center">
                 <h3 class="text-semibold-20 font-bold text-neutral-primary">Rencana Anggaran Biaya (RAB)</h3>
-                <span class="text-xs font-semibold text-primary-base">Total: {{ formatRupiah(totalRabAmount) }}</span>
+                <span class="text-semibold-12 text-primary-base">Total: {{ formatRupiah(totalRabAmount) }}</span>
               </div>
 
               <div class="overflow-x-auto border border-primary-base/10 rounded-xl">
-                <table class="w-full text-left text-xs">
+                <table class="w-full text-left text-regular-12">
                   <thead class="bg-neutral-tertiary border-b border-primary-base/10 text-neutral-secondary">
                     <tr>
                       <th class="p-3.5">Nama Item</th>
@@ -341,7 +349,7 @@ onMounted(() => {
             <!-- Tab Content 3: Milestone Pencairan -->
             <div v-else-if="activeTab === 'milestone'" class="bg-white rounded-2xl p-6 sm:p-8 border border-primary-base/10 space-y-6">
               <h3 class="text-semibold-20 font-bold text-neutral-primary">Tahapan Pencairan Milestone</h3>
-              <p class="text-xs text-neutral-secondary">
+              <p class="text-regular-12 text-neutral-secondary">
                 Dana yang terkumpul akan dicairkan bertahap per milestone setelah borrower mengunggah bukti nota penggunaan dana yang diverifikasi admin.
               </p>
 
@@ -352,14 +360,14 @@ onMounted(() => {
                   class="p-5 rounded-xl border border-primary-base/10 bg-neutral-tertiary/40 space-y-2"
                 >
                   <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-primary-base">Milestone {{ ms.order_number }}</span>
-                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-primary-10 text-primary-base">
+                    <span class="text-semibold-12 text-primary-base">Milestone {{ ms.order_number }}</span>
+                    <span class="px-2.5 py-0.5 rounded-full text-medium-12 bg-primary-10 text-primary-base">
                       {{ ms.status || 'Pending' }}
                     </span>
                   </div>
                   <h4 class="text-medium-16 font-semibold text-neutral-primary">{{ ms.title }}</h4>
-                  <p class="text-xs text-neutral-secondary">{{ ms.description }}</p>
-                  <div class="pt-2 text-xs font-bold text-neutral-primary">
+                  <p class="text-regular-12 text-neutral-secondary">{{ ms.description }}</p>
+                  <div class="pt-2 text-semibold-12 text-neutral-primary">
                     Target Alokasi: <span class="text-primary-base font-mono">{{ formatRupiah(ms.target_amount) }}</span>
                   </div>
                 </div>
@@ -372,7 +380,7 @@ onMounted(() => {
             <BaseCard variant="default" padding="lg" rounded="lg" class="border border-primary-base/20 space-y-6 shadow-sm">
               <h3 class="text-semibold-20 font-bold text-neutral-primary">Danai Campaign Ini</h3>
 
-              <div v-if="pledgeSuccessMessage" class="p-4 bg-status-success-surface/40 border border-status-success-main/30 rounded-xl text-status-success-main text-xs font-medium">
+              <div v-if="pledgeSuccessMessage" class="p-4 bg-status-success-surface/40 border border-status-success-main/30 rounded-xl text-status-success-main text-medium-12">
                 {{ pledgeSuccessMessage }}
               </div>
 
@@ -385,7 +393,7 @@ onMounted(() => {
                   required
                 />
 
-                <div class="p-3.5 bg-primary-10/40 rounded-xl space-y-1.5 text-xs">
+                <div class="p-3.5 bg-primary-10/40 rounded-xl space-y-1.5 text-regular-12">
                   <div class="flex justify-between text-neutral-secondary">
                     <span>Estimasi Imbal Hasil:</span>
                     <span class="font-bold text-primary-base tabular-nums">{{ campaign.interest_rate }}% / thn</span>
@@ -397,7 +405,7 @@ onMounted(() => {
                 </div>
 
                 <!-- Risk Disclosure Statement (System Requirement) -->
-                <div class="p-3.5 bg-status-warning-surface/30 border border-status-warning-main/30 rounded-xl text-[11px] text-neutral-secondary space-y-2">
+                <div class="p-3.5 bg-status-warning-surface/30 border border-status-warning-main/30 rounded-xl text-regular-12 text-neutral-secondary space-y-2">
                   <p class="font-bold text-secondary-base">Pemberitahuan Risiko Pendanaan:</p>
                   <p>Pendanaan UMKM memiliki risiko keterlambatan pembayaran. Estimasi pengembalian bukan jaminan mutlak.</p>
                   <label class="flex items-start gap-2 pt-1 cursor-pointer">

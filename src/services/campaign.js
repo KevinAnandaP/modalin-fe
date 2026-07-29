@@ -148,6 +148,47 @@ export const campaignService = {
     return await apiClient.delete(`/campaigns/${campaignId}/milestones/${milestoneId}`);
   },
 
+  /**
+   * Pledge / Danai campaign (Lender)
+   * Endpoint: POST /api/v1/campaigns/:id/fundings
+   * @param {string} campaignId
+   * @param {number} amount
+   */
+  async pledgeCampaign(campaignId, amount) {
+    return await apiClient.post(`/campaigns/${campaignId}/fundings`, { amount: Number(amount) });
+  },
+
+  /**
+   * Get lender's own fundings
+   * Endpoint: GET /api/v1/campaigns/fundings/me
+   */
+  async getLenderFundings() {
+    return await apiClient.get('/campaigns/fundings/me');
+  },
+
+  /**
+   * List disbursements for a campaign
+   * Endpoint: GET /api/v1/campaigns/:id/disbursements
+   * @param {string} campaignId
+   */
+  async getDisbursements(campaignId) {
+    return await apiClient.get(`/campaigns/${campaignId}/disbursements`);
+  },
+
+  /**
+   * Upload fund usage proof (Borrower)
+   * Endpoint: POST /api/v1/campaigns/:id/disbursements/:disbursementId/proofs
+   * @param {string} campaignId
+   * @param {string} disbursementId
+   * @param {FormData|Object} payload
+   */
+  async uploadFundUsageProof(campaignId, disbursementId, payload) {
+    if (payload instanceof FormData) {
+      return await apiClient.upload(`/campaigns/${campaignId}/disbursements/${disbursementId}/proofs`, payload);
+    }
+    return await apiClient.post(`/campaigns/${campaignId}/disbursements/${disbursementId}/proofs`, payload);
+  },
+
   // --- Admin Review & Moderation ---
 
   /**
@@ -202,3 +243,4 @@ export const campaignService = {
 };
 
 export default campaignService;
+
