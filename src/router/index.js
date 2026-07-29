@@ -12,6 +12,7 @@ import CampaignDetailView from '@/views/CampaignDetailView.vue'
 import CampaignWizardView from '@/views/CampaignWizardView.vue'
 import AdminDashboardView from '@/views/AdminDashboardView.vue'
 import VerifierDashboardView from '@/views/VerifierDashboardView.vue'
+import VerifierReportView from '@/views/VerifierReportView.vue'
 
 import { getAuthToken } from '@/services/api'
 
@@ -89,6 +90,12 @@ const routes = [
     name: 'verifier-dashboard',
     component: VerifierDashboardView,
     alias: ['/verifier/tasks'],
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/verifier/report/:id',
+    name: 'verifier-report',
+    component: VerifierReportView,
     meta: { requiresAuth: true }
   }
 ]
