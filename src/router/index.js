@@ -7,6 +7,12 @@ import RoleStatusView from '@/views/RoleStatusView.vue'
 import BusinessWizardView from '@/views/BusinessWizardView.vue'
 import BusinessDetailView from '@/views/BusinessDetailView.vue'
 import FinancialRecordsView from '@/views/FinancialRecordsView.vue'
+import CampaignCatalogView from '@/views/CampaignCatalogView.vue'
+import CampaignDetailView from '@/views/CampaignDetailView.vue'
+import CampaignWizardView from '@/views/CampaignWizardView.vue'
+import AdminDashboardView from '@/views/AdminDashboardView.vue'
+
+import { getAuthToken } from '@/services/api'
 
 const routes = [
   {
@@ -27,35 +33,86 @@ const routes = [
   {
     path: '/request-role',
     name: 'request-role',
-    component: RequestRoleView
+    component: RequestRoleView,
+    meta: { requiresAuth: true }
   },
   {
     path: '/role-status',
     name: 'role-status',
-    component: RoleStatusView
+    component: RoleStatusView,
+    meta: { requiresAuth: true }
   },
   {
     path: '/business/wizard',
     name: 'business-wizard',
-    component: BusinessWizardView
+    component: BusinessWizardView,
+    meta: { requiresAuth: true }
   },
   {
     path: '/business/detail',
     name: 'business-detail',
-    component: BusinessDetailView
+    component: BusinessDetailView,
+    meta: { requiresAuth: true }
   },
   {
     path: '/financial-records',
     name: 'financial-records',
-    component: FinancialRecordsView
+    component: FinancialRecordsView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/campaigns',
+    name: 'campaign-catalog',
+    component: CampaignCatalogView
+  },
+  {
+    path: '/campaigns/:id',
+    name: 'campaign-detail',
+    component: CampaignDetailView
+  },
+  {
+    path: '/campaign/wizard',
+    name: 'campaign-wizard',
+    component: CampaignWizardView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/admin',
+    name: 'admin-dashboard',
+    component: AdminDashboardView,
+    alias: ['/admin/campaigns/review', '/admin/roles/review', '/admin/business/verification', '/admin/disbursements', '/admin/analytics'],
+    meta: { requiresAuth: true }
   }
 ]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
-  scrollBehavior() {
-    return { top: 0 }
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    }
+    if (typeof window !== 'undefined' && window.lenis) {
+      window.lenis.scrollTo(0, { immediate: true })
+    }
+    return { top: 0, left: 0 }
+  }
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.requiresAuth && !getAuthToken()) {
+    next({ name: 'login' })
+  } else {
+    next()
+  }
+})
+
+router.afterEach(() => {
+  if (typeof window !== 'undefined') {
+    if (window.lenis) {
+      window.lenis.scrollTo(0, { immediate: true })
+    }
+    window.scrollTo(0, 0)
   }
 })
 

@@ -1,5 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
+import { useRouter, RouterLink } from 'vue-router'
+import { getAuthToken } from '@/services/api'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import BaseBadge from '@/components/BaseBadge.vue'
@@ -17,6 +19,28 @@ import testimoniImg2 from '@/assets/placeholder-img/testimoni-image2.png'
 import testimoniImg3 from '@/assets/placeholder-img/testimoni-image3.png'
 
 import noteSvg from '@/assets/icons/note.svg'
+
+const router = useRouter()
+
+const handleUmkmRegisterClick = () => {
+  if (getAuthToken()) {
+    router.push('/request-role')
+  } else {
+    router.push('/register')
+  }
+}
+
+const handleCampaignWizardClick = () => {
+  if (getAuthToken()) {
+    router.push('/campaign/wizard')
+  } else {
+    router.push('/login')
+  }
+}
+
+const handleCatalogClick = () => {
+  router.push('/campaigns')
+}
 
 const activeTab = ref('peminjam')
 
@@ -122,7 +146,7 @@ const getSlotStyle = (index) => {
                 Hubungkan bisnismu dengan ribuan pendana yang siap mendukung pertumbuhan UMKM lokal melalui pendanaan transparan dan terpercaya.
               </p>
               <div class="flex flex-wrap gap-4 mt-8">
-                <BaseButton variant="primary" size="lg" rounded>
+                <BaseButton variant="primary" size="lg" rounded @click="handleCampaignWizardClick">
                   Ajukan modal usaha
                 </BaseButton>
                 <BaseButton
@@ -130,6 +154,7 @@ const getSlotStyle = (index) => {
                   size="lg"
                   rounded
                   class="bg-primary-10 border-primary-base text-primary-base hover:bg-primary-20"
+                  @click="handleCatalogClick"
                 >
                   Danai UMKM
                 </BaseButton>
@@ -521,10 +546,10 @@ const getSlotStyle = (index) => {
           <h2 class="text-semibold-32 font-newsreader text-neutral-primary">Siap Tumbuh Bersama Modalin?</h2>
           <p class="text-regular-18 text-neutral-secondary mt-2 mb-8">Mulai langkahmu hari ini, baik sebagai peminjam maupun pemberi modal.</p>
           <div class="flex flex-wrap justify-center gap-4">
-            <BaseButton variant="primary" size="md" rounded>
+            <BaseButton variant="primary" size="md" rounded @click="handleUmkmRegisterClick">
               Daftar sebagai UMKM
             </BaseButton>
-            <BaseButton variant="outline" size="md" rounded>
+            <BaseButton variant="outline" size="md" rounded @click="handleCatalogClick">
               Mulai Mendanai
             </BaseButton>
           </div>

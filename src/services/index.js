@@ -1,6 +1,7 @@
 import api, { apiClient, http, getAuthToken, setAuthToken, removeAuthToken } from './api';
 import authService from './auth';
 import businessService from './business';
+import campaignService from './campaign';
 
 export {
   api,
@@ -10,7 +11,8 @@ export {
   setAuthToken,
   removeAuthToken,
   authService,
-  businessService
+  businessService,
+  campaignService
 };
 
 export default api;

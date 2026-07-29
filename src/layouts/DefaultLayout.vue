@@ -1,7 +1,95 @@
 <script setup>
-import { RouterLink } from 'vue-router'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import logoUrl from '@/assets/Logo.svg'
 import logoWhiteUrl from '@/assets/Logo-White.svg'
+import { getAuthToken, removeAuthToken } from '@/services/api'
+
+const route = useRoute()
+const router = useRouter()
+
+const isLandingPage = computed(() => route.path === '/')
+const isAuthenticated = computed(() => !!getAuthToken())
+const activeSection = ref('')
+
+const landingSections = [
+  { id: 'cara-kerja', label: 'Cara Kerja' },
+  { id: 'terkait', label: 'Terkait Modalin' },
+  { id: 'tentang', label: 'Tentang Kami' },
+  { id: 'testimoni', label: 'Testimoni' },
+  { id: 'faq', label: 'FAQ' }
+]
+
+const handleLogout = () => {
+  removeAuthToken()
+  router.push('/login')
+}
+
+const handleDashboardClick = (e) => {
+  if (!isAuthenticated.value) {
+    if (e) e.preventDefault()
+    router.push('/login')
+  }
+}
+
+// Lenis smooth scroll handler
+const scrollToSection = (sectionId, event) => {
+  if (event) event.preventDefault()
+  const target = document.getElementById(sectionId)
+  if (target) {
+    if (window.lenis) {
+      window.lenis.scrollTo(target, { offset: -90 })
+    } else {
+      target.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+}
+
+// Scroll spy for section focus
+let observer = null
+
+const setupScrollSpy = () => {
+  if (!isLandingPage.value || typeof window === 'undefined') return
+
+  if (observer) observer.disconnect()
+
+  const sectionIds = landingSections.map(s => s.id)
+  const elements = sectionIds.map(id => document.getElementById(id)).filter(Boolean)
+
+  if (elements.length === 0) return
+
+  observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          activeSection.value = entry.target.id
+        }
+      })
+    },
+    {
+      rootMargin: '-20% 0px -60% 0px',
+      threshold: 0.1
+    }
+  )
+
+  elements.forEach(el => observer.observe(el))
+}
+
+onMounted(() => {
+  setupScrollSpy()
+})
+
+watch(isLandingPage, (val) => {
+  if (val) {
+    setTimeout(setupScrollSpy, 150)
+  } else if (observer) {
+    observer.disconnect()
+  }
+})
+
+onUnmounted(() => {
+  if (observer) observer.disconnect()
+})
 </script>
 
 <template>
@@ -9,35 +97,94 @@ import logoWhiteUrl from '@/assets/Logo-White.svg'
     <header class="pt-6 pb-2 bg-transparent sticky top-0 z-50">
       <div class="w-full px-4 sm:px-8 lg:px-16">
         <div class="bg-primary-10 rounded-full px-6 sm:px-10 py-3.5 flex items-center justify-between shadow-xs border border-primary-base/10">
+          <!-- Logo & Brand Name -->
           <RouterLink to="/" class="flex items-center gap-3 no-underline">
             <img :src="logoUrl" alt="Modalin Logo" class="h-9 w-9" />
             <span class="text-semibold-32 font-newsreader text-primary-base font-bold tracking-tight">Modalin</span>
           </RouterLink>
 
-          <nav class="hidden lg:flex items-center gap-8 md:gap-10">
-            <a href="#cara-kerja" class="text-regular-16 text-neutral-primary hover:text-primary-base transition-colors no-underline">
-              Cara Kerja
-            </a>
-            <a href="#terkait" class="text-regular-16 text-neutral-primary hover:text-primary-base transition-colors no-underline">
-              Terkait Modalin
-            </a>
-            <a href="#tentang" class="text-regular-16 text-neutral-primary hover:text-primary-base transition-colors no-underline">
-              Tentang Kami
-            </a>
-            <a href="#testimoni" class="text-regular-16 text-neutral-primary hover:text-primary-base transition-colors no-underline">
-              Testimoni
-            </a>
-            <a href="#faq" class="text-regular-16 text-neutral-primary hover:text-primary-base transition-colors no-underline">
-              FAQ
-            </a>
+          <!-- Navigation Links -->
+          <nav class="hidden lg:flex items-center gap-6 md:gap-8">
+            <!-- Landing Page Navigation with Scroll Spy & Lenis Smooth Scroll -->
+            <template v-if="isLandingPage">
+              <a
+                v-for="sec in landingSections"
+                :key="sec.id"
+                :href="`#${sec.id}`"
+                @click="scrollToSection(sec.id, $event)"
+                class="text-regular-16 text-neutral-primary hover:text-primary-base transition-colors no-underline cursor-pointer"
+                :class="{ 'font-semibold text-primary-base': activeSection === sec.id }"
+              >
+                {{ sec.label }}
+              </a>
+
+              <RouterLink
+                to="/campaigns"
+                class="px-4 py-1.5 rounded-full bg-primary-base text-white text-medium-14 font-medium hover:bg-primary-60 shadow-xs transition-all no-underline inline-flex items-center gap-1.5"
+              >
+                <span>Katalog Campaign</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </RouterLink>
+            </template>
+
+            <!-- Non-Landing Page Navigation -->
+            <template v-else>
+              <RouterLink
+                to="/"
+                class="text-regular-16 text-neutral-primary hover:text-primary-base transition-colors no-underline"
+                :class="{ 'font-semibold text-primary-base': route.path === '/' }"
+              >
+                Beranda
+              </RouterLink>
+
+              <RouterLink
+                to="/campaigns"
+                class="text-regular-16 text-neutral-primary hover:text-primary-base transition-colors no-underline"
+                :class="{ 'font-semibold text-primary-base': route.path.startsWith('/campaigns') }"
+              >
+                Katalog Campaign
+              </RouterLink>
+
+              <RouterLink
+                to="/campaign/wizard"
+                class="text-regular-16 text-neutral-primary hover:text-primary-base transition-colors no-underline"
+                :class="{ 'font-semibold text-primary-base': route.path === '/campaign/wizard' }"
+              >
+                Ajukan Pendanaan
+              </RouterLink>
+
+              <RouterLink
+                to="/business/detail"
+                @click="handleDashboardClick"
+                class="text-regular-16 text-neutral-primary hover:text-primary-base transition-colors no-underline"
+                :class="{ 'font-semibold text-primary-base': route.path.startsWith('/business') || route.path.startsWith('/role') || route.path.startsWith('/financial') }"
+              >
+                Dashboard Saya
+              </RouterLink>
+            </template>
           </nav>
 
-          <RouterLink
-            to="/login"
-            class="text-medium-16 text-primary-base underline underline-offset-4 hover:opacity-80 transition-opacity"
-          >
-            Masuk
-          </RouterLink>
+          <!-- Auth Actions -->
+          <div class="flex items-center gap-4">
+            <template v-if="isAuthenticated">
+              <button
+                @click="handleLogout"
+                class="text-medium-16 text-status-error-main underline underline-offset-4 hover:opacity-80 transition-opacity cursor-pointer bg-transparent border-0"
+              >
+                Keluar
+              </button>
+            </template>
+            <template v-else>
+              <RouterLink
+                to="/login"
+                class="text-medium-16 text-primary-base underline underline-offset-4 hover:opacity-80 transition-opacity"
+              >
+                Masuk
+              </RouterLink>
+            </template>
+          </div>
         </div>
       </div>
     </header>
@@ -80,55 +227,55 @@ import logoWhiteUrl from '@/assets/Logo-White.svg'
             <div>
               <h4 class="text-semibold-16 text-white font-semibold mb-3">Cara Kerja</h4>
               <ul class="space-y-1.5 text-white/80 text-xs sm:text-sm">
-                <li><a href="#cara-kerja" class="hover:text-white no-underline">Cara Kerja</a></li>
-                <li><a href="#cara-kerja" class="hover:text-white no-underline">Cara Kerja</a></li>
-                <li><a href="#cara-kerja" class="hover:text-white no-underline">Cara Kerja</a></li>
-                <li><a href="#cara-kerja" class="hover:text-white no-underline">Cara Kerja</a></li>
-                <li><a href="#cara-kerja" class="hover:text-white no-underline">Cara Kerja</a></li>
+                <li><a href="#cara-kerja" @click="scrollToSection('cara-kerja', $event)" class="hover:text-white no-underline">Cara Kerja</a></li>
+                <li><a href="#cara-kerja" @click="scrollToSection('cara-kerja', $event)" class="hover:text-white no-underline">Cara Kerja</a></li>
+                <li><a href="#terkait" @click="scrollToSection('terkait', $event)" class="hover:text-white no-underline">Terkait Modalin</a></li>
+                <li><a href="#tentang" @click="scrollToSection('tentang', $event)" class="hover:text-white no-underline">Tentang Kami</a></li>
+                <li><a href="#faq" @click="scrollToSection('faq', $event)" class="hover:text-white no-underline">FAQ</a></li>
               </ul>
             </div>
 
             <div>
               <h4 class="text-semibold-16 text-white font-semibold mb-3">Terkait Modalin</h4>
               <ul class="space-y-1.5 text-white/80 text-xs sm:text-sm">
-                <li><a href="#terkait" class="hover:text-white no-underline">Terkait Modalin</a></li>
-                <li><a href="#terkait" class="hover:text-white no-underline">Terkait Modalin</a></li>
-                <li><a href="#terkait" class="hover:text-white no-underline">Terkait Modalin</a></li>
-                <li><a href="#terkait" class="hover:text-white no-underline">Terkait Modalin</a></li>
-                <li><a href="#terkait" class="hover:text-white no-underline">Terkait Modalin</a></li>
+                <li><a href="#terkait" @click="scrollToSection('terkait', $event)" class="hover:text-white no-underline">Terkait Modalin</a></li>
+                <li><a href="#terkait" @click="scrollToSection('terkait', $event)" class="hover:text-white no-underline">Terkait Modalin</a></li>
+                <li><a href="#terkait" @click="scrollToSection('terkait', $event)" class="hover:text-white no-underline">Terkait Modalin</a></li>
+                <li><a href="#terkait" @click="scrollToSection('terkait', $event)" class="hover:text-white no-underline">Terkait Modalin</a></li>
+                <li><a href="#terkait" @click="scrollToSection('terkait', $event)" class="hover:text-white no-underline">Terkait Modalin</a></li>
               </ul>
             </div>
 
             <div>
               <h4 class="text-semibold-16 text-white font-semibold mb-3">Tentang Kami</h4>
               <ul class="space-y-1.5 text-white/80 text-xs sm:text-sm">
-                <li><a href="#tentang" class="hover:text-white no-underline">Tentang Kami</a></li>
-                <li><a href="#tentang" class="hover:text-white no-underline">Tentang Kami</a></li>
-                <li><a href="#tentang" class="hover:text-white no-underline">Tentang Kami</a></li>
-                <li><a href="#tentang" class="hover:text-white no-underline">Tentang Kami</a></li>
-                <li><a href="#tentang" class="hover:text-white no-underline">Tentang Kami</a></li>
+                <li><a href="#tentang" @click="scrollToSection('tentang', $event)" class="hover:text-white no-underline">Tentang Kami</a></li>
+                <li><a href="#tentang" @click="scrollToSection('tentang', $event)" class="hover:text-white no-underline">Tentang Kami</a></li>
+                <li><a href="#tentang" @click="scrollToSection('tentang', $event)" class="hover:text-white no-underline">Tentang Kami</a></li>
+                <li><a href="#tentang" @click="scrollToSection('tentang', $event)" class="hover:text-white no-underline">Tentang Kami</a></li>
+                <li><a href="#tentang" @click="scrollToSection('tentang', $event)" class="hover:text-white no-underline">Tentang Kami</a></li>
               </ul>
             </div>
 
             <div>
               <h4 class="text-semibold-16 text-white font-semibold mb-3">Testimoni</h4>
               <ul class="space-y-1.5 text-white/80 text-xs sm:text-sm">
-                <li><a href="#testimoni" class="hover:text-white no-underline">Testimoni</a></li>
-                <li><a href="#testimoni" class="hover:text-white no-underline">Testimoni</a></li>
-                <li><a href="#testimoni" class="hover:text-white no-underline">Testimoni</a></li>
-                <li><a href="#testimoni" class="hover:text-white no-underline">Testimoni</a></li>
-                <li><a href="#testimoni" class="hover:text-white no-underline">Testimoni</a></li>
+                <li><a href="#testimoni" @click="scrollToSection('testimoni', $event)" class="hover:text-white no-underline">Testimoni</a></li>
+                <li><a href="#testimoni" @click="scrollToSection('testimoni', $event)" class="hover:text-white no-underline">Testimoni</a></li>
+                <li><a href="#testimoni" @click="scrollToSection('testimoni', $event)" class="hover:text-white no-underline">Testimoni</a></li>
+                <li><a href="#testimoni" @click="scrollToSection('testimoni', $event)" class="hover:text-white no-underline">Testimoni</a></li>
+                <li><a href="#testimoni" @click="scrollToSection('testimoni', $event)" class="hover:text-white no-underline">Testimoni</a></li>
               </ul>
             </div>
 
             <div>
               <h4 class="text-semibold-16 text-white font-semibold mb-3">FAQ</h4>
               <ul class="space-y-1.5 text-white/80 text-xs sm:text-sm">
-                <li><a href="#faq" class="hover:text-white no-underline">FAQ</a></li>
-                <li><a href="#faq" class="hover:text-white no-underline">FAQ</a></li>
-                <li><a href="#faq" class="hover:text-white no-underline">FAQ</a></li>
-                <li><a href="#faq" class="hover:text-white no-underline">FAQ</a></li>
-                <li><a href="#faq" class="hover:text-white no-underline">FAQ</a></li>
+                <li><a href="#faq" @click="scrollToSection('faq', $event)" class="hover:text-white no-underline">FAQ</a></li>
+                <li><a href="#faq" @click="scrollToSection('faq', $event)" class="hover:text-white no-underline">FAQ</a></li>
+                <li><a href="#faq" @click="scrollToSection('faq', $event)" class="hover:text-white no-underline">FAQ</a></li>
+                <li><a href="#faq" @click="scrollToSection('faq', $event)" class="hover:text-white no-underline">FAQ</a></li>
+                <li><a href="#faq" @click="scrollToSection('faq', $event)" class="hover:text-white no-underline">FAQ</a></li>
               </ul>
             </div>
           </div>
