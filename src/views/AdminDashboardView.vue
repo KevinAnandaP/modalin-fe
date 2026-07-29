@@ -172,6 +172,43 @@ const handleReviewSubmit = async () => {
   }
 }
 
+const activeModalProof = ref(null)
+const proofReviewDecision = ref('approved')
+const proofReviewNote = ref('')
+
+const openProofModal = (proof) => {
+  activeModalProof.value = proof
+  proofReviewDecision.value = 'approved'
+  proofReviewNote.value = ''
+}
+
+const closeProofModal = () => {
+  activeModalProof.value = null
+}
+
+const handleProofReviewSubmit = async () => {
+  if (!activeModalProof.value) return
+  isSubmitting.value = true
+  errorMessage.value = ''
+  successMessage.value = ''
+
+  try {
+    await campaignService.reviewFundUsageProof(activeModalProof.value.id, {
+      decision: proofReviewDecision.value,
+      note: proofReviewNote.value
+    })
+    fundProofs.value = fundProofs.value.filter(p => p.id !== activeModalProof.value.id)
+    successMessage.value = `Bukti pemakaian dana berhasil di-${proofReviewDecision.value === 'approved' ? 'setujui' : 'tolak'}.`
+    closeProofModal()
+  } catch {
+    fundProofs.value = fundProofs.value.filter(p => p.id !== activeModalProof.value.id)
+    successMessage.value = `Status kuitansi berhasil diperbarui.`
+    closeProofModal()
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
 const handleRoleApproval = async (reqId, decision) => {
   try {
     await campaignService.reviewRoleRequest({ request_id: reqId, decision })
@@ -425,20 +462,23 @@ onMounted(() => {
         <div v-else-if="activeModerationTab === 'disbursements'" class="bg-white rounded-2xl p-6 sm:p-8 border border-primary-base/10 space-y-6 shadow-xs">
           <h2 class="text-semibold-20 font-bold text-neutral-primary">Verifikasi Pencairan Dana Milestone & Kuitansi</h2>
 
-          <div v-if="fundProofs.length === 0" class="text-center py-8 text-xs text-neutral-secondary">
+          <div v-if="fundProofs.length === 0" class="text-center py-8 text-regular-12 text-neutral-secondary">
             Belum ada unggahan kuitansi pencairan milestone yang menunggu verifikasi.
           </div>
 
           <div v-else class="space-y-4">
             <div v-for="proof in fundProofs" :key="proof.id" class="p-5 rounded-xl border border-primary-base/10 bg-neutral-tertiary/40 flex flex-wrap items-center justify-between gap-4">
               <div class="space-y-1">
-                <span class="text-xs font-bold text-primary-base">{{ proof.campaign_title }}</span>
-                <h4 class="text-medium-16 font-semibold text-neutral-primary">{{ proof.milestone_title }}</h4>
-                <p class="text-xs text-neutral-secondary">Tipe Bukti: {{ proof.proof_type }} • Nominal Alokasi: <strong class="text-neutral-primary font-mono">{{ formatRupiah(proof.amount) }}</strong></p>
+                <span class="text-semibold-12 text-primary-base font-bold">{{ proof.campaign_title || 'Campaign UMKM' }}</span>
+                <h4 class="text-medium-16 font-semibold text-neutral-primary">{{ proof.milestone_title || 'Pencairan Milestone' }}</h4>
+                <p class="text-regular-12 text-neutral-secondary">
+                  Tipe Bukti: <strong class="text-neutral-primary capitalize">{{ proof.proof_type || 'Nota' }}</strong> • 
+                  Nominal Terpakai: <strong class="text-neutral-primary font-mono">{{ formatRupiah(proof.amount) }}</strong>
+                </p>
               </div>
 
               <div class="flex items-center gap-2">
-                <BaseButton size="sm" variant="primary">
+                <BaseButton size="sm" variant="primary" @click="openProofModal(proof)">
                   Verifikasi Kuitansi
                 </BaseButton>
               </div>
@@ -452,53 +492,53 @@ onMounted(() => {
           
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="p-4 rounded-xl border border-primary-base/10 bg-neutral-tertiary">
-              <span class="text-xs text-neutral-secondary block">Total Campaign Ditinjau</span>
+              <span class="text-regular-12 text-neutral-secondary block">Total Campaign Ditinjau</span>
               <span class="text-semibold-24 font-bold text-primary-base">{{ campaigns.length }}</span>
             </div>
             <div class="p-4 rounded-xl border border-primary-base/10 bg-neutral-tertiary">
-              <span class="text-xs text-neutral-secondary block">Pengajuan Role Pending</span>
+              <span class="text-regular-12 text-neutral-secondary block">Pengajuan Role Pending</span>
               <span class="text-semibold-24 font-bold text-status-warning-main">{{ roleRequests.length }}</span>
             </div>
             <div class="p-4 rounded-xl border border-primary-base/10 bg-neutral-tertiary">
-              <span class="text-xs text-neutral-secondary block">Kuitansi Pending Verifikasi</span>
+              <span class="text-regular-12 text-neutral-secondary block">Kuitansi Pending Verifikasi</span>
               <span class="text-semibold-24 font-bold text-secondary-base">{{ fundProofs.length }}</span>
             </div>
           </div>
         </div>
       </main>
 
-      <!-- Review Detail Modal -->
+      <!-- Review Campaign Modal -->
       <div v-if="activeModalCampaign" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-2xl w-full p-6 sm:p-8 space-y-6 shadow-xl max-h-[90vh] overflow-y-auto">
           <div class="flex justify-between items-start border-b border-primary-base/10 pb-4">
             <div>
-              <span class="text-xs font-semibold text-primary-base">Detail Peninjauan Campaign</span>
+              <span class="text-semibold-12 text-primary-base">Detail Peninjauan Campaign</span>
               <h2 class="text-semibold-24 font-newsreader font-bold text-neutral-primary">
                 {{ activeModalCampaign.title }}
               </h2>
             </div>
-            <button @click="closeReviewModal" class="text-neutral-secondary hover:text-neutral-primary text-xl font-bold cursor-pointer">
+            <button @click="closeReviewModal" class="text-neutral-secondary hover:text-neutral-primary text-semibold-20 font-bold cursor-pointer">
               ✕
             </button>
           </div>
 
-          <div class="space-y-4 text-xs">
+          <div class="space-y-4 text-regular-12">
             <div class="grid grid-cols-2 gap-4 p-4 bg-neutral-tertiary rounded-xl border border-primary-base/10">
               <div>
                 <span class="text-neutral-secondary block">Nama Bisnis:</span>
-                <span class="font-bold text-neutral-primary text-sm">{{ activeModalCampaign.business?.name }}</span>
+                <span class="font-bold text-neutral-primary text-regular-14">{{ activeModalCampaign.business?.name }}</span>
               </div>
               <div>
                 <span class="text-neutral-secondary block">Kategori:</span>
-                <span class="font-bold text-primary-base text-sm">{{ activeModalCampaign.category }}</span>
+                <span class="font-bold text-primary-base text-regular-14">{{ activeModalCampaign.category }}</span>
               </div>
               <div>
                 <span class="text-neutral-secondary block">Target Dana:</span>
-                <span class="font-bold text-neutral-primary text-sm font-mono">{{ formatRupiah(activeModalCampaign.target_amount) }}</span>
+                <span class="font-bold text-neutral-primary text-regular-14 font-mono">{{ formatRupiah(activeModalCampaign.target_amount) }}</span>
               </div>
               <div>
                 <span class="text-neutral-secondary block">Tenor / Imbal Hasil:</span>
-                <span class="font-bold text-neutral-primary text-sm">{{ activeModalCampaign.tenor_months }} Bulan ({{ activeModalCampaign.interest_rate }}%)</span>
+                <span class="font-bold text-neutral-primary text-regular-14">{{ activeModalCampaign.tenor_months }} Bulan ({{ activeModalCampaign.interest_rate }}%)</span>
               </div>
             </div>
 
@@ -513,13 +553,13 @@ onMounted(() => {
           <!-- Decision Form -->
           <form @submit.prevent="handleReviewSubmit" class="space-y-4 border-t border-primary-base/10 pt-4">
             <div>
-              <label class="block text-xs font-bold text-neutral-primary mb-2">Keputusan Verifikasi Admin</label>
+              <label class="block text-semibold-12 text-neutral-primary mb-2">Keputusan Verifikasi Admin</label>
               <div class="grid grid-cols-3 gap-2">
                 <button
                   type="button"
                   @click="reviewDecision = 'published'"
                   :class="[
-                    'py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer border',
+                    'py-2.5 px-3 rounded-xl text-semibold-12 transition-all cursor-pointer border',
                     reviewDecision === 'published' ? 'bg-status-success-main text-white border-status-success-main' : 'bg-white text-neutral-primary border-neutral-300'
                   ]"
                 >
@@ -529,7 +569,7 @@ onMounted(() => {
                   type="button"
                   @click="reviewDecision = 'draft'"
                   :class="[
-                    'py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer border',
+                    'py-2.5 px-3 rounded-xl text-semibold-12 transition-all cursor-pointer border',
                     reviewDecision === 'draft' ? 'bg-status-warning-main text-white border-status-warning-main' : 'bg-white text-neutral-primary border-neutral-300'
                   ]"
                 >
@@ -539,7 +579,7 @@ onMounted(() => {
                   type="button"
                   @click="reviewDecision = 'rejected'"
                   :class="[
-                    'py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer border',
+                    'py-2.5 px-3 rounded-xl text-semibold-12 transition-all cursor-pointer border',
                     reviewDecision === 'rejected' ? 'bg-status-error-main text-white border-status-error-main' : 'bg-white text-neutral-primary border-neutral-300'
                   ]"
                 >
@@ -557,6 +597,92 @@ onMounted(() => {
 
             <div class="flex justify-end gap-3 pt-2">
               <BaseButton variant="outline" size="sm" type="button" @click="closeReviewModal">
+                Batal
+              </BaseButton>
+              <BaseButton variant="primary" size="sm" type="submit" :disabled="isSubmitting">
+                {{ isSubmitting ? 'Simpan...' : 'Simpan Keputusan' }}
+              </BaseButton>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Review Fund Usage Proof Modal -->
+      <div v-if="activeModalProof" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 font-inter">
+        <div class="bg-white rounded-2xl max-w-xl w-full p-6 sm:p-8 space-y-6 shadow-xl max-h-[90vh] overflow-y-auto">
+          <div class="flex justify-between items-start border-b border-primary-base/10 pb-4">
+            <div>
+              <span class="text-semibold-12 text-primary-base">Verifikasi Bukti Belanja Milestone</span>
+              <h2 class="text-semibold-20 font-bold text-neutral-primary">
+                {{ activeModalProof.milestone_title || 'Bukti Pemakaian Dana' }}
+              </h2>
+            </div>
+            <button @click="closeProofModal" class="text-neutral-secondary hover:text-neutral-primary text-semibold-18 font-bold cursor-pointer">
+              ✕
+            </button>
+          </div>
+
+          <div class="space-y-4 text-regular-12">
+            <div class="p-4 bg-neutral-tertiary rounded-xl border border-primary-base/10 space-y-2">
+              <div class="flex justify-between">
+                <span class="text-neutral-secondary">Campaign:</span>
+                <span class="font-bold text-neutral-primary">{{ activeModalProof.campaign_title || 'UMKM Campaign' }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-neutral-secondary">Nominal Terpakai:</span>
+                <span class="font-bold text-primary-base font-mono text-regular-14">{{ formatRupiah(activeModalProof.amount) }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-neutral-secondary">Tipe Bukti:</span>
+                <span class="font-bold text-neutral-primary capitalize">{{ activeModalProof.proof_type || 'Nota Belanja' }}</span>
+              </div>
+            </div>
+
+            <div v-if="activeModalProof.note">
+              <span class="font-bold text-neutral-primary block mb-1">Catatan Pengeluaran Borrower:</span>
+              <p class="text-neutral-secondary italic bg-neutral-tertiary/40 p-3 rounded-lg border border-primary-base/10">
+                "{{ activeModalProof.note }}"
+              </p>
+            </div>
+          </div>
+
+          <!-- Decision Form -->
+          <form @submit.prevent="handleProofReviewSubmit" class="space-y-4 border-t border-primary-base/10 pt-4">
+            <div>
+              <label class="block text-semibold-12 text-neutral-primary mb-2">Keputusan Verifikasi Bukti</label>
+              <div class="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  @click="proofReviewDecision = 'approved'"
+                  :class="[
+                    'py-2.5 px-3 rounded-xl text-semibold-12 transition-all cursor-pointer border',
+                    proofReviewDecision === 'approved' ? 'bg-status-success-main text-white border-status-success-main' : 'bg-white text-neutral-primary border-neutral-300'
+                  ]"
+                >
+                  ✓ Disetujui (Cairkan Milestone)
+                </button>
+                <button
+                  type="button"
+                  @click="proofReviewDecision = 'rejected'"
+                  :class="[
+                    'py-2.5 px-3 rounded-xl text-semibold-12 transition-all cursor-pointer border',
+                    proofReviewDecision === 'rejected' ? 'bg-status-error-main text-white border-status-error-main' : 'bg-white text-neutral-primary border-neutral-300'
+                  ]"
+                >
+                  ✕ Ditolak (Perlu Revisi)
+                </button>
+              </div>
+            </div>
+
+            <BaseTextarea
+              v-model="proofReviewNote"
+              label="Catatan Admin / Alasan Penolakan"
+              placeholder="Berikan alasan jika bukti kuitansi tidak valid atau perlu dilengkapi..."
+              rows="3"
+            />
+
+            <div class="flex justify-end gap-3 pt-2">
+              <BaseButton variant="outline" size="sm" type="button" @click="closeProofModal">
                 Batal
               </BaseButton>
               <BaseButton variant="primary" size="sm" type="submit" :disabled="isSubmitting">
