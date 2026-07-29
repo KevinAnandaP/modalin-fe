@@ -8,6 +8,7 @@ import BaseButton from '@/components/BaseButton.vue'
 import BaseInput from '@/components/BaseInput.vue'
 import Skeleton from '@/components/ui/skeleton/Skeleton.vue'
 import MilestoneTracker from '@/components/MilestoneTracker.vue'
+import FundUsageProofModal from '@/components/FundUsageProofModal.vue'
 import campaignService from '@/services/campaign'
 
 const route = useRoute()
@@ -20,6 +21,18 @@ const milestones = ref([])
 const isLoading = ref(true)
 const errorMessage = ref('')
 const activeTab = ref('tentang')
+
+const isProofModalOpen = ref(false)
+const selectedMilestoneForProof = ref(null)
+
+const handleOpenProofModal = (ms) => {
+  selectedMilestoneForProof.value = ms
+  isProofModalOpen.value = true
+}
+
+const handleProofSuccess = () => {
+  fetchDetailData()
+}
 
 const pledgeAmount = ref(100000)
 const riskAccepted = ref(false)
@@ -349,7 +362,11 @@ onMounted(() => {
 
             <!-- Tab Content 3: Milestone Pencairan -->
             <div v-else-if="activeTab === 'milestone'" class="bg-white rounded-2xl p-6 sm:p-8 border border-primary-base/10 space-y-6">
-              <MilestoneTracker :milestones="milestones" />
+              <MilestoneTracker 
+                :milestones="milestones" 
+                :is-borrower="true"
+                @upload-proof="handleOpenProofModal"
+              />
             </div>
           </div>
 
@@ -406,6 +423,15 @@ onMounted(() => {
           </div>
         </div>
       </main>
+
+      <!-- Borrower Upload Fund Usage Proof Modal -->
+      <FundUsageProofModal
+        :is-open="isProofModalOpen"
+        :campaign-id="campaignId"
+        :milestone="selectedMilestoneForProof"
+        @close="isProofModalOpen = false"
+        @success="handleProofSuccess"
+      />
     </div>
   </DefaultLayout>
 </template>
