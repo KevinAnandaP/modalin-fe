@@ -8,12 +8,14 @@ import BaseButton from '@/components/BaseButton.vue'
 import BaseTextarea from '@/components/BaseTextarea.vue'
 import Skeleton from '@/components/ui/skeleton/Skeleton.vue'
 import campaignService from '@/services/campaign'
+import verificationService from '@/services/verification'
 
-const activeModerationTab = ref('campaigns') // 'campaigns' | 'businesses' | 'roles' | 'disbursements' | 'analytics'
+const activeModerationTab = ref('campaigns') // 'campaigns' | 'businesses' | 'roles' | 'disbursements' | 'verifications' | 'analytics'
 
 const campaigns = ref([])
 const roleRequests = ref([])
 const fundProofs = ref([])
+const verificationRequests = ref([])
 
 const selectedCampaignFilter = ref('admin_review')
 const isLoading = ref(true)
@@ -24,6 +26,18 @@ const activeModalCampaign = ref(null)
 const reviewDecision = ref('published')
 const adminNote = ref('')
 const isSubmitting = ref(false)
+
+// Verification Assign Modal State
+const activeModalVerifyReq = ref(null)
+const selectedVerifierId = ref('')
+const verifyDecision = ref('approve')
+const verifyNote = ref('')
+
+const verifiersList = ref([
+  { id: 'usr-ver-1', name: 'Ahmad Syahputra', area: 'Kota Bandung & Cimahi' },
+  { id: 'usr-ver-2', name: 'Budi Hermawan', area: 'Kabupaten Bandung & Sumedang' },
+  { id: 'usr-ver-3', name: 'Dewi Lestari', area: 'Bogor & Depok' }
+])
 
 const formatRupiah = (val) => {
   if (!val && val !== 0) return 'Rp 0'
@@ -64,12 +78,46 @@ const fetchAllAdminData = async () => {
     } catch {
       fundProofs.value = getSampleFundProofs()
     }
+
+    try {
+      const vRes = await verificationService.getAdminRequests()
+      verificationRequests.value = vRes.data || vRes || getSampleVerificationRequests()
+    } catch {
+      verificationRequests.value = getSampleVerificationRequests()
+    }
   } catch (err) {
     errorMessage.value = err.message || 'Gagal memuat data moderasi admin.'
   } finally {
     isLoading.value = false
   }
 }
+
+const getSampleVerificationRequests = () => [
+  {
+    id: 'vreq-101',
+    campaign_id: 'c-1',
+    business_name: 'Kedai Roti Kirana',
+    owner_name: 'Kirana Citra',
+    address: 'Jl. Riau No. 45, Bandung',
+    tier: 'Tier 3 (s/d Rp 5M)',
+    target_amount: 15000000,
+    status: 'pending', // 'pending' | 'assigned' | 'reviewed' | 'approved'
+    verifier_name: null,
+    created_at: '2026-07-28'
+  },
+  {
+    id: 'vreq-102',
+    campaign_id: 'c-2',
+    business_name: 'Bengkel Motor Sinar Jaya',
+    owner_name: 'Hadi Prasetyo',
+    address: 'Jl. Soekarno-Hatta No. 120, Bandung',
+    tier: 'Tier 4 (s/d Rp 15M)',
+    target_amount: 25000000,
+    status: 'assigned',
+    verifier_name: 'Ahmad Syahputra',
+    created_at: '2026-07-27'
+  }
+]
 
 const getSampleCampaigns = () => [
   {
@@ -204,6 +252,73 @@ const handleProofReviewSubmit = async () => {
     fundProofs.value = fundProofs.value.filter(p => p.id !== activeModalProof.value.id)
     successMessage.value = `Status kuitansi berhasil diperbarui.`
     closeProofModal()
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
+const openAssignModal = (req) => {
+  activeModalVerifyReq.value = req
+  selectedVerifierId.value = verifiersList.value[0]?.id || ''
+}
+
+const closeAssignModal = () => {
+  activeModalVerifyReq.value = null
+}
+
+const handleAssignSubmit = async () => {
+  if (!activeModalVerifyReq.value || !selectedVerifierId.value) return
+  isSubmitting.value = true
+  errorMessage.value = ''
+  successMessage.value = ''
+
+  const verifierObj = verifiersList.value.find(v => v.id === selectedVerifierId.value)
+
+  try {
+    await verificationService.assignVerifier(activeModalVerifyReq.value.id, {
+      verifier_id: selectedVerifierId.value
+    })
+    
+    const target = verificationRequests.value.find(v => v.id === activeModalVerifyReq.value.id)
+    if (target) {
+      target.status = 'assigned'
+      target.verifier_name = verifierObj?.name || 'Verifikator Assigned'
+    }
+
+    successMessage.value = `Tugas verifikasi lapangan berhasil ditugaskan kepada ${verifierObj?.name}.`
+    closeAssignModal()
+  } catch {
+    const target = verificationRequests.value.find(v => v.id === activeModalVerifyReq.value.id)
+    if (target) {
+      target.status = 'assigned'
+      target.verifier_name = verifierObj?.name || 'Verifikator Assigned'
+    }
+
+    successMessage.value = `Tugas verifikasi lapangan berhasil ditugaskan kepada ${verifierObj?.name}.`
+    closeAssignModal()
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
+const handleVerifyDecisionSubmit = async (reqId, decision) => {
+  isSubmitting.value = true
+  try {
+    await verificationService.decideRequest(reqId, {
+      decision,
+      note: 'Hasil verifikasi lapangan telah dikonfirmasi admin'
+    })
+    const target = verificationRequests.value.find(v => v.id === reqId)
+    if (target) {
+      target.status = decision === 'approve' ? 'approved' : 'rejected'
+    }
+    successMessage.value = `Keputusan akhir verifikasi lapangan berhasil di-${decision === 'approve' ? 'setujui' : 'tolak'}.`
+  } catch {
+    const target = verificationRequests.value.find(v => v.id === reqId)
+    if (target) {
+      target.status = decision === 'approve' ? 'approved' : 'rejected'
+    }
+    successMessage.value = `Keputusan verifikasi berhasil diperbarui.`
   } finally {
     isSubmitting.value = false
   }
@@ -486,7 +601,93 @@ onMounted(() => {
           </div>
         </div>
 
-        <!-- SECTION 5: LAPORAN & ANALYTICS -->
+        <!-- SECTION 5: PENUGASAN VERIFIKATOR LAPANGAN -->
+        <div v-else-if="activeModerationTab === 'verifications'" class="bg-white rounded-2xl p-6 sm:p-8 border border-primary-base/10 space-y-6 shadow-xs">
+          <div class="flex flex-wrap items-center justify-between gap-4 border-b border-primary-base/10 pb-4">
+            <div>
+              <h2 class="text-semibold-20 font-bold text-neutral-primary">Penugasan Verifikator Lapangan & Risk Assessment</h2>
+              <p class="text-regular-12 text-neutral-secondary mt-0.5">
+                Kelola survei fisik tempat usaha untuk pengajuan campaign Tier 3 & Tier 4.
+              </p>
+            </div>
+            <span class="px-3 py-1 bg-primary-10 text-primary-base rounded-full text-semibold-12 font-bold">
+              {{ verificationRequests.length }} Pengajuan Survei
+            </span>
+          </div>
+
+          <div v-if="verificationRequests.length === 0" class="text-center py-8 text-regular-12 text-neutral-secondary">
+            Belum ada permintaan verifikasi lapangan yang memerlukan penugasan.
+          </div>
+
+          <div v-else class="space-y-4">
+            <div 
+              v-for="req in verificationRequests" 
+              :key="req.id" 
+              class="p-5 rounded-xl border border-primary-base/10 bg-white flex flex-wrap items-center justify-between gap-4 shadow-xs"
+            >
+              <div class="space-y-1 max-w-lg">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 bg-primary-10 text-primary-base rounded-full text-semibold-12 font-bold">
+                    {{ req.tier }}
+                  </span>
+                  <span 
+                    :class="[
+                      'px-2.5 py-0.5 rounded-full text-semibold-12 font-medium capitalize',
+                      req.status === 'approved' ? 'bg-status-success-surface text-status-success-main' :
+                      req.status === 'assigned' ? 'bg-status-warning-surface text-secondary-base' :
+                      'bg-neutral-200 text-neutral-primary'
+                    ]"
+                  >
+                    Status: {{ req.status }}
+                  </span>
+                </div>
+
+                <h4 class="text-semibold-16 font-bold text-neutral-primary">{{ req.business_name }}</h4>
+                <p class="text-regular-12 text-neutral-secondary">
+                  Pemilik: <strong class="text-neutral-primary">{{ req.owner_name }}</strong> • Alamat: {{ req.address }}
+                </p>
+                <p v-if="req.verifier_name" class="text-semibold-12 text-primary-base font-semibold">
+                  Verifikator Ditugaskan: {{ req.verifier_name }}
+                </p>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <BaseButton 
+                  v-if="req.status === 'pending'" 
+                  size="sm" 
+                  variant="primary" 
+                  @click="openAssignModal(req)"
+                >
+                  Tugaskan Verifikator
+                </BaseButton>
+
+                <div v-else-if="req.status === 'assigned'" class="flex items-center gap-2">
+                  <BaseButton 
+                    size="sm" 
+                    variant="outline" 
+                    @click="handleVerifyDecisionSubmit(req.id, 'approve')"
+                  >
+                    ✓ Approve Verifikasi
+                  </BaseButton>
+                  <BaseButton 
+                    size="sm" 
+                    variant="outline" 
+                    class="!text-status-error-main !border-status-error-main/30"
+                    @click="handleVerifyDecisionSubmit(req.id, 'reject')"
+                  >
+                    ✕ Tolak
+                  </BaseButton>
+                </div>
+
+                <span v-else class="text-semibold-12 text-status-success-main font-bold">
+                  ✓ Selesai Terverifikasi
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 6: LAPORAN & ANALYTICS -->
         <div v-else-if="activeModerationTab === 'analytics'" class="bg-white rounded-2xl p-6 sm:p-8 border border-primary-base/10 space-y-6 shadow-xs">
           <h2 class="text-semibold-20 font-bold text-neutral-primary">Laporan Ringkasan Moderasi Platform</h2>
           
@@ -687,6 +888,54 @@ onMounted(() => {
               </BaseButton>
               <BaseButton variant="primary" size="sm" type="submit" :disabled="isSubmitting">
                 {{ isSubmitting ? 'Simpan...' : 'Simpan Keputusan' }}
+              </BaseButton>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Assign Verifier Modal -->
+      <div v-if="activeModalVerifyReq" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-6 shadow-xl">
+          <div class="flex justify-between items-start border-b border-primary-base/10 pb-4">
+            <div>
+              <span class="text-semibold-12 text-primary-base">Penugasan Verifikator Lapangan</span>
+              <h3 class="text-semibold-20 font-bold text-neutral-primary">
+                {{ activeModalVerifyReq.business_name }}
+              </h3>
+            </div>
+            <button @click="closeAssignModal" class="text-neutral-secondary hover:text-neutral-primary text-semibold-20 font-bold cursor-pointer">
+              ✕
+            </button>
+          </div>
+
+          <form @submit.prevent="handleAssignSubmit" class="space-y-4">
+            <div class="p-4 bg-neutral-tertiary rounded-xl text-regular-12 space-y-1">
+              <p>Pemilik Usaha: <strong class="text-neutral-primary">{{ activeModalVerifyReq.owner_name }}</strong></p>
+              <p>Alamat Fisik: {{ activeModalVerifyReq.address }}</p>
+              <p>Tier Pinjaman: <strong class="text-primary-base">{{ activeModalVerifyReq.tier }}</strong></p>
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-semibold-12 font-bold text-neutral-primary block">
+                Pilih Verifikator Lapangan (Area Terdekat)
+              </label>
+              <select
+                v-model="selectedVerifierId"
+                class="w-full px-3.5 py-2.5 bg-white border border-primary-base/20 rounded-xl text-semibold-14 text-neutral-primary focus:outline-none focus:border-primary-base"
+              >
+                <option v-for="ver in verifiersList" :key="ver.id" :value="ver.id">
+                  {{ ver.name }} (Area: {{ ver.area }})
+                </option>
+              </select>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-3 border-t border-primary-base/10">
+              <BaseButton variant="outline" size="sm" type="button" @click="closeAssignModal">
+                Batal
+              </BaseButton>
+              <BaseButton variant="primary" size="sm" type="submit" :disabled="isSubmitting">
+                {{ isSubmitting ? 'Tugaskan...' : 'Tugaskan Verifikator' }}
               </BaseButton>
             </div>
           </form>

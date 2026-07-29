@@ -44,6 +44,11 @@ const adminNavItems = [
     icon: Wallet
   },
   {
+    id: 'verifications',
+    name: 'Penugasan Verifikator',
+    icon: UserCheck
+  },
+  {
     id: 'analytics',
     name: 'Laporan & Audit Log',
     icon: BarChart2
