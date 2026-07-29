@@ -131,7 +131,8 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.requiresAuth && !getAuthToken()) {
+  const token = getAuthToken()
+  if (to.meta.requiresAuth && !token) {
     next({ name: 'login' })
   } else {
     next()

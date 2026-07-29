@@ -66,7 +66,14 @@ const handleRoleSubmit = async () => {
       router.push('/role-status')
     }, 1500)
   } catch (err) {
-    errorMessage.value = err.message || 'Gagal mengajukan peran. Periksa kembali data pengajuan Anda.'
+    if (err.status === 409 || (err.message && err.message.includes('already open'))) {
+      successMessage.value = 'Pengajuan peran untuk posisi ini sudah dikirimkan sebelumnya. Mengalihkan ke status pengajuan...'
+      setTimeout(() => {
+        router.push('/role-status')
+      }, 1500)
+    } else {
+      errorMessage.value = err.message || 'Gagal mengajukan peran. Periksa kembali data pengajuan Anda.'
+    }
   } finally {
     isLoading.value = false
   }

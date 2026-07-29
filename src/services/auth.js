@@ -48,6 +48,10 @@ export const authService = {
     return await apiClient.get('/auth/me');
   },
 
+  async getMe() {
+    return await this.getProfile();
+  },
+
   /**
    * Request a new role (borrower, lender, verifier)
    * Endpoint target: http://localhost:8080/api/v1/auth/roles

@@ -84,7 +84,7 @@ const fetchAllAdminData = async () => {
   try {
     try {
       const res = await campaignService.getCatalog({ search: '' })
-      const list = res.data || res || []
+      const list = Array.isArray(res.data) ? res.data : (Array.isArray(res) ? res : [])
       campaigns.value = list.length > 0 ? list : getSampleCampaigns()
     } catch {
       campaigns.value = getSampleCampaigns()
@@ -92,21 +92,27 @@ const fetchAllAdminData = async () => {
 
     try {
       const roleRes = await campaignService.getRoleRequests()
-      roleRequests.value = roleRes.data || roleRes || getSampleRoleRequests()
-    } catch {
-      roleRequests.value = getSampleRoleRequests()
+      const list = Array.isArray(roleRes.data) ? roleRes.data : (Array.isArray(roleRes) ? roleRes : [])
+      roleRequests.value = list
+    } catch (err) {
+      if (err.status === 403 || err.status === 401) {
+        errorMessage.value = 'Akses Ditolak: Token akun Anda tidak memiliki izin role Admin di backend.'
+      }
+      roleRequests.value = []
     }
 
     try {
       const proofRes = await campaignService.getFundUsageProofs()
-      fundProofs.value = proofRes.data || proofRes || getSampleFundProofs()
+      const list = Array.isArray(proofRes.data) ? proofRes.data : (Array.isArray(proofRes) ? proofRes : [])
+      fundProofs.value = list.length > 0 ? list : getSampleFundProofs()
     } catch {
       fundProofs.value = getSampleFundProofs()
     }
 
     try {
       const vRes = await verificationService.getAdminRequests()
-      verificationRequests.value = vRes.data || vRes || getSampleVerificationRequests()
+      const list = Array.isArray(vRes.data) ? vRes.data : (Array.isArray(vRes) ? vRes : [])
+      verificationRequests.value = list.length > 0 ? list : getSampleVerificationRequests()
     } catch {
       verificationRequests.value = getSampleVerificationRequests()
     }
@@ -352,8 +358,8 @@ const handleVerifyDecisionSubmit = async (reqId, decision) => {
 const handleRoleApproval = async (reqId, decision) => {
   try {
     await campaignService.reviewRoleRequest({ request_id: reqId, decision })
-    roleRequests.value = roleRequests.value.filter(r => r.id !== reqId)
-    successMessage.value = `Pengajuan role berhasil di-${decision}.`
+    roleRequests.value = roleRequests.value.filter(r => (r.ID || r.id) !== reqId)
+    successMessage.value = `Pengajuan role berhasil di-${decision === 'approved' ? 'setujui' : 'tolak'}.`
   } catch (err) {
     alert(err.message || 'Gagal memproses pengajuan role.')
   }
@@ -561,31 +567,31 @@ onMounted(() => {
                 </tr>
               </thead>
               <tbody class="divide-y divide-primary-base/10 text-neutral-primary">
-                <tr v-for="req in roleRequests" :key="req.id" class="hover:bg-neutral-tertiary/50">
-                  <td class="p-3.5 font-bold">{{ req.user_name }}</td>
-                  <td class="p-3.5 text-neutral-secondary">{{ req.email }}</td>
+                <tr v-for="req in roleRequests" :key="req.ID || req.id" class="hover:bg-neutral-tertiary/50">
+                  <td class="p-3.5 font-bold">{{ req.User?.FullName || req.user?.full_name || req.user_name || 'Pengguna Baru' }}</td>
+                  <td class="p-3.5 text-neutral-secondary">{{ req.User?.Email || req.user?.email || req.email || '-' }}</td>
                   <td class="p-3.5">
                     <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-primary-10 text-primary-base capitalize">
-                      {{ req.requested_role }}
+                      {{ req.Role?.Name || req.role?.name || req.requested_role || 'borrower' }}
                     </span>
                   </td>
                   <td class="p-3.5 text-center">
-                    <span class="px-2 py-0.5 rounded-full text-[11px] font-medium bg-status-warning-surface text-status-warning-main">
-                      {{ req.status }}
+                    <span class="px-2 py-0.5 rounded-full text-[11px] font-medium bg-status-warning-surface text-status-warning-main capitalize">
+                      {{ req.Status || req.status || 'submitted' }}
                     </span>
                   </td>
                   <td class="p-3.5 text-center">
                     <div class="flex justify-center items-center gap-1.5">
                       <button
                         type="button"
-                        @click="handleRoleApproval(req.id, 'approved')"
+                        @click="handleRoleApproval(req.ID || req.id, 'approved')"
                         class="px-2.5 py-1 bg-primary-base text-white text-[11px] font-semibold rounded-lg hover:bg-primary-dark transition-colors cursor-pointer"
                       >
                         Setuju
                       </button>
                       <button
                         type="button"
-                        @click="handleRoleApproval(req.id, 'rejected')"
+                        @click="handleRoleApproval(req.ID || req.id, 'rejected')"
                         class="px-2.5 py-1 bg-white text-status-error-main border border-status-error-main/30 text-[11px] font-semibold rounded-lg hover:bg-status-error-surface transition-colors cursor-pointer"
                       >
                         Tolak
