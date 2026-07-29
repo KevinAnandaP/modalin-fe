@@ -55,7 +55,32 @@ export const verificationService = {
    */
   async decideRequest(requestId, payload) {
     return await apiClient.post(`/admin/verification-requests/${requestId}/decision`, payload);
+  },
+
+  /**
+   * Verify monthly progress report (Verifier)
+   * Endpoint: POST /api/v1/verifier/monthly-reports/:id/review
+   */
+  async verifyMonthlyReport(reportId, payload) {
+    return await apiClient.post(`/verifier/monthly-reports/${reportId}/review`, payload);
+  },
+
+  /**
+   * Verify revenue report (Verifier)
+   * Endpoint: POST /api/v1/verifier/revenue-reports/:id/review
+   */
+  async verifyRevenueReport(reportId, payload) {
+    return await apiClient.post(`/verifier/revenue-reports/${reportId}/review`, payload);
+  },
+
+  /**
+   * Verify repayment payment (Verifier)
+   * Endpoint: POST /api/v1/verifier/repayments/:id/review
+   */
+  async verifyRepayment(repaymentId, payload) {
+    return await apiClient.post(`/verifier/repayments/${repaymentId}/review`, payload);
   }
 };
 
 export default verificationService;
+
