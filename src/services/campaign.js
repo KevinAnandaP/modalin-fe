@@ -189,6 +189,38 @@ export const campaignService = {
     return await apiClient.post(`/campaigns/${campaignId}/disbursements/${disbursementId}/proofs`, payload);
   },
 
+  /**
+   * Create monthly progress report (Borrower)
+   * Endpoint: POST /api/v1/campaigns/:id/monthly-reports
+   */
+  async createMonthlyProgressReport(campaignId, payload) {
+    return await apiClient.post(`/campaigns/${campaignId}/monthly-reports`, payload);
+  },
+
+  /**
+   * List monthly progress reports
+   * Endpoint: GET /api/v1/campaigns/:id/monthly-reports
+   */
+  async getMonthlyProgressReports(campaignId) {
+    return await apiClient.get(`/campaigns/${campaignId}/monthly-reports`);
+  },
+
+  /**
+   * Create revenue report (Borrower)
+   * Endpoint: POST /api/v1/campaigns/:id/revenue-reports
+   */
+  async createRevenueReport(campaignId, payload) {
+    return await apiClient.post(`/campaigns/${campaignId}/revenue-reports`, payload);
+  },
+
+  /**
+   * List revenue reports
+   * Endpoint: GET /api/v1/campaigns/:id/revenue-reports
+   */
+  async getRevenueReports(campaignId) {
+    return await apiClient.get(`/campaigns/${campaignId}/revenue-reports`);
+  },
+
   // --- Admin Review & Moderation ---
 
   /**

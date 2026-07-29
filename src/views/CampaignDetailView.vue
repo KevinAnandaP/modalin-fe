@@ -12,6 +12,7 @@ import FundUsageProofModal from '@/components/FundUsageProofModal.vue'
 import RiskScoreBadge from '@/components/RiskScoreBadge.vue'
 import RiskScoreCard from '@/components/RiskScoreCard.vue'
 import CommunityVoteWidget from '@/components/CommunityVoteWidget.vue'
+import MonthlyReportModal from '@/components/MonthlyReportModal.vue'
 import campaignService from '@/services/campaign'
 
 const route = useRoute()
@@ -28,6 +29,20 @@ const activeTab = ref('tentang')
 const isProofModalOpen = ref(false)
 const selectedMilestoneForProof = ref(null)
 
+const isReportModalOpen = ref(false)
+const monthlyReportsList = ref([
+  {
+    id: 'rep-1',
+    month: 6,
+    year: 2026,
+    gross_revenue: 28500000,
+    total_expense: 17200000,
+    net_profit: 11300000,
+    summary: 'Penjualan stabil dan terjadi peningkatan transaksi dari paket katering kantor.',
+    status: 'verified'
+  }
+])
+
 const handleOpenProofModal = (ms) => {
   selectedMilestoneForProof.value = ms
   isProofModalOpen.value = true
@@ -35,6 +50,19 @@ const handleOpenProofModal = (ms) => {
 
 const handleProofSuccess = () => {
   fetchDetailData()
+}
+
+const handleReportSubmitted = (newRep) => {
+  monthlyReportsList.value.unshift({
+    id: `rep-${Date.now()}`,
+    month: newRep.month,
+    year: newRep.year,
+    gross_revenue: newRep.gross_revenue,
+    total_expense: newRep.total_expense,
+    net_profit: newRep.net_profit,
+    summary: newRep.summary,
+    status: 'submitted'
+  })
 }
 
 const pledgeAmount = ref(100000)
@@ -317,6 +345,17 @@ onMounted(() => {
               >
                 Analisis Risiko
               </button>
+
+              <button
+                type="button"
+                @click="activeTab = 'laporan'"
+                :class="[
+                  'px-4 py-2 rounded-lg text-semibold-12 transition-all cursor-pointer whitespace-nowrap',
+                  activeTab === 'laporan' ? 'bg-primary-base text-white' : 'text-neutral-secondary hover:text-neutral-primary'
+                ]"
+              >
+                Laporan Bulanan & Omzet
+              </button>
             </div>
 
             <!-- Tab Content 1: Tentang Campaign -->
@@ -391,6 +430,57 @@ onMounted(() => {
                 :business-name="campaign.business?.name || 'Kedai Roti Kirana'"
               />
             </div>
+
+            <!-- Tab Content 5: Laporan Bulanan & Omzet Usaha -->
+            <div v-else-if="activeTab === 'laporan'" class="bg-white rounded-2xl p-6 sm:p-8 border border-primary-base/10 space-y-6">
+              <div class="flex flex-wrap items-center justify-between gap-4 border-b border-primary-base/10 pb-4">
+                <div>
+                  <h3 class="text-semibold-18 font-bold text-neutral-primary">Laporan Perkembangan Bulanan & Omzet</h3>
+                  <p class="text-regular-12 text-neutral-secondary mt-0.5">
+                    Transparansi laporan omzet aktual dan kegiatan operasional usaha bulanan.
+                  </p>
+                </div>
+                <BaseButton variant="primary" size="sm" @click="isReportModalOpen = true">
+                  + Input Laporan Bulanan
+                </BaseButton>
+              </div>
+
+              <div v-if="monthlyReportsList.length === 0" class="text-center py-8 text-regular-12 text-neutral-secondary">
+                Belum ada laporan bulanan yang dikirimkan.
+              </div>
+
+              <div v-else class="space-y-4">
+                <div v-for="rep in monthlyReportsList" :key="rep.id" class="p-5 rounded-xl border border-primary-base/10 bg-neutral-tertiary/40 space-y-3">
+                  <div class="flex items-center justify-between border-b border-primary-base/10 pb-2">
+                    <span class="text-semibold-14 font-bold text-neutral-primary">
+                      Periode: Bulan {{ rep.month }}/{{ rep.year }}
+                    </span>
+                    <BaseBadge variant="success" class="!text-semibold-12">
+                      {{ rep.status === 'verified' ? 'Terverifikasi' : 'Terkirim' }}
+                    </BaseBadge>
+                  </div>
+
+                  <div class="grid grid-cols-3 gap-3 text-center text-regular-12">
+                    <div class="p-2.5 bg-white rounded-lg border border-primary-base/10">
+                      <span class="text-neutral-secondary block">Omzet Bulanan</span>
+                      <span class="font-bold font-mono text-primary-base text-semibold-14">{{ formatRupiah(rep.gross_revenue) }}</span>
+                    </div>
+                    <div class="p-2.5 bg-white rounded-lg border border-primary-base/10">
+                      <span class="text-neutral-secondary block">Pengeluaran</span>
+                      <span class="font-bold font-mono text-neutral-primary text-semibold-14">{{ formatRupiah(rep.total_expense) }}</span>
+                    </div>
+                    <div class="p-2.5 bg-white rounded-lg border border-primary-base/10">
+                      <span class="text-neutral-secondary block">Laba Bersih</span>
+                      <span class="font-bold font-mono text-status-success-main text-semibold-14">{{ formatRupiah(rep.net_profit) }}</span>
+                    </div>
+                  </div>
+
+                  <p class="text-regular-14 text-neutral-secondary italic">
+                    "{{ rep.summary }}"
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Right Column (Pledge / Direct Funding Widget) -->
@@ -454,6 +544,15 @@ onMounted(() => {
         :milestone="selectedMilestoneForProof"
         @close="isProofModalOpen = false"
         @success="handleProofSuccess"
+      />
+
+      <!-- Borrower Input Monthly Progress & Revenue Report Modal -->
+      <MonthlyReportModal
+        :is-open="isReportModalOpen"
+        :campaign-id="campaignId"
+        :campaign-title="campaign?.title || 'Campaign Modalin'"
+        @close="isReportModalOpen = false"
+        @submitted="handleReportSubmitted"
       />
     </div>
   </DefaultLayout>
