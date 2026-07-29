@@ -9,6 +9,8 @@ import BaseInput from '@/components/BaseInput.vue'
 import Skeleton from '@/components/ui/skeleton/Skeleton.vue'
 import MilestoneTracker from '@/components/MilestoneTracker.vue'
 import FundUsageProofModal from '@/components/FundUsageProofModal.vue'
+import RiskScoreBadge from '@/components/RiskScoreBadge.vue'
+import RiskScoreCard from '@/components/RiskScoreCard.vue'
 import campaignService from '@/services/campaign'
 
 const route = useRoute()
@@ -303,6 +305,17 @@ onMounted(() => {
               >
                 Tahapan Milestone
               </button>
+
+              <button
+                type="button"
+                @click="activeTab = 'risiko'"
+                :class="[
+                  'px-4 py-2 rounded-lg text-semibold-12 transition-all cursor-pointer whitespace-nowrap',
+                  activeTab === 'risiko' ? 'bg-primary-base text-white' : 'text-neutral-secondary hover:text-neutral-primary'
+                ]"
+              >
+                Analisis Risiko
+              </button>
             </div>
 
             <!-- Tab Content 1: Tentang Campaign -->
@@ -367,6 +380,11 @@ onMounted(() => {
                 :is-borrower="true"
                 @upload-proof="handleOpenProofModal"
               />
+            </div>
+
+            <!-- Tab Content 4: Analisis Kelayakan Risiko -->
+            <div v-else-if="activeTab === 'risiko'">
+              <RiskScoreCard :risk-assessment="campaign.risk_assessment || campaign.riskAssessment" />
             </div>
           </div>
 
