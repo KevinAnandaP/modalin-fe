@@ -11,6 +11,7 @@ import CampaignCatalogView from '@/views/CampaignCatalogView.vue'
 import CampaignDetailView from '@/views/CampaignDetailView.vue'
 import CampaignWizardView from '@/views/CampaignWizardView.vue'
 import AdminDashboardView from '@/views/AdminDashboardView.vue'
+import VerifierDashboardView from '@/views/VerifierDashboardView.vue'
 
 import { getAuthToken } from '@/services/api'
 
@@ -81,6 +82,13 @@ const routes = [
     name: 'admin-dashboard',
     component: AdminDashboardView,
     alias: ['/admin/campaigns/review', '/admin/roles/review', '/admin/business/verification', '/admin/disbursements', '/admin/analytics'],
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/verifier/dashboard',
+    name: 'verifier-dashboard',
+    component: VerifierDashboardView,
+    alias: ['/verifier/tasks'],
     meta: { requiresAuth: true }
   }
 ]
