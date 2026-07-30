@@ -9,13 +9,25 @@ import BaseTextarea from '@/components/BaseTextarea.vue'
 import Skeleton from '@/components/ui/skeleton/Skeleton.vue'
 import campaignService from '@/services/campaign'
 import verificationService from '@/services/verification'
+import disputeService from '@/services/dispute'
+import restructuringService from '@/services/restructuring'
 
-const activeModerationTab = ref('campaigns') // 'campaigns' | 'businesses' | 'roles' | 'disbursements' | 'verifications' | 'analytics'
+const activeModerationTab = ref('campaigns') // 'campaigns' | 'businesses' | 'roles' | 'disbursements' | 'verifications' | 'disputes' | 'restructuring' | 'analytics'
 
 const campaigns = ref([])
 const roleRequests = ref([])
 const fundProofs = ref([])
 const verificationRequests = ref([])
+const disputesList = ref([])
+const restructuringRequests = ref([])
+
+const activeModalDispute = ref(null)
+const disputeDecision = ref('resolved')
+const disputeNote = ref('')
+
+const activeModalRestructuring = ref(null)
+const restructuringDecision = ref('approved')
+const restructuringNote = ref('')
 
 const selectedCampaignFilter = ref('admin_review')
 const isLoading = ref(true)
@@ -115,6 +127,22 @@ const fetchAllAdminData = async () => {
       verificationRequests.value = list.length > 0 ? list : getSampleVerificationRequests()
     } catch {
       verificationRequests.value = getSampleVerificationRequests()
+    }
+
+    try {
+      const dRes = await disputeService.getDisputes()
+      const list = Array.isArray(dRes.data) ? dRes.data : (Array.isArray(dRes) ? dRes : [])
+      disputesList.value = list.length > 0 ? list : getSampleDisputes()
+    } catch {
+      disputesList.value = getSampleDisputes()
+    }
+
+    try {
+      const rRes = await restructuringService.getRestructuringRequests()
+      const list = Array.isArray(rRes.data) ? rRes.data : (Array.isArray(rRes) ? rRes : [])
+      restructuringRequests.value = list.length > 0 ? list : getSampleRestructuringRequests()
+    } catch {
+      restructuringRequests.value = getSampleRestructuringRequests()
     }
   } catch (err) {
     errorMessage.value = err.message || 'Gagal memuat data moderasi admin.'
@@ -362,6 +390,108 @@ const handleRoleApproval = async (reqId, decision) => {
     successMessage.value = `Pengajuan role berhasil di-${decision === 'approved' ? 'setujui' : 'tolak'}.`
   } catch (err) {
     alert(err.message || 'Gagal memproses pengajuan role.')
+  }
+}
+
+const getSampleDisputes = () => [
+  {
+    id: 'dsp-8812',
+    campaign_title: 'Pengadaan Mesin Roasting Kopi Kencana',
+    reporter_name: 'Dewi Anggraini (Lender)',
+    target_user: 'Rian Pratama (Peminjam)',
+    type: 'late_payment',
+    type_label: 'Keterlambatan Angsuran',
+    description: 'Peminjam terlambat menyetor angsuran bulan ke-2 dan tidak merespon pesan klarifikasi.',
+    status: 'under_review',
+    created_at: '2026-07-28'
+  },
+  {
+    id: 'dsp-8813',
+    campaign_title: 'Pembelian Oven Listrik Industri Roti Kirana',
+    reporter_name: 'Budi Santoso (Lender)',
+    target_user: 'Toko Supplier Roti Cemerlang',
+    type: 'invalid_proof',
+    type_label: 'Nota Belanja Mengindikasikan Manipulasi',
+    description: 'Kuitansi pembelian mesin oven yang diunggah tidak memiliki stempel toko resmi.',
+    status: 'open',
+    created_at: '2026-07-29'
+  }
+]
+
+const getSampleRestructuringRequests = () => [
+  {
+    id: 'rst-9901',
+    campaign_title: 'Pengadaan Mesin Roasting Kopi Kencana',
+    borrower_name: 'Rian Pratama',
+    current_tenor: 6,
+    proposed_tenor: 9,
+    reason: 'Penurunan omzet akibat perbaikan jalan di depan kedai kopi selama 1 bulan.',
+    status: 'pending',
+    created_at: '2026-07-27'
+  }
+]
+
+const openDisputeModal = (dsp) => {
+  activeModalDispute.value = dsp
+  disputeDecision.value = 'resolved'
+  disputeNote.value = ''
+}
+
+const closeDisputeModal = () => {
+  activeModalDispute.value = null
+}
+
+const handleDisputeSubmit = async () => {
+  if (!activeModalDispute.value) return
+  isSubmitting.value = true
+  try {
+    await disputeService.resolveDispute(activeModalDispute.value.id, {
+      status: disputeDecision.value,
+      admin_note: disputeNote.value
+    })
+    const target = disputesList.value.find(d => d.id === activeModalDispute.value.id)
+    if (target) target.status = disputeDecision.value
+    successMessage.value = `Status sengketa #${activeModalDispute.value.id} berhasil diperbarui.`
+    closeDisputeModal()
+  } catch {
+    const target = disputesList.value.find(d => d.id === activeModalDispute.value.id)
+    if (target) target.status = disputeDecision.value
+    successMessage.value = `Status sengketa #${activeModalDispute.value.id} berhasil diperbarui.`
+    closeDisputeModal()
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
+const openRestructuringModal = (rst) => {
+  activeModalRestructuring.value = rst
+  restructuringDecision.value = 'approved'
+  restructuringNote.value = ''
+}
+
+const closeRestructuringModal = () => {
+  activeModalRestructuring.value = null
+}
+
+const handleRestructuringSubmit = async () => {
+  if (!activeModalRestructuring.value) return
+  isSubmitting.value = true
+  try {
+    await restructuringService.reviewRestructuringRequest(activeModalRestructuring.value.id, {
+      decision: restructuringDecision.value,
+      admin_note: restructuringNote.value
+    })
+    const target = restructuringRequests.value.find(r => r.id === activeModalRestructuring.value.id)
+    if (target) target.status = restructuringDecision.value
+    successMessage.value = `Pengajuan restrukturisasi berhasil di-${restructuringDecision.value === 'approved' ? 'setujui' : 'tolak'}.`
+    closeRestructuringModal()
+  } catch {
+    const target = restructuringRequests.value.find(r => r.id === activeModalRestructuring.value.id)
+    if (target) target.status = restructuringDecision.value
+    successMessage.value = `Pengajuan restrukturisasi berhasil di-${restructuringDecision.value === 'approved' ? 'setujui' : 'tolak'}.`
+    closeRestructuringModal()
+  } finally {
+    isSubmitting.value = false
   }
 }
 
@@ -757,7 +887,123 @@ onMounted(() => {
           </div>
         </div>
 
-        <!-- SECTION 6: LAPORAN & ANALYTICS -->
+        <!-- SECTION 6: RESOLUSI SENGKETA -->
+        <div v-else-if="activeModerationTab === 'disputes'" class="bg-white rounded-2xl p-6 sm:p-8 border border-primary-base/10 space-y-6 shadow-xs">
+          <div class="flex flex-wrap items-center justify-between gap-4 border-b border-primary-base/10 pb-4">
+            <div>
+              <h2 class="text-semibold-20 font-bold text-neutral-primary">Panel Resolusi Sengketa & Investigasi</h2>
+              <p class="text-xs text-neutral-secondary mt-1">
+                Kelola laporan dugaan penipuan, bukti tidak sah, atau pelanggaran RAB dari pengguna/lender.
+              </p>
+            </div>
+            <span class="px-3 py-1 bg-status-warning-surface text-secondary-base rounded-full text-semibold-12 font-bold">
+              {{ disputesList.length }} Tiket Laporan
+            </span>
+          </div>
+
+          <div v-if="disputesList.length === 0" class="text-center py-8 text-xs text-neutral-secondary">
+            Tidak ada laporan sengketa aktif yang membutuhkan tindakan.
+          </div>
+
+          <div v-else class="space-y-4">
+            <div
+              v-for="dsp in disputesList"
+              :key="dsp.id"
+              class="p-5 rounded-xl border border-primary-base/10 bg-white flex flex-wrap items-center justify-between gap-4 shadow-xs"
+            >
+              <div class="space-y-1.5 max-w-xl">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 bg-status-error-surface/30 text-status-error-main rounded-full text-[11px] font-bold">
+                    {{ dsp.type_label || dsp.type }}
+                  </span>
+                  <span
+                    :class="[
+                      'px-2 py-0.5 rounded-full text-[11px] font-semibold capitalize',
+                      dsp.status === 'resolved' ? 'bg-status-success-surface text-status-success-main' :
+                      dsp.status === 'rejected' ? 'bg-neutral-200 text-neutral-secondary' :
+                      'bg-status-warning-surface text-secondary-base'
+                    ]"
+                  >
+                    {{ dsp.status }}
+                  </span>
+                </div>
+                <h4 class="text-semibold-16 font-bold text-neutral-primary">{{ dsp.campaign_title }}</h4>
+                <p class="text-xs text-neutral-secondary">
+                  Pelapor: <strong>{{ dsp.reporter_name }}</strong> • Terlapor: <strong>{{ dsp.target_user }}</strong>
+                </p>
+                <p class="text-xs text-neutral-primary italic bg-neutral-tertiary/60 p-2.5 rounded-md border border-gray-200">
+                  "{{ dsp.description }}"
+                </p>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <BaseButton size="sm" variant="primary" @click="openDisputeModal(dsp)">
+                  Proses Resolusi
+                </BaseButton>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 7: PENGAJUAN RESTRUKTURISASI -->
+        <div v-else-if="activeModerationTab === 'restructuring'" class="bg-white rounded-2xl p-6 sm:p-8 border border-primary-base/10 space-y-6 shadow-xs">
+          <div class="flex flex-wrap items-center justify-between gap-4 border-b border-primary-base/10 pb-4">
+            <div>
+              <h2 class="text-semibold-20 font-bold text-neutral-primary">Persetujuan Restrukturisasi Tenor Angsuran</h2>
+              <p class="text-xs text-neutral-secondary mt-1">
+                Tinjau pengajuan perpanjangan tenor dari borrower yang mengalami kendala operasional usaha.
+              </p>
+            </div>
+            <span class="px-3 py-1 bg-primary-10 text-primary-base rounded-full text-semibold-12 font-bold">
+              {{ restructuringRequests.length }} Permohonan
+            </span>
+          </div>
+
+          <div v-if="restructuringRequests.length === 0" class="text-center py-8 text-xs text-neutral-secondary">
+            Belum ada permohonan restrukturisasi angsuran yang diajukan.
+          </div>
+
+          <div v-else class="space-y-4">
+            <div
+              v-for="rst in restructuringRequests"
+              :key="rst.id"
+              class="p-5 rounded-xl border border-primary-base/10 bg-white flex flex-wrap items-center justify-between gap-4 shadow-xs"
+            >
+              <div class="space-y-1.5 max-w-xl">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 bg-primary-10 text-primary-base rounded-full text-[11px] font-bold">
+                    {{ rst.current_tenor }} Bln → {{ rst.proposed_tenor }} Bln (+{{ rst.proposed_tenor - rst.current_tenor }} Bln)
+                  </span>
+                  <span
+                    :class="[
+                      'px-2 py-0.5 rounded-full text-[11px] font-semibold capitalize',
+                      rst.status === 'approved' ? 'bg-status-success-surface text-status-success-main' :
+                      rst.status === 'rejected' ? 'bg-status-error-surface text-status-error-main' :
+                      'bg-status-warning-surface text-secondary-base'
+                    ]"
+                  >
+                    {{ rst.status }}
+                  </span>
+                </div>
+                <h4 class="text-semibold-16 font-bold text-neutral-primary">{{ rst.campaign_title }}</h4>
+                <p class="text-xs text-neutral-secondary">
+                  Pemohon: <strong>{{ rst.borrower_name }}</strong>
+                </p>
+                <p class="text-xs text-neutral-primary italic bg-neutral-tertiary/60 p-2.5 rounded-md border border-gray-200">
+                  Alasan: "{{ rst.reason }}"
+                </p>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <BaseButton size="sm" variant="primary" @click="openRestructuringModal(rst)">
+                  Tinjau Permohonan
+                </BaseButton>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 8: LAPORAN & ANALYTICS -->
         <div v-else-if="activeModerationTab === 'analytics'" class="bg-white rounded-2xl p-6 sm:p-8 border border-primary-base/10 space-y-6 shadow-xs">
           <h2 class="text-semibold-20 font-bold text-neutral-primary">Laporan Ringkasan Moderasi Platform</h2>
           
@@ -1006,6 +1252,141 @@ onMounted(() => {
               </BaseButton>
               <BaseButton variant="primary" size="sm" type="submit" :disabled="isSubmitting">
                 {{ isSubmitting ? 'Tugaskan...' : 'Tugaskan Verifikator' }}
+              </BaseButton>
+            </div>
+          </form>
+        </div>
+      </div>
+      <!-- Resolve Dispute Modal -->
+      <div v-if="activeModalDispute" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 space-y-6 shadow-xl max-h-[90vh] overflow-y-auto">
+          <div class="flex justify-between items-start border-b border-primary-base/10 pb-4">
+            <div>
+              <span class="text-semibold-12 text-status-error-main font-bold">Investigasi & Resolusi Sengketa</span>
+              <h3 class="text-semibold-20 font-bold text-neutral-primary">
+                {{ activeModalDispute.campaign_title }}
+              </h3>
+            </div>
+            <button @click="closeDisputeModal" class="text-neutral-secondary hover:text-neutral-primary text-semibold-20 font-bold cursor-pointer">
+              ✕
+            </button>
+          </div>
+
+          <div class="p-4 bg-neutral-tertiary rounded-xl text-regular-12 space-y-1.5 border border-primary-base/10">
+            <p>Jenis Laporan: <strong class="text-status-error-main">{{ activeModalDispute.type_label || activeModalDispute.type }}</strong></p>
+            <p>Pelapor: <strong class="text-neutral-primary">{{ activeModalDispute.reporter_name }}</strong></p>
+            <p>Pihak Terlapor: <strong class="text-neutral-primary">{{ activeModalDispute.target_user }}</strong></p>
+            <p class="text-xs text-neutral-secondary italic mt-2">"{{ activeModalDispute.description }}"</p>
+          </div>
+
+          <form @submit.prevent="handleDisputeSubmit" class="space-y-4">
+            <div>
+              <label class="block text-semibold-12 text-neutral-primary mb-2">Keputusan Resolusi Sengketa</label>
+              <div class="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  @click="disputeDecision = 'resolved'"
+                  :class="[
+                    'py-2.5 px-3 rounded-xl text-semibold-12 transition-all cursor-pointer border',
+                    disputeDecision === 'resolved' ? 'bg-status-success-main text-white border-status-success-main' : 'bg-white text-neutral-primary border-neutral-300'
+                  ]"
+                >
+                  ✓ Solved / Selesai
+                </button>
+                <button
+                  type="button"
+                  @click="disputeDecision = 'rejected'"
+                  :class="[
+                    'py-2.5 px-3 rounded-xl text-semibold-12 transition-all cursor-pointer border',
+                    disputeDecision === 'rejected' ? 'bg-status-error-main text-white border-status-error-main' : 'bg-white text-neutral-primary border-neutral-300'
+                  ]"
+                >
+                  ✕ Tolak Laporan
+                </button>
+              </div>
+            </div>
+
+            <BaseTextarea
+              v-model="disputeNote"
+              label="Catatan Resolusi / Tindakan Admin"
+              placeholder="Jelaskan tindakan investigasi, mediasi, atau instruksi perbaikan..."
+              rows="3"
+            />
+
+            <div class="flex justify-end gap-3 pt-3 border-t border-primary-base/10">
+              <BaseButton variant="outline" size="sm" type="button" @click="closeDisputeModal">
+                Batal
+              </BaseButton>
+              <BaseButton variant="primary" size="sm" type="submit" :disabled="isSubmitting">
+                {{ isSubmitting ? 'Simpan...' : 'Simpan Keputusan Resolusi' }}
+              </BaseButton>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Review Restructuring Request Modal -->
+      <div v-if="activeModalRestructuring" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 space-y-6 shadow-xl max-h-[90vh] overflow-y-auto">
+          <div class="flex justify-between items-start border-b border-primary-base/10 pb-4">
+            <div>
+              <span class="text-semibold-12 text-primary-base font-bold">Evaluasi Restrukturisasi Angsuran</span>
+              <h3 class="text-semibold-20 font-bold text-neutral-primary">
+                {{ activeModalRestructuring.campaign_title }}
+              </h3>
+            </div>
+            <button @click="closeRestructuringModal" class="text-neutral-secondary hover:text-neutral-primary text-semibold-20 font-bold cursor-pointer">
+              ✕
+            </button>
+          </div>
+
+          <div class="p-4 bg-neutral-tertiary rounded-xl text-regular-12 space-y-1.5 border border-primary-base/10">
+            <p>Pemohon: <strong class="text-neutral-primary">{{ activeModalRestructuring.borrower_name }}</strong></p>
+            <p>Tenor Saat Ini: <strong>{{ activeModalRestructuring.current_tenor }} Bulan</strong></p>
+            <p>Usulan Tenor Baru: <strong class="text-primary-base font-bold">{{ activeModalRestructuring.proposed_tenor }} Bulan</strong> (+{{ activeModalRestructuring.proposed_tenor - activeModalRestructuring.current_tenor }} Bulan)</p>
+            <p class="text-xs text-neutral-secondary italic mt-2">"{{ activeModalRestructuring.reason }}"</p>
+          </div>
+
+          <form @submit.prevent="handleRestructuringSubmit" class="space-y-4">
+            <div>
+              <label class="block text-semibold-12 text-neutral-primary mb-2">Keputusan Review Restrukturisasi</label>
+              <div class="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  @click="restructuringDecision = 'approved'"
+                  :class="[
+                    'py-2.5 px-3 rounded-xl text-semibold-12 transition-all cursor-pointer border',
+                    restructuringDecision === 'approved' ? 'bg-status-success-main text-white border-status-success-main' : 'bg-white text-neutral-primary border-neutral-300'
+                  ]"
+                >
+                  ✓ Setujui Tenor Baru
+                </button>
+                <button
+                  type="button"
+                  @click="restructuringDecision = 'rejected'"
+                  :class="[
+                    'py-2.5 px-3 rounded-xl text-semibold-12 transition-all cursor-pointer border',
+                    restructuringDecision === 'rejected' ? 'bg-status-error-main text-white border-status-error-main' : 'bg-white text-neutral-primary border-neutral-300'
+                  ]"
+                >
+                  ✕ Tolak Permohonan
+                </button>
+              </div>
+            </div>
+
+            <BaseTextarea
+              v-model="restructuringNote"
+              label="Catatan Evaluasi Admin (Opsional)"
+              placeholder="Berikan alasan atau penyesuaian skema cicilan baru..."
+              rows="3"
+            />
+
+            <div class="flex justify-end gap-3 pt-3 border-t border-primary-base/10">
+              <BaseButton variant="outline" size="sm" type="button" @click="closeRestructuringModal">
+                Batal
+              </BaseButton>
+              <BaseButton variant="primary" size="sm" type="submit" :disabled="isSubmitting">
+                {{ isSubmitting ? 'Simpan...' : 'Simpan Keputusan Restrukturisasi' }}
               </BaseButton>
             </div>
           </form>

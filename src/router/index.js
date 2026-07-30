@@ -1,23 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
-import LoginView from '@/views/LoginView.vue'
-import RegisterView from '@/views/RegisterView.vue'
-import RequestRoleView from '@/views/RequestRoleView.vue'
-import RoleStatusView from '@/views/RoleStatusView.vue'
-import BusinessWizardView from '@/views/BusinessWizardView.vue'
-import BusinessDetailView from '@/views/BusinessDetailView.vue'
-import FinancialRecordsView from '@/views/FinancialRecordsView.vue'
-import CampaignCatalogView from '@/views/CampaignCatalogView.vue'
-import CampaignDetailView from '@/views/CampaignDetailView.vue'
-import CampaignWizardView from '@/views/CampaignWizardView.vue'
-import AdminDashboardView from '@/views/AdminDashboardView.vue'
-import VerifierDashboardView from '@/views/VerifierDashboardView.vue'
-import VerifierReportView from '@/views/VerifierReportView.vue'
-import LenderPortfolioView from '@/views/LenderPortfolioView.vue'
-import RepaymentScheduleView from '@/views/RepaymentScheduleView.vue'
-
 import { getAuthToken } from '@/services/api'
 
+// Route-level code-splitting (Lazy loading components)
 const routes = [
   {
     path: '/',
@@ -27,91 +12,109 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: LoginView
+    component: () => import('@/views/LoginView.vue')
   },
   {
     path: '/register',
     name: 'register',
-    component: RegisterView
+    component: () => import('@/views/RegisterView.vue')
   },
   {
     path: '/request-role',
     name: 'request-role',
-    component: RequestRoleView,
+    component: () => import('@/views/RequestRoleView.vue'),
     meta: { requiresAuth: true }
   },
   {
     path: '/role-status',
     name: 'role-status',
-    component: RoleStatusView,
+    component: () => import('@/views/RoleStatusView.vue'),
     meta: { requiresAuth: true }
   },
   {
     path: '/business/wizard',
     name: 'business-wizard',
-    component: BusinessWizardView,
+    component: () => import('@/views/BusinessWizardView.vue'),
     meta: { requiresAuth: true }
   },
   {
     path: '/business/detail',
     name: 'business-detail',
-    component: BusinessDetailView,
+    component: () => import('@/views/BusinessDetailView.vue'),
     meta: { requiresAuth: true }
   },
   {
     path: '/financial-records',
     name: 'financial-records',
-    component: FinancialRecordsView,
+    component: () => import('@/views/FinancialRecordsView.vue'),
     meta: { requiresAuth: true }
   },
   {
     path: '/campaigns',
     name: 'campaign-catalog',
-    component: CampaignCatalogView
+    component: () => import('@/views/CampaignCatalogView.vue')
   },
   {
     path: '/campaigns/:id',
     name: 'campaign-detail',
-    component: CampaignDetailView
+    component: () => import('@/views/CampaignDetailView.vue')
   },
   {
     path: '/campaign/wizard',
     name: 'campaign-wizard',
-    component: CampaignWizardView,
+    component: () => import('@/views/CampaignWizardView.vue'),
     meta: { requiresAuth: true }
   },
   {
     path: '/admin',
     name: 'admin-dashboard',
-    component: AdminDashboardView,
-    alias: ['/admin/campaigns/review', '/admin/roles/review', '/admin/business/verification', '/admin/disbursements', '/admin/analytics'],
+    component: () => import('@/views/AdminDashboardView.vue'),
+    alias: ['/admin/campaigns/review', '/admin/roles/review', '/admin/business/verification', '/admin/disbursements', '/admin/analytics', '/admin/disputes', '/admin/restructuring'],
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/admin/audit-logs',
+    name: 'admin-audit-logs',
+    component: () => import('@/views/AuditLogView.vue'),
     meta: { requiresAuth: true }
   },
   {
     path: '/verifier/dashboard',
     name: 'verifier-dashboard',
-    component: VerifierDashboardView,
+    component: () => import('@/views/VerifierDashboardView.vue'),
     alias: ['/verifier/tasks'],
     meta: { requiresAuth: true }
   },
   {
     path: '/verifier/report/:id',
     name: 'verifier-report',
-    component: VerifierReportView,
+    component: () => import('@/views/VerifierReportView.vue'),
     meta: { requiresAuth: true }
   },
   {
     path: '/lender/portfolio',
     name: 'lender-portfolio',
-    component: LenderPortfolioView,
+    component: () => import('@/views/LenderPortfolioView.vue'),
     alias: ['/lender/dashboard'],
     meta: { requiresAuth: true }
   },
   {
     path: '/borrower/repayments',
     name: 'borrower-repayments',
-    component: RepaymentScheduleView,
+    component: () => import('@/views/RepaymentScheduleView.vue'),
     alias: ['/campaigns/:id/repayments'],
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/disputes/create',
+    name: 'dispute-create',
+    component: () => import('@/views/DisputeCreateView.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/borrower/restructuring/create',
+    name: 'restructuring-create',
+    component: () => import('@/views/RestructuringRequestView.vue'),
     meta: { requiresAuth: true }
   }
 ]
@@ -149,6 +152,3 @@ router.afterEach(() => {
 })
 
 export default router
-
-
-

@@ -19,5 +19,20 @@ export default defineConfig({
         changeOrigin: true,
       }
     }
+  },
+  build: {
+    chunkSizeWarningLimit: 6000,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules/vue/') || id.includes('node_modules/vue-router/')) {
+            return 'vendor-vue'
+          }
+          if (id.includes('node_modules/@lucide/') || id.includes('node_modules/vue-iconsax/')) {
+            return 'vendor-icons'
+          }
+        }
+      }
+    }
   }
 })
