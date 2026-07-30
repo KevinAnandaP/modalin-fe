@@ -141,6 +141,19 @@
 @utility text-medium-16 { font-size: 1rem; font-weight: 500; letter-spacing: -0.003rem; }
 @utility text-semibold-16 { font-size: 1rem; font-weight: 600; letter-spacing: -0.003rem; }
 
+@utility text-regular-14 { font-size: 0.875rem; font-weight: 400; letter-spacing: -0.002rem; }
+@utility text-medium-14 { font-size: 0.875rem; font-weight: 500; letter-spacing: -0.002rem; }
+@utility text-semibold-14 { font-size: 0.875rem; font-weight: 600; letter-spacing: -0.002rem; }
+
+@utility text-regular-13 { font-size: 0.8125rem; font-weight: 400; letter-spacing: -0.001rem; }
+@utility text-medium-13 { font-size: 0.8125rem; font-weight: 500; letter-spacing: -0.001rem; }
+@utility text-semibold-13 { font-size: 0.8125rem; font-weight: 600; letter-spacing: -0.001rem; }
+
+@utility text-regular-12 { font-size: 0.75rem; font-weight: 400; letter-spacing: -0.001rem; }
+@utility text-medium-12 { font-size: 0.75rem; font-weight: 500; letter-spacing: -0.001rem; }
+@utility text-semibold-12 { font-size: 0.75rem; font-weight: 600; letter-spacing: -0.001rem; }
+
+
 /* Typography Utilities (Italic) */
 @utility text-italic-regular-48 { font-size: 3rem; font-weight: 400; letter-spacing: -0.003rem; font-style: italic; }
 @utility text-italic-medium-48 { font-size: 3rem; font-weight: 500; letter-spacing: -0.003rem; font-style: italic; }

@@ -83,8 +83,19 @@ export const businessService = {
         'Content-Type': 'multipart/form-data'
       }
     });
+  },
+
+  /**
+   * Submit community vote for a business
+   * Endpoint: POST /api/v1/businesses/:id/community-vote
+   * @param {string} businessId
+   * @param {Object} payload { vote_type, comment }
+   */
+  async voteCommunity(businessId, payload) {
+    return await apiClient.post(`/businesses/${businessId}/community-vote`, payload);
   }
 };
 
 export default businessService;
+
 

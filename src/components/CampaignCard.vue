@@ -4,6 +4,7 @@ import { RouterLink } from 'vue-router'
 import BaseCard from '@/components/BaseCard.vue'
 import BaseBadge from '@/components/BaseBadge.vue'
 import BaseButton from '@/components/BaseButton.vue'
+import RiskScoreBadge from '@/components/RiskScoreBadge.vue'
 
 const props = defineProps({
   campaign: {
@@ -47,17 +48,15 @@ const statusBadgeVariant = computed(() => {
 const statusLabel = computed(() => {
   switch (props.campaign.status) {
     case 'published':
-      return 'Aktif / Penggalangan'
+      return 'Aktif'
     case 'funded':
-      return 'Tendanai Sepenuhnya'
+      return 'Tendanai'
     case 'completed':
       return 'Selesai'
     case 'submitted':
-      return 'Menunggu Review'
+      return 'Review'
     case 'rejected':
       return 'Ditolak'
-    case 'draft':
-      return 'Draft'
     default:
       return props.campaign.status || 'Draft'
   }
@@ -72,14 +71,14 @@ const statusLabel = computed(() => {
       
       <!-- Category Badge Top-Left -->
       <div class="absolute top-3 left-3 z-10">
-        <span class="inline-flex items-center px-3 py-1 text-xs font-semibold text-primary-base bg-white/90 backdrop-blur-md rounded-full shadow-xs">
+        <span class="inline-flex items-center px-3 py-1 text-semibold-12 font-semibold text-primary-base bg-white/90 backdrop-blur-md rounded-full shadow-xs">
           {{ campaign.category || 'UMKM' }}
         </span>
       </div>
 
       <!-- Status Badge Top-Right -->
       <div class="absolute top-3 right-3 z-10">
-        <BaseBadge :variant="statusBadgeVariant" class="!px-2.5 !py-0.5 !text-xs font-medium">
+        <BaseBadge :variant="statusBadgeVariant" class="!px-2.5 !py-0.5 !text-semibold-12 font-medium">
           {{ statusLabel }}
         </BaseBadge>
       </div>
@@ -94,11 +93,19 @@ const statusLabel = computed(() => {
 
     <!-- Body Content -->
     <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
-      <div>
-        <h3 class="text-medium-20 text-neutral-primary font-semibold line-clamp-1 group-hover:text-primary-base transition-colors">
-          {{ campaign.title }}
-        </h3>
-        
+      <div class="space-y-2">
+        <div class="flex items-center justify-between gap-2">
+          <h3 class="text-medium-20 text-neutral-primary font-semibold line-clamp-1 group-hover:text-primary-base transition-colors flex-1">
+            {{ campaign.title }}
+          </h3>
+        </div>
+
+        <RiskScoreBadge 
+          :risk-level="campaign.risk_level || campaign.risk_assessment?.risk_level || 'low'"
+          :score="campaign.risk_assessment?.final_score"
+          size="sm"
+        />
+
         <p class="text-regular-14 text-neutral-secondary line-clamp-2 mt-1.5 leading-relaxed">
           {{ campaign.description || 'Campaign pendanaan UMKM lokal untuk pengembangan usaha dan modal kerja.' }}
         </p>
@@ -106,7 +113,7 @@ const statusLabel = computed(() => {
 
       <!-- Progress Bar Section -->
       <div class="space-y-2">
-        <div class="flex justify-between items-center text-xs font-medium text-neutral-secondary">
+        <div class="flex justify-between items-center text-semibold-12 font-medium text-neutral-secondary">
           <span>Terkumpul</span>
           <span class="text-primary-base font-bold">{{ progressPercentage }}%</span>
         </div>
@@ -129,14 +136,14 @@ const statusLabel = computed(() => {
       </div>
 
       <!-- Financial Metrics Grid -->
-      <div class="grid grid-cols-2 gap-2 pt-3 border-t border-primary-base/10 text-xs">
+      <div class="grid grid-cols-2 gap-2 pt-3 border-t border-primary-base/10 text-regular-12">
         <div class="bg-primary-10/50 p-2.5 rounded-lg text-center">
-          <span class="text-neutral-secondary block text-[11px]">Tenor</span>
-          <span class="font-semibold text-neutral-primary text-sm">{{ campaign.tenor_months || 12 }} Bulan</span>
+          <span class="text-neutral-secondary block text-regular-12">Tenor</span>
+          <span class="font-semibold text-neutral-primary text-semibold-14">{{ campaign.tenor_months || 12 }} Bulan</span>
         </div>
         <div class="bg-primary-10/50 p-2.5 rounded-lg text-center">
-          <span class="text-neutral-secondary block text-[11px]">Bunga / Thn</span>
-          <span class="font-semibold text-primary-base text-sm">{{ campaign.interest_rate || 10 }}%</span>
+          <span class="text-neutral-secondary block text-regular-12">Imbal Hasil / Thn</span>
+          <span class="font-semibold text-primary-base text-semibold-14">{{ campaign.interest_rate || 10 }}%</span>
         </div>
       </div>
 

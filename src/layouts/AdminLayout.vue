@@ -1,7 +1,9 @@
 <script setup>
+import { ref, computed, onMounted } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import logoUrl from '@/assets/Logo.svg'
 import { removeAuthToken } from '@/services/api'
+import { authService } from '@/services/auth'
 import { 
   CheckSquare, 
   Store, 
@@ -21,6 +23,41 @@ const props = defineProps({
 const emit = defineEmits(['update:activeTab', 'selectTab'])
 
 const router = useRouter()
+const currentUser = ref(null)
+const userRoles = ref([])
+const isAdmin = computed(() => userRoles.value.includes('admin'))
+
+const userFullName = computed(() => {
+  return currentUser.value?.FullName || currentUser.value?.full_name || currentUser.value?.name || 'Administrator'
+})
+
+const userEmail = computed(() => {
+  return currentUser.value?.Email || currentUser.value?.email || 'admin@modalin.id'
+})
+
+const userInitials = computed(() => {
+  const name = userFullName.value
+  const parts = name.trim().split(' ')
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[1][0]).toUpperCase()
+  }
+  return name.substring(0, 2).toUpperCase()
+})
+
+const fetchProfile = async () => {
+  try {
+    const res = await authService.getProfile()
+    const payload = res?.data || res || {}
+    currentUser.value = payload.user || payload || null
+    userRoles.value = payload.roles || []
+  } catch (err) {
+    console.warn('AdminLayout fetchProfile error:', err)
+  }
+}
+
+onMounted(() => {
+  fetchProfile()
+})
 
 const adminNavItems = [
   {
@@ -42,6 +79,11 @@ const adminNavItems = [
     id: 'disbursements',
     name: 'Pencairan Dana (Disbursement)',
     icon: Wallet
+  },
+  {
+    id: 'verifications',
+    name: 'Penugasan Verifikator',
+    icon: UserCheck
   },
   {
     id: 'analytics',
@@ -102,11 +144,15 @@ const handleLogout = () => {
       <div class="p-4 border-t border-primary-base/10 space-y-3 bg-neutral-tertiary/30">
         <div class="flex items-center gap-3 px-2">
           <div class="w-9 h-9 rounded-full bg-primary-base text-white flex items-center justify-center font-bold text-xs shrink-0">
-            AD
+            {{ userInitials }}
           </div>
           <div class="overflow-hidden">
-            <span class="text-xs font-bold text-neutral-primary block truncate">Administrator</span>
-            <span class="text-[11px] text-neutral-secondary block truncate">admin@modalin.id</span>
+            <span class="text-xs font-bold text-neutral-primary block truncate">
+              {{ userFullName }}
+            </span>
+            <span class="text-[11px] text-neutral-secondary block truncate">
+              {{ userEmail }}
+            </span>
           </div>
         </div>
 
@@ -122,6 +168,12 @@ const handleLogout = () => {
 
     <!-- Main Content Area -->
     <div class="flex-1 flex flex-col min-w-0 min-h-screen overflow-y-auto">
+      <div v-if="currentUser && !isAdmin" class="bg-status-error-surface border-b border-status-error-main/30 p-4 px-8 flex items-center justify-between text-xs text-status-error-main font-semibold">
+        <span>⚠️ Perhatian: Akun Anda ({{ userFullName }} - {{ userEmail }}) terdaftar sebagai {{ userRoles.join(', ') || 'User' }}, bukan Administrator. Akses data moderasi terbatas.</span>
+        <button @click="router.push('/role-status')" class="underline hover:text-red-900 cursor-pointer">
+          Cek Status Role Anda →
+        </button>
+      </div>
       <slot />
     </div>
   </div>

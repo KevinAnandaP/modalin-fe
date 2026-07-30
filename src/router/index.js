@@ -11,6 +11,10 @@ import CampaignCatalogView from '@/views/CampaignCatalogView.vue'
 import CampaignDetailView from '@/views/CampaignDetailView.vue'
 import CampaignWizardView from '@/views/CampaignWizardView.vue'
 import AdminDashboardView from '@/views/AdminDashboardView.vue'
+import VerifierDashboardView from '@/views/VerifierDashboardView.vue'
+import VerifierReportView from '@/views/VerifierReportView.vue'
+import LenderPortfolioView from '@/views/LenderPortfolioView.vue'
+import RepaymentScheduleView from '@/views/RepaymentScheduleView.vue'
 
 import { getAuthToken } from '@/services/api'
 
@@ -82,6 +86,33 @@ const routes = [
     component: AdminDashboardView,
     alias: ['/admin/campaigns/review', '/admin/roles/review', '/admin/business/verification', '/admin/disbursements', '/admin/analytics'],
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/verifier/dashboard',
+    name: 'verifier-dashboard',
+    component: VerifierDashboardView,
+    alias: ['/verifier/tasks'],
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/verifier/report/:id',
+    name: 'verifier-report',
+    component: VerifierReportView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/lender/portfolio',
+    name: 'lender-portfolio',
+    component: LenderPortfolioView,
+    alias: ['/lender/dashboard'],
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/borrower/repayments',
+    name: 'borrower-repayments',
+    component: RepaymentScheduleView,
+    alias: ['/campaigns/:id/repayments'],
+    meta: { requiresAuth: true }
   }
 ]
 
@@ -100,7 +131,8 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.requiresAuth && !getAuthToken()) {
+  const token = getAuthToken()
+  if (to.meta.requiresAuth && !token) {
     next({ name: 'login' })
   } else {
     next()

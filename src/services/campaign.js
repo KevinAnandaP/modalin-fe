@@ -148,6 +148,98 @@ export const campaignService = {
     return await apiClient.delete(`/campaigns/${campaignId}/milestones/${milestoneId}`);
   },
 
+  /**
+   * Pledge / Danai campaign (Lender)
+   * Endpoint: POST /api/v1/campaigns/:id/fundings
+   * @param {string} campaignId
+   * @param {number} amount
+   */
+  async pledgeCampaign(campaignId, amount) {
+    return await apiClient.post(`/campaigns/${campaignId}/fundings`, { amount: Number(amount) });
+  },
+
+  /**
+   * Get lender's own fundings
+   * Endpoint: GET /api/v1/campaigns/fundings/me
+   */
+  async getLenderFundings() {
+    return await apiClient.get('/campaigns/fundings/me');
+  },
+
+  /**
+   * List disbursements for a campaign
+   * Endpoint: GET /api/v1/campaigns/:id/disbursements
+   * @param {string} campaignId
+   */
+  async getDisbursements(campaignId) {
+    return await apiClient.get(`/campaigns/${campaignId}/disbursements`);
+  },
+
+  /**
+   * Upload fund usage proof (Borrower)
+   * Endpoint: POST /api/v1/campaigns/:id/disbursements/:disbursementId/proofs
+   * @param {string} campaignId
+   * @param {string} disbursementId
+   * @param {FormData|Object} payload
+   */
+  async uploadFundUsageProof(campaignId, disbursementId, payload) {
+    if (payload instanceof FormData) {
+      return await apiClient.upload(`/campaigns/${campaignId}/disbursements/${disbursementId}/proofs`, payload);
+    }
+    return await apiClient.post(`/campaigns/${campaignId}/disbursements/${disbursementId}/proofs`, payload);
+  },
+
+  /**
+   * Create monthly progress report (Borrower)
+   * Endpoint: POST /api/v1/campaigns/:id/monthly-reports
+   */
+  async createMonthlyProgressReport(campaignId, payload) {
+    return await apiClient.post(`/campaigns/${campaignId}/monthly-reports`, payload);
+  },
+
+  /**
+   * List monthly progress reports
+   * Endpoint: GET /api/v1/campaigns/:id/monthly-reports
+   */
+  async getMonthlyProgressReports(campaignId) {
+    return await apiClient.get(`/campaigns/${campaignId}/monthly-reports`);
+  },
+
+  /**
+   * Create revenue report (Borrower)
+   * Endpoint: POST /api/v1/campaigns/:id/revenue-reports
+   */
+  async createRevenueReport(campaignId, payload) {
+    return await apiClient.post(`/campaigns/${campaignId}/revenue-reports`, payload);
+  },
+
+  /**
+   * List revenue reports
+   * Endpoint: GET /api/v1/campaigns/:id/revenue-reports
+   */
+  async getRevenueReports(campaignId) {
+    return await apiClient.get(`/campaigns/${campaignId}/revenue-reports`);
+  },
+
+  /**
+   * List repayment schedules for a campaign
+   * Endpoint: GET /api/v1/campaigns/:id/repayment-schedules
+   */
+  async getRepaymentSchedules(campaignId) {
+    return await apiClient.get(`/campaigns/${campaignId}/repayment-schedules`);
+  },
+
+  /**
+   * Submit repayment cicilan (Borrower)
+   * Endpoint: POST /api/v1/campaigns/:id/repayments
+   */
+  async createRepayment(campaignId, payload) {
+    if (payload instanceof FormData) {
+      return await apiClient.upload(`/campaigns/${campaignId}/repayments`, payload);
+    }
+    return await apiClient.post(`/campaigns/${campaignId}/repayments`, payload);
+  },
+
   // --- Admin Review & Moderation ---
 
   /**
@@ -198,7 +290,28 @@ export const campaignService = {
    */
   async reviewFundUsageProof(proofID, payload) {
     return await apiClient.post(`/admin/fund-usage-proofs/${proofID}/review`, payload);
+  },
+
+  /**
+   * Get lender return distributions
+   * Endpoint: GET /api/v1/lender/return-distributions
+   */
+  async getLenderReturnDistributions() {
+    return await apiClient.get('/lender/return-distributions');
+  },
+
+  /**
+   * Mark lender return distribution as distributed (Admin)
+   * Endpoint: POST /api/v1/admin/lender-return-distributions/:id/distribute
+   * @param {string} distributionId
+   * @param {Object} payload
+   */
+  async markLenderReturnDistributed(distributionId, payload = {}) {
+    return await apiClient.post(`/admin/lender-return-distributions/${distributionId}/distribute`, payload);
   }
 };
 
 export default campaignService;
+
+
+
