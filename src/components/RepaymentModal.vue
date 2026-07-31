@@ -95,6 +95,39 @@ const handleSubmit = async () => {
     isSubmitting.value = false
   }
 }
+
+const handleXenditPayment = async () => {
+  isSubmitting.value = true
+  errorMessage.value = ''
+  successMessage.value = ''
+
+  try {
+    const res = await campaignService.createRepayment(props.campaignId, {
+      schedule_id: props.schedule?.id,
+      paid_amount: props.schedule?.total_amount || props.schedule?.total_due || 0
+    })
+
+    const invoiceUrl = res?.xendit_invoice_url || res?.data?.xendit_invoice_url
+    if (invoiceUrl) {
+      window.open(invoiceUrl, '_blank')
+      successMessage.value = 'Invoice Xendit berhasil dibuat! Membuka halaman pembayaran Xendit...'
+    } else {
+      successMessage.value = 'Pembayaran berhasil diproses.'
+    }
+
+    setTimeout(() => {
+      emit('success', {
+        scheduleId: props.schedule?.id,
+        installmentNumber: props.schedule?.installment_number
+      })
+      handleClose()
+    }, 1500)
+  } catch (err) {
+    errorMessage.value = err.message || 'Gagal membuat Invoice Xendit.'
+  } finally {
+    isSubmitting.value = false
+  }
+}
 </script>
 
 <template>
@@ -127,6 +160,30 @@ const handleSubmit = async () => {
       </div>
       <div v-if="errorMessage" class="p-3.5 bg-status-error-surface text-status-error-main rounded-xl text-regular-12 font-medium">
         {{ errorMessage }}
+      </div>
+
+      <!-- Instant Payment via Xendit Button -->
+      <div class="p-4 bg-primary-10 rounded-xl border border-primary-base/20 text-center space-y-3">
+        <div class="text-left space-y-1">
+          <p class="text-semibold-14 font-bold text-neutral-primary">🚀 Bayar Otomatis via Xendit Payment Gateway</p>
+          <p class="text-regular-12 text-neutral-secondary">Bayar instan via QRIS, Virtual Account (BCA, Mandiri, BRI, BNI), E-Wallet (GoPay, OVO, ShopeePay), atau Kartu Kredit. Otomatis terverifikasi.</p>
+        </div>
+        <BaseButton
+          variant="primary"
+          size="md"
+          class="w-full justify-center"
+          :disabled="isSubmitting"
+          @click="handleXenditPayment"
+        >
+          💳 {{ isSubmitting ? 'Memproses...' : 'Bayar via Xendit (Instan & Otomatis)' }}
+        </BaseButton>
+      </div>
+
+      <!-- Divider -->
+      <div class="relative flex py-1 items-center">
+        <div class="flex-grow border-t border-neutral-200"></div>
+        <span class="flex-shrink mx-4 text-regular-12 text-neutral-secondary">Atau Upload Bukti Manual</span>
+        <div class="flex-grow border-t border-neutral-200"></div>
       </div>
 
       <!-- Summary Breakdown Card -->
