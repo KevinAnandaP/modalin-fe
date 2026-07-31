@@ -1,11 +1,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { RouterLink, useRouter } from 'vue-router'
+import { RouterLink, useRouter, useRoute } from 'vue-router'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import BaseInput from '@/components/BaseInput.vue'
 import { authService } from '@/services/auth'
 
 const router = useRouter()
+const route = useRoute()
 
 const form = ref({
   email: '',
@@ -30,12 +31,27 @@ const isCompletingGoogle = ref(false)
 // Helper: Redirect user based on approved roles
 const redirectUserBasedOnRole = async () => {
   try {
+    if (route.query.redirect) {
+      router.push(route.query.redirect)
+      return
+    }
+
     const profileRes = await authService.getProfile()
     const rawData = profileRes?.data || profileRes
     const roles = rawData?.roles || rawData?.user?.roles || []
 
     if (Array.isArray(roles) && roles.length > 0) {
-      router.push('/')
+      if (roles.includes('admin')) {
+        router.push('/admin')
+      } else if (roles.includes('verifier')) {
+        router.push('/verifier/dashboard')
+      } else if (roles.includes('borrower')) {
+        router.push('/business/detail')
+      } else if (roles.includes('lender')) {
+        router.push('/lender/portfolio')
+      } else {
+        router.push('/campaigns')
+      }
     } else {
       router.push('/request-role')
     }
@@ -162,12 +178,12 @@ const handleCompleteGoogleAuth = async () => {
 
 <template>
   <AuthLayout>
-    <div class="bg-white p-8 sm:p-10 rounded-xl border border-primary-base/40 shadow-xs w-full max-w-md mx-auto font-inter">
+    <div class="bg-white p-5 sm:p-8 lg:p-10 rounded-xl border border-primary-base/40 shadow-xs w-full max-w-md mx-auto font-inter">
       <div class="mb-6 text-center">
-        <h2 class="text-3xl sm:text-[36px] font-semibold text-neutral-primary font-newsreader leading-tight">
+        <h2 class="text-2xl sm:text-[36px] font-semibold text-neutral-primary font-newsreader leading-tight">
           Masuk ke Modalin
         </h2>
-        <p class="text-sm sm:text-base text-[#52605D] mt-2">
+        <p class="text-xs sm:text-base text-[#52605D] mt-2">
           Selamat datang kembali. Silakan masuk untuk melanjutkan.
         </p>
       </div>
