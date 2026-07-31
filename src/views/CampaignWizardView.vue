@@ -182,48 +182,48 @@ const handleFinalSubmit = async () => {
       <!-- Main Container -->
       <main class="max-w-3xl mx-auto px-4 sm:px-8 lg:px-16 pt-8 space-y-8">
         <!-- Title & 4-Step Progress Bar Card -->
-        <div class="bg-white rounded-2xl p-6 sm:p-8 border border-primary-base/10 shadow-xs space-y-6">
-          <h1 class="text-semibold-32 font-newsreader font-bold text-neutral-primary border-b border-primary-base/10 pb-4">
+        <div class="bg-white rounded-2xl p-4 sm:p-8 border border-primary-base/10 shadow-xs space-y-6">
+          <h1 class="text-xl sm:text-3xl font-newsreader font-bold text-neutral-primary border-b border-primary-base/10 pb-3 sm:pb-4">
             Pengajuan Pendanaan Usaha
           </h1>
 
-          <div class="flex items-center justify-between relative px-4">
-            <div class="absolute left-8 right-8 top-1/2 -translate-y-1/2 h-1 bg-gray-200 z-0"></div>
+          <div class="flex items-center justify-between relative px-2 sm:px-4">
+            <div class="absolute left-6 right-6 sm:left-8 sm:right-8 top-1/2 -translate-y-1/2 h-1 bg-gray-200 z-0"></div>
             <div
-              class="absolute left-8 top-1/2 -translate-y-1/2 h-1 bg-primary-base transition-all duration-300 z-0"
-              :style="{ width: `${((currentStep - 1) / 3) * 80}%` }"
+              class="absolute left-6 sm:left-8 top-1/2 -translate-y-1/2 h-1 bg-primary-base transition-all duration-300 z-0"
+              :style="{ width: `${((currentStep - 1) / 3) * 82}%` }"
             ></div>
 
             <!-- Step 1 Indicator -->
-            <div class="relative z-10 flex flex-col items-center gap-1.5 cursor-pointer" @click="currentStep = 1">
-              <div :class="['w-9 h-9 rounded-full flex items-center justify-center font-semibold text-xs transition-colors', currentStep >= 1 ? 'bg-primary-base text-white' : 'bg-gray-200 text-[#52605D]']">
+            <div class="relative z-10 flex flex-col items-center gap-1 cursor-pointer" @click="currentStep = 1">
+              <div :class="['w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center font-semibold text-[11px] sm:text-xs transition-colors shrink-0', currentStep >= 1 ? 'bg-primary-base text-white' : 'bg-gray-200 text-[#52605D]']">
                 1
               </div>
-              <span class="text-xs font-medium text-neutral-primary">Info Utama</span>
+              <span class="text-[10px] sm:text-xs font-medium text-neutral-primary text-center max-w-[64px] sm:max-w-none truncate sm:whitespace-normal">Info Utama</span>
             </div>
 
             <!-- Step 2 Indicator -->
-            <div class="relative z-10 flex flex-col items-center gap-1.5 cursor-pointer" @click="currentStep >= 2 ? currentStep = 2 : null">
-              <div :class="['w-9 h-9 rounded-full flex items-center justify-center font-semibold text-xs transition-colors', currentStep >= 2 ? 'bg-primary-base text-white' : 'bg-gray-200 text-[#52605D]']">
+            <div class="relative z-10 flex flex-col items-center gap-1 cursor-pointer" @click="currentStep >= 2 ? currentStep = 2 : null">
+              <div :class="['w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center font-semibold text-[11px] sm:text-xs transition-colors shrink-0', currentStep >= 2 ? 'bg-primary-base text-white' : 'bg-gray-200 text-[#52605D]']">
                 2
               </div>
-              <span class="text-xs font-medium text-neutral-primary">RAB (Budget)</span>
+              <span class="text-[10px] sm:text-xs font-medium text-neutral-primary text-center max-w-[64px] sm:max-w-none truncate sm:whitespace-normal">RAB (Budget)</span>
             </div>
 
             <!-- Step 3 Indicator -->
-            <div class="relative z-10 flex flex-col items-center gap-1.5 cursor-pointer" @click="currentStep >= 3 ? currentStep = 3 : null">
-              <div :class="['w-9 h-9 rounded-full flex items-center justify-center font-semibold text-xs transition-colors', currentStep >= 3 ? 'bg-primary-base text-white' : 'bg-gray-200 text-[#52605D]']">
+            <div class="relative z-10 flex flex-col items-center gap-1 cursor-pointer" @click="currentStep >= 3 ? currentStep = 3 : null">
+              <div :class="['w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center font-semibold text-[11px] sm:text-xs transition-colors shrink-0', currentStep >= 3 ? 'bg-primary-base text-white' : 'bg-gray-200 text-[#52605D]']">
                 3
               </div>
-              <span class="text-xs font-medium text-neutral-primary">Milestone</span>
+              <span class="text-[10px] sm:text-xs font-medium text-neutral-primary text-center max-w-[64px] sm:max-w-none truncate sm:whitespace-normal">Milestone</span>
             </div>
 
             <!-- Step 4 Indicator -->
-            <div class="relative z-10 flex flex-col items-center gap-1.5 cursor-pointer" @click="currentStep >= 4 ? currentStep = 4 : null">
-              <div :class="['w-9 h-9 rounded-full flex items-center justify-center font-semibold text-xs transition-colors', currentStep >= 4 ? 'bg-primary-base text-white' : 'bg-gray-200 text-[#52605D]']">
+            <div class="relative z-10 flex flex-col items-center gap-1 cursor-pointer" @click="currentStep >= 4 ? currentStep = 4 : null">
+              <div :class="['w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center font-semibold text-[11px] sm:text-xs transition-colors shrink-0', currentStep >= 4 ? 'bg-primary-base text-white' : 'bg-gray-200 text-[#52605D]']">
                 4
               </div>
-              <span class="text-xs font-medium text-neutral-primary">Review</span>
+              <span class="text-[10px] sm:text-xs font-medium text-neutral-primary text-center max-w-[64px] sm:max-w-none truncate sm:whitespace-normal">Review</span>
             </div>
           </div>
         </div>
@@ -237,8 +237,8 @@ const handleFinalSubmit = async () => {
         </div>
 
         <!-- STEP 1: Info & Skema Pendanaan -->
-        <div v-if="currentStep === 1" class="bg-white rounded-2xl p-6 sm:p-8 border border-primary-base/10 space-y-6 shadow-xs">
-          <h2 class="text-semibold-20 font-bold text-neutral-primary">Step 1: Informasi Utama Campaign</h2>
+        <div v-if="currentStep === 1" class="bg-white rounded-2xl p-5 sm:p-8 border border-primary-base/10 space-y-6 shadow-xs">
+          <h2 class="text-lg sm:text-xl font-bold text-neutral-primary">Step 1: Informasi Utama Campaign</h2>
 
           <div class="space-y-5">
             <BaseInput
@@ -308,14 +308,14 @@ const handleFinalSubmit = async () => {
         </div>
 
         <!-- STEP 2: Rencana Anggaran Biaya (RAB) -->
-        <div v-else-if="currentStep === 2" class="bg-white rounded-2xl p-6 sm:p-8 border border-primary-base/10 space-y-6 shadow-xs">
-          <div class="flex justify-between items-center">
-            <h2 class="text-semibold-20 font-bold text-neutral-primary">Step 2: Rencana Anggaran Biaya (RAB)</h2>
+        <div v-else-if="currentStep === 2" class="bg-white rounded-2xl p-5 sm:p-8 border border-primary-base/10 space-y-6 shadow-xs">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1 sm:gap-2">
+            <h2 class="text-lg sm:text-xl font-bold text-neutral-primary">Step 2: Rencana Anggaran Biaya (RAB)</h2>
             <span class="text-xs font-semibold text-primary-base">Total RAB: {{ formatRupiah(totalRabAmount) }}</span>
           </div>
 
           <!-- Add Item Form -->
-          <div class="p-5 bg-primary-10/40 rounded-xl border border-primary-base/15 space-y-3">
+          <div class="p-4 sm:p-5 bg-primary-10/40 rounded-xl border border-primary-base/15 space-y-3">
             <span class="text-medium-14 font-bold text-primary-base block">Tambah Item Anggaran</span>
             <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
               <div class="sm:col-span-5">
@@ -351,7 +351,7 @@ const handleFinalSubmit = async () => {
 
           <!-- Table Items -->
           <div v-if="budgetItems.length > 0" class="overflow-x-auto border border-primary-base/10 rounded-xl">
-            <table class="w-full text-left text-xs">
+            <table class="w-full text-left text-xs min-w-[500px]">
               <thead class="bg-neutral-tertiary text-neutral-secondary border-b border-primary-base/10">
                 <tr>
                   <th class="p-3">Nama Item</th>
@@ -384,8 +384,8 @@ const handleFinalSubmit = async () => {
         </div>
 
         <!-- STEP 3: Tahapan Milestone -->
-        <div v-else-if="currentStep === 3" class="bg-white rounded-2xl p-6 sm:p-8 border border-primary-base/10 space-y-6 shadow-xs">
-          <h2 class="text-semibold-20 font-bold text-neutral-primary">Step 3: Tahapan Milestone Pencairan</h2>
+        <div v-else-if="currentStep === 3" class="bg-white rounded-2xl p-5 sm:p-8 border border-primary-base/10 space-y-6 shadow-xs">
+          <h2 class="text-lg sm:text-xl font-bold text-neutral-primary">Step 3: Tahapan Milestone Pencairan</h2>
           <p class="text-xs text-neutral-secondary">
             Susun urutan milestone pencairan dana sesuai alokasi RAB yang sudah Anda buat.
           </p>
@@ -416,13 +416,13 @@ const handleFinalSubmit = async () => {
         </div>
 
         <!-- STEP 4: Review & Submit -->
-        <div v-else-if="currentStep === 4" class="bg-white rounded-2xl p-6 sm:p-8 border border-primary-base/10 space-y-6 shadow-xs">
-          <h2 class="text-semibold-20 font-bold text-neutral-primary">Step 4: Konfirmasi & Kirim Campaign</h2>
+        <div v-else-if="currentStep === 4" class="bg-white rounded-2xl p-5 sm:p-8 border border-primary-base/10 space-y-6 shadow-xs">
+          <h2 class="text-lg sm:text-xl font-bold text-neutral-primary">Step 4: Konfirmasi & Kirim Campaign</h2>
 
-          <div class="p-5 bg-neutral-tertiary rounded-xl space-y-4 text-xs">
-            <div class="flex justify-between border-b border-primary-base/10 pb-2">
+          <div class="p-4 sm:p-5 bg-neutral-tertiary rounded-xl space-y-3 sm:space-y-4 text-xs">
+            <div class="flex flex-col sm:flex-row justify-between border-b border-primary-base/10 pb-2 gap-1 sm:gap-0">
               <span class="text-neutral-secondary">Judul Campaign:</span>
-              <span class="font-bold text-neutral-primary">{{ campaignForm.title || '-' }}</span>
+              <span class="font-bold text-neutral-primary text-right sm:text-left">{{ campaignForm.title || '-' }}</span>
             </div>
             <div class="flex justify-between border-b border-primary-base/10 pb-2">
               <span class="text-neutral-secondary">Kategori:</span>
@@ -448,9 +448,9 @@ const handleFinalSubmit = async () => {
         </div>
 
         <!-- Wizard Navigation Footer Buttons -->
-        <div class="flex justify-between items-center pt-4">
-          <RouterLink v-if="currentStep === 1" to="/campaigns" class="no-underline">
-            <BaseButton variant="outline" size="md">
+        <div class="flex flex-col-reverse sm:flex-row gap-3 sm:gap-0 justify-between items-stretch sm:items-center pt-4">
+          <RouterLink v-if="currentStep === 1" to="/campaigns" class="no-underline w-full sm:w-auto">
+            <BaseButton variant="outline" size="md" class="w-full sm:w-auto justify-center">
               Batal
             </BaseButton>
           </RouterLink>
@@ -459,6 +459,7 @@ const handleFinalSubmit = async () => {
             variant="outline"
             size="md"
             @click="prevStep"
+            class="w-full sm:w-auto justify-center"
           >
             ← Kembali
           </BaseButton>
@@ -468,6 +469,7 @@ const handleFinalSubmit = async () => {
             variant="primary"
             size="md"
             @click="nextStep"
+            class="w-full sm:w-auto justify-center"
           >
             Lanjut →
           </BaseButton>
@@ -478,6 +480,7 @@ const handleFinalSubmit = async () => {
             size="md"
             :disabled="isLoading"
             @click="handleFinalSubmit"
+            class="w-full sm:w-auto justify-center"
           >
             {{ isLoading ? 'Mengirim...' : 'Kirim untuk Review Admin' }}
           </BaseButton>

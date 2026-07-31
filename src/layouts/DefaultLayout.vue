@@ -3,14 +3,15 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import logoUrl from '@/assets/Logo.svg'
 import logoWhiteUrl from '@/assets/Logo-White.svg'
-import { getAuthToken, removeAuthToken } from '@/services/api'
+import { getAuthToken, removeAuthToken, authToken } from '@/services/api'
 
 const route = useRoute()
 const router = useRouter()
 
 const isLandingPage = computed(() => route.path === '/')
-const isAuthenticated = computed(() => !!getAuthToken())
+const isAuthenticated = computed(() => !!authToken.value)
 const activeSection = ref('')
+const isMobileMenuOpen = ref(false)
 
 const landingSections = [
   { id: 'cara-kerja', label: 'Cara Kerja' },
@@ -94,13 +95,13 @@ onUnmounted(() => {
 
 <template>
   <div class="flex flex-col min-h-screen bg-neutral-tertiary font-inter text-neutral-primary">
-    <header class="pt-6 pb-2 bg-transparent sticky top-0 z-50">
-      <div class="w-full px-4 sm:px-8 lg:px-16">
-        <div class="bg-primary-10 rounded-full px-6 sm:px-10 py-3.5 flex items-center justify-between shadow-xs border border-primary-base/10">
+    <header class="pt-4 sm:pt-6 pb-2 bg-transparent sticky top-0 z-50">
+      <div class="w-full px-3 sm:px-8 lg:px-16">
+        <div class="bg-primary-10 rounded-full px-4 sm:px-10 py-2.5 sm:py-3.5 flex items-center justify-between shadow-xs border border-primary-base/10">
           <!-- Logo & Brand Name -->
-          <RouterLink to="/" class="flex items-center gap-3 no-underline">
-            <img :src="logoUrl" alt="Modalin Logo" class="h-9 w-9" />
-            <span class="text-semibold-32 font-newsreader text-primary-base font-bold tracking-tight">Modalin</span>
+          <RouterLink to="/" class="flex items-center gap-2 sm:gap-3 no-underline">
+            <img :src="logoUrl" alt="Modalin Logo" class="h-7 w-7 sm:h-9 sm:w-9" />
+            <span class="text-xl sm:text-semibold-32 font-newsreader text-primary-base font-bold tracking-tight">Modalin</span>
           </RouterLink>
 
           <!-- Navigation Links -->
@@ -166,12 +167,12 @@ onUnmounted(() => {
             </template>
           </nav>
 
-          <!-- Auth Actions -->
-          <div class="flex items-center gap-4">
+          <!-- Auth Actions & Mobile Hamburger Button -->
+          <div class="flex items-center gap-3 sm:gap-4">
             <template v-if="isAuthenticated">
               <button
                 @click="handleLogout"
-                class="text-medium-16 text-status-error-main underline underline-offset-4 hover:opacity-80 transition-opacity cursor-pointer bg-transparent border-0"
+                class="text-xs sm:text-medium-16 text-status-error-main underline underline-offset-4 hover:opacity-80 transition-opacity cursor-pointer bg-transparent border-0"
               >
                 Keluar
               </button>
@@ -179,12 +180,84 @@ onUnmounted(() => {
             <template v-else>
               <RouterLink
                 to="/login"
-                class="text-medium-16 text-primary-base underline underline-offset-4 hover:opacity-80 transition-opacity"
+                class="text-xs sm:text-medium-16 text-primary-base underline underline-offset-4 hover:opacity-80 transition-opacity"
               >
                 Masuk
               </RouterLink>
             </template>
+
+            <button
+              type="button"
+              @click="isMobileMenuOpen = !isMobileMenuOpen"
+              class="lg:hidden p-1.5 text-primary-base hover:bg-primary-base/10 rounded-lg transition-colors cursor-pointer"
+              aria-label="Toggle Mobile Menu"
+            >
+              <svg v-if="!isMobileMenuOpen" class="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+              <svg v-else class="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
+        </div>
+
+        <!-- Mobile Navigation Menu Overlay -->
+        <div v-if="isMobileMenuOpen" class="lg:hidden mt-2 bg-white rounded-2xl p-4 shadow-lg border border-primary-base/15 flex flex-col gap-2.5 font-inter text-xs sm:text-sm">
+          <template v-if="isLandingPage">
+            <a
+              v-for="sec in landingSections"
+              :key="sec.id"
+              :href="`#${sec.id}`"
+              @click="scrollToSection(sec.id, $event); isMobileMenuOpen = false"
+              class="py-2 px-3 rounded-lg text-neutral-primary hover:bg-primary-10 hover:text-primary-base no-underline"
+              :class="{ 'font-semibold text-primary-base bg-primary-10': activeSection === sec.id }"
+            >
+              {{ sec.label }}
+            </a>
+            <RouterLink
+              to="/campaigns"
+              @click="isMobileMenuOpen = false"
+              class="py-2.5 px-3 rounded-lg bg-primary-base text-white font-semibold no-underline flex items-center justify-between"
+            >
+              <span>Katalog Campaign</span>
+              <span>→</span>
+            </RouterLink>
+          </template>
+          <template v-else>
+            <RouterLink
+              to="/"
+              @click="isMobileMenuOpen = false"
+              class="py-2 px-3 rounded-lg text-neutral-primary hover:bg-primary-10 hover:text-primary-base no-underline"
+              :class="{ 'font-semibold text-primary-base bg-primary-10': route.path === '/' }"
+            >
+              Beranda
+            </RouterLink>
+            <RouterLink
+              to="/campaigns"
+              @click="isMobileMenuOpen = false"
+              class="py-2 px-3 rounded-lg text-neutral-primary hover:bg-primary-10 hover:text-primary-base no-underline"
+              :class="{ 'font-semibold text-primary-base bg-primary-10': route.path.startsWith('/campaigns') }"
+            >
+              Katalog Campaign
+            </RouterLink>
+            <RouterLink
+              to="/campaign/wizard"
+              @click="isMobileMenuOpen = false"
+              class="py-2 px-3 rounded-lg text-neutral-primary hover:bg-primary-10 hover:text-primary-base no-underline"
+              :class="{ 'font-semibold text-primary-base bg-primary-10': route.path === '/campaign/wizard' }"
+            >
+              Ajukan Pendanaan
+            </RouterLink>
+            <RouterLink
+              to="/business/detail"
+              @click="handleDashboardClick(); isMobileMenuOpen = false"
+              class="py-2 px-3 rounded-lg text-neutral-primary hover:bg-primary-10 hover:text-primary-base no-underline"
+              :class="{ 'font-semibold text-primary-base bg-primary-10': route.path.startsWith('/business') || route.path.startsWith('/role') || route.path.startsWith('/financial') }"
+            >
+              Dashboard Saya
+            </RouterLink>
+          </template>
         </div>
       </div>
     </header>

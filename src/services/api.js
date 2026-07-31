@@ -1,10 +1,18 @@
 import axios from 'axios';
+import { ref } from 'vue';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const TOKEN_KEY = 'token';
 
-export const getAuthToken = () => {
+const getInitialToken = () => {
+  if (typeof window === 'undefined') return null;
   return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY);
+};
+
+export const authToken = ref(getInitialToken());
+
+export const getAuthToken = () => {
+  return authToken.value;
 };
 
 export const setAuthToken = (token, remember = true) => {
@@ -13,6 +21,7 @@ export const setAuthToken = (token, remember = true) => {
   } else {
     sessionStorage.setItem(TOKEN_KEY, token);
   }
+  authToken.value = token;
   if (token) {
     api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   } else {
@@ -23,6 +32,7 @@ export const setAuthToken = (token, remember = true) => {
 export const removeAuthToken = () => {
   localStorage.removeItem(TOKEN_KEY);
   sessionStorage.removeItem(TOKEN_KEY);
+  authToken.value = null;
   delete api.defaults.headers.common['Authorization'];
 };
 

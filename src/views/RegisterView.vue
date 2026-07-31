@@ -37,10 +37,20 @@ const redirectUserBasedOnRole = async () => {
   try {
     const profileRes = await authService.getProfile()
     const profileData = profileRes?.data || profileRes
-    const roles = profileData?.roles || []
+    const roles = profileData?.roles || profileData?.user?.roles || []
 
     if (Array.isArray(roles) && roles.length > 0) {
-      router.push('/')
+      if (roles.includes('admin')) {
+        router.push('/admin')
+      } else if (roles.includes('verifier')) {
+        router.push('/verifier/dashboard')
+      } else if (roles.includes('borrower')) {
+        router.push('/business/detail')
+      } else if (roles.includes('lender')) {
+        router.push('/lender/portfolio')
+      } else {
+        router.push('/campaigns')
+      }
     } else {
       router.push('/request-role')
     }
@@ -188,9 +198,9 @@ const handleCompleteGoogleAuth = async () => {
 
 <template>
   <AuthLayout>
-    <div class="bg-white p-8 sm:p-10 rounded-xl border border-[#0F6E56]/40 shadow-xs w-full max-w-lg mx-auto font-inter my-8">
+    <div class="bg-white p-5 sm:p-8 lg:p-10 rounded-xl border border-[#0F6E56]/40 shadow-xs w-full max-w-lg mx-auto font-inter my-4 sm:my-8">
       <div class="mb-6 text-center">
-        <h2 class="text-3xl sm:text-[36px] font-semibold text-[#1F2937] font-newsreader leading-tight">
+        <h2 class="text-2xl sm:text-[36px] font-semibold text-[#1F2937] font-newsreader leading-tight">
           Buat Akun Modalin
         </h2>
         <p class="text-sm sm:text-base text-[#52605D] mt-2">

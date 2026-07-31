@@ -209,7 +209,7 @@ const getSlotStyle = (index) => {
             <h2 class="font-newsreader text-regular-40 text-neutral-primary font-normal">Cara Kerja Modalin</h2>
             <p class="text-regular-16 text-neutral-secondary mt-2 mb-8">Proses yang sederhana, transparan, dan terukur.</p>
             
-            <div class="relative bg-primary-10/60 p-1.5 rounded-lg inline-flex items-center justify-center border border-primary-base/10 min-w-100 sm:min-w-110">
+            <div class="relative bg-primary-10/60 p-1.5 rounded-lg inline-flex items-center justify-center border border-primary-base/10 w-full max-w-md">
               <div
                 class="absolute top-1.5 bottom-1.5 bg-white rounded-md shadow-xs transition-all duration-300 ease-in-out"
                 :style="{
@@ -222,7 +222,7 @@ const getSlotStyle = (index) => {
                 type="button"
                 @click="activeTab = 'peminjam'"
                 :class="[
-                  'relative z-10 flex-1 px-6 py-2 text-medium-16 font-semibold transition-colors duration-300 cursor-pointer text-center select-none whitespace-nowrap',
+                  'relative z-10 flex-1 px-3 sm:px-6 py-2 text-sm sm:text-base font-semibold transition-colors duration-300 cursor-pointer text-center select-none whitespace-nowrap',
                   activeTab === 'peminjam' ? 'text-primary-base' : 'text-neutral-secondary hover:text-neutral-primary'
                 ]"
               >
@@ -232,7 +232,7 @@ const getSlotStyle = (index) => {
                 type="button"
                 @click="activeTab = 'pemberi'"
                 :class="[
-                  'relative z-10 flex-1 px-6 py-2 text-medium-16 font-semibold transition-colors duration-300 cursor-pointer text-center select-none whitespace-nowrap',
+                  'relative z-10 flex-1 px-3 sm:px-6 py-2 text-sm sm:text-base font-semibold transition-colors duration-300 cursor-pointer text-center select-none whitespace-nowrap',
                   activeTab === 'pemberi' ? 'text-primary-base' : 'text-neutral-secondary hover:text-neutral-primary'
                 ]"
               >

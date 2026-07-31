@@ -132,48 +132,48 @@ const handleSubmit = async () => {
 
 <template>
   <AuthLayout>
-    <div class="bg-white p-8 sm:p-10 rounded-xl border border-primary-base/40 shadow-xs w-full max-w-3xl mx-auto font-inter my-8">
+    <div class="bg-white p-4 sm:p-8 lg:p-10 rounded-xl border border-primary-base/40 shadow-xs w-full max-w-3xl mx-auto font-inter my-4 sm:my-8">
       
-      <!-- Title Header (Removed word Wizard) -->
-      <div class="mb-8 text-center border-b border-gray-100 pb-6">
-        <h2 class="text-3xl sm:text-[36px] font-semibold text-neutral-primary font-newsreader leading-tight">
+      <!-- Title Header -->
+      <div class="mb-6 sm:mb-8 text-center border-b border-gray-100 pb-4 sm:pb-6">
+        <h2 class="text-2xl sm:text-[36px] font-semibold text-neutral-primary font-newsreader leading-tight">
           Profil Bisnis
         </h2>
-        <p class="text-sm sm:text-base text-[#52605D] mt-2">
+        <p class="text-xs sm:text-base text-[#52605D] mt-1.5 sm:mt-2">
           Lengkapi profil usaha Anda untuk menentukan limit pinjaman dan membuka akses pengajuan modal.
         </p>
       </div>
 
       <!-- 3-Step Progress Bar -->
-      <div class="mb-8 flex items-center justify-between relative px-6">
-        <div class="absolute left-10 right-10 top-1/2 -translate-y-1/2 h-1 bg-gray-200 z-0"></div>
+      <div class="mb-8 flex items-center justify-between relative px-2 sm:px-6">
+        <div class="absolute left-6 right-6 sm:left-10 sm:right-10 top-1/2 -translate-y-1/2 h-1 bg-gray-200 z-0"></div>
         <div
-          class="absolute left-10 top-1/2 -translate-y-1/2 h-1 bg-primary-base transition-all duration-300 z-0"
-          :style="{ width: `${((currentStep - 1) / 2) * 80}%` }"
+          class="absolute left-6 sm:left-10 top-1/2 -translate-y-1/2 h-1 bg-primary-base transition-all duration-300 z-0"
+          :style="{ width: `${((currentStep - 1) / 2) * 82}%` }"
         ></div>
 
         <!-- Step 1 Indicator -->
-        <div class="relative z-10 flex flex-col items-center gap-1.5 cursor-pointer" @click="currentStep = 1">
-          <div :class="['w-9 h-9 rounded-full flex items-center justify-center font-semibold text-xs transition-colors', currentStep >= 1 ? 'bg-primary-base text-white' : 'bg-gray-200 text-[#52605D]']">
+        <div class="relative z-10 flex flex-col items-center gap-1 cursor-pointer" @click="currentStep = 1">
+          <div :class="['w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center font-semibold text-[11px] sm:text-xs transition-colors shrink-0', currentStep >= 1 ? 'bg-primary-base text-white' : 'bg-gray-200 text-[#52605D]']">
             1
           </div>
-          <span class="text-xs font-medium text-neutral-primary">Info Utama</span>
+          <span class="text-[10px] sm:text-xs font-medium text-neutral-primary text-center max-w-[64px] sm:max-w-none truncate sm:whitespace-normal">Info Utama</span>
         </div>
 
         <!-- Step 2 Indicator -->
-        <div class="relative z-10 flex flex-col items-center gap-1.5 cursor-pointer" @click="currentStep >= 2 ? currentStep = 2 : null">
-          <div :class="['w-9 h-9 rounded-full flex items-center justify-center font-semibold text-xs transition-colors', currentStep >= 2 ? 'bg-primary-base text-white' : 'bg-gray-200 text-[#52605D]']">
+        <div class="relative z-10 flex flex-col items-center gap-1 cursor-pointer" @click="currentStep >= 2 ? currentStep = 2 : null">
+          <div :class="['w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center font-semibold text-[11px] sm:text-xs transition-colors shrink-0', currentStep >= 2 ? 'bg-primary-base text-white' : 'bg-gray-200 text-[#52605D]']">
             2
           </div>
-          <span class="text-xs font-medium text-neutral-primary">Lokasi & Detail</span>
+          <span class="text-[10px] sm:text-xs font-medium text-neutral-primary text-center max-w-[64px] sm:max-w-none truncate sm:whitespace-normal">Lokasi & Detail</span>
         </div>
 
         <!-- Step 3 Indicator -->
-        <div class="relative z-10 flex flex-col items-center gap-1.5 cursor-pointer" @click="currentStep === 3 ? null : null">
-          <div :class="['w-9 h-9 rounded-full flex items-center justify-center font-semibold text-xs transition-colors', currentStep === 3 ? 'bg-primary-base text-white' : 'bg-gray-200 text-[#52605D]']">
+        <div class="relative z-10 flex flex-col items-center gap-1 cursor-pointer" @click="currentStep === 3 ? null : null">
+          <div :class="['w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center font-semibold text-[11px] sm:text-xs transition-colors shrink-0', currentStep === 3 ? 'bg-primary-base text-white' : 'bg-gray-200 text-[#52605D]']">
             3
           </div>
-          <span class="text-xs font-medium text-neutral-primary">Review</span>
+          <span class="text-[10px] sm:text-xs font-medium text-neutral-primary text-center max-w-[64px] sm:max-w-none truncate sm:whitespace-normal">Review</span>
         </div>
       </div>
 
@@ -428,13 +428,13 @@ const handleSubmit = async () => {
         </div>
 
         <!-- Navigation Buttons -->
-        <div class="mt-8 flex items-center justify-between pt-4 border-t border-gray-100">
+        <div class="mt-8 flex flex-col-reverse sm:flex-row gap-3 sm:gap-0 justify-between items-stretch sm:items-center pt-4 border-t border-gray-100">
           <button
             v-if="currentStep > 1"
             type="button"
             @click="prevStep"
             :disabled="isLoading"
-            class="px-5 py-2.5 border border-gray-300 text-[#52605D] hover:text-neutral-primary font-semibold text-sm rounded-lg transition-colors cursor-pointer flex items-center gap-1.5"
+            class="px-5 py-2.5 border border-gray-300 text-[#52605D] hover:text-neutral-primary font-semibold text-sm rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5 w-full sm:w-auto"
           >
             <ChevronLeft class="w-4 h-4" />
             <span>Kembali</span>
@@ -445,7 +445,7 @@ const handleSubmit = async () => {
             v-if="currentStep < 3"
             type="button"
             @click="nextStep"
-            class="px-6 py-2.5 bg-primary-base hover:bg-[#0A5744] text-white font-semibold text-sm rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs"
+            class="px-6 py-2.5 bg-primary-base hover:bg-[#0A5744] text-white font-semibold text-sm rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-xs w-full sm:w-auto"
           >
             <span>Selanjutnya</span>
             <ChevronRight class="w-4 h-4" />
@@ -455,7 +455,7 @@ const handleSubmit = async () => {
             v-else
             type="submit"
             :disabled="isLoading"
-            class="px-8 py-3 bg-primary-base hover:bg-[#0A5744] text-white font-semibold text-sm rounded-lg transition-colors cursor-pointer flex items-center gap-2 shadow-xs disabled:opacity-60 disabled:cursor-not-allowed"
+            class="px-8 py-3 bg-primary-base hover:bg-[#0A5744] text-white font-semibold text-sm rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2 shadow-xs disabled:opacity-60 disabled:cursor-not-allowed w-full sm:w-auto"
           >
             <svg v-if="isLoading" class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

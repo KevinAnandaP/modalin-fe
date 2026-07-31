@@ -82,14 +82,14 @@ const handleRoleSubmit = async () => {
 
 <template>
   <AuthLayout>
-    <div class="bg-white p-8 sm:p-10 rounded-xl border border-primary-base/40 shadow-xs w-full max-w-5xl mx-auto font-inter my-8">
+    <div class="bg-white p-4 sm:p-8 lg:p-10 rounded-xl border border-primary-base/40 shadow-xs w-full max-w-5xl mx-auto font-inter my-4 sm:my-8">
       <!-- Header -->
-      <div class="mb-8 text-center border-b border-gray-100 pb-6">
-        <h2 class="text-3xl sm:text-[36px] font-semibold text-neutral-primary font-newsreader leading-tight">
+      <div class="mb-6 sm:mb-8 text-center border-b border-gray-100 pb-4 sm:pb-6">
+        <h2 class="text-2xl sm:text-[36px] font-semibold text-neutral-primary font-newsreader leading-tight">
           Pengajuan Peran Akun Modalin
         </h2>
-        <p class="text-sm sm:text-base text-[#52605D] mt-2">
-          Pilih peran utama Anda di sebelah kiri dan lengkapi persyaratan pengajuan di sebelah kanan.
+        <p class="text-xs sm:text-base text-[#52605D] mt-1.5 sm:mt-2">
+          Pilih peran utama Anda dan lengkapi persyaratan pengajuan.
         </p>
       </div>
 

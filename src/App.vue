@@ -60,7 +60,17 @@ const handleGlobalGoogleCallback = async () => {
         const roles = rawData?.roles || rawData?.user?.roles || []
 
         if (Array.isArray(roles) && roles.length > 0) {
-          router.push('/')
+          if (roles.includes('admin')) {
+            router.push('/admin')
+          } else if (roles.includes('verifier')) {
+            router.push('/verifier/dashboard')
+          } else if (roles.includes('borrower')) {
+            router.push('/business/detail')
+          } else if (roles.includes('lender')) {
+            router.push('/lender/portfolio')
+          } else {
+            router.push('/campaigns')
+          }
         } else {
           router.push('/request-role')
         }
