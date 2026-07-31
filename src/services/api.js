@@ -154,9 +154,30 @@ export const apiClient = {
         'Content-Type': 'multipart/form-data'
       }
     });
+  },
+
+  /**
+   * Helper Payment Xendit
+   */
+  pledgeFunding: (campaignId, amount) => {
+    return api.post(`/campaigns/${campaignId}/fundings`, { amount });
+  },
+
+  createRepayment: (campaignId, scheduleId, paidAmount) => {
+    return api.post(`/campaigns/${campaignId}/repayments`, {
+      schedule_id: scheduleId,
+      paid_amount: paidAmount
+    });
+  },
+
+  openPaymentGateway: (invoiceUrl) => {
+    if (!invoiceUrl) return false;
+    window.open(invoiceUrl, '_blank', 'noopener,noreferrer');
+    return true;
   }
 };
 
 export const http = apiClient;
 export default api;
+
 

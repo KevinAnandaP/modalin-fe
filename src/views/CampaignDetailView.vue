@@ -180,11 +180,18 @@ const handlePledgeSubmit = async () => {
   pledgeSuccessMessage.value = ''
   try {
     const res = await campaignService.pledgeCampaign(campaignId, pledgeAmount.value)
-    const newCollected = res?.data?.collected_amount || (campaign.value ? (campaign.value.collected_amount || 0) + Number(pledgeAmount.value) : Number(pledgeAmount.value))
-    if (campaign.value) {
-      campaign.value.collected_amount = newCollected
+    const invoiceUrl = res?.xendit_invoice_url || res?.data?.xendit_invoice_url
+
+    if (invoiceUrl) {
+      window.open(invoiceUrl, '_blank')
+      pledgeSuccessMessage.value = `Invoice Xendit berhasil dibuat! Membuka halaman pembayaran Xendit...`
+    } else {
+      const newCollected = res?.data?.collected_amount || (campaign.value ? (campaign.value.collected_amount || 0) + Number(pledgeAmount.value) : Number(pledgeAmount.value))
+      if (campaign.value) {
+        campaign.value.collected_amount = newCollected
+      }
+      pledgeSuccessMessage.value = `Terima kasih! Pendanaan sebesar ${formatRupiah(pledgeAmount.value)} berhasil disalurkan.`
     }
-    pledgeSuccessMessage.value = `Terima kasih! Pendanaan sebesar ${formatRupiah(pledgeAmount.value)} berhasil disalurkan.`
   } catch (err) {
     const errText = err.message || err.error || 'Gagal menyalurkan pendanaan.'
     if (err.status === 401) {
