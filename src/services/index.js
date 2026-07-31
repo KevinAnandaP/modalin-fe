@@ -2,6 +2,10 @@ import api, { apiClient, http, getAuthToken, setAuthToken, removeAuthToken } fro
 import authService from './auth';
 import businessService from './business';
 import campaignService from './campaign';
+import verificationService from './verification';
+import disputeService from './dispute';
+import restructuringService from './restructuring';
+import auditService from './audit';
 
 export {
   api,
@@ -12,7 +16,11 @@ export {
   removeAuthToken,
   authService,
   businessService,
-  campaignService
+  campaignService,
+  verificationService,
+  disputeService,
+  restructuringService,
+  auditService
 };
 
 export default api;

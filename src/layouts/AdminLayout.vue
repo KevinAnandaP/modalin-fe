@@ -10,7 +10,10 @@ import {
   UserCheck, 
   Wallet, 
   BarChart2, 
-  LogOut
+  LogOut,
+  ShieldAlert,
+  CalendarClock,
+  FileCode
 } from '@lucide/vue'
 
 const props = defineProps({
@@ -86,13 +89,30 @@ const adminNavItems = [
     icon: UserCheck
   },
   {
-    id: 'analytics',
-    name: 'Laporan & Audit Log',
-    icon: BarChart2
+    id: 'disputes',
+    name: 'Resolusi Sengketa',
+    icon: ShieldAlert
+  },
+  {
+    id: 'restructuring',
+    name: 'Restrukturisasi Tenor',
+    icon: CalendarClock
+  },
+  {
+    id: 'audit',
+    name: 'Audit Log Forensik',
+    icon: FileCode,
+    isRoute: true,
+    to: '/admin/audit-logs'
   }
 ]
 
-const handleTabClick = (tabId) => {
+const handleTabClick = (item) => {
+  if (typeof item === 'object' && item.isRoute) {
+    router.push(item.to)
+    return
+  }
+  const tabId = typeof item === 'object' ? item.id : item
   emit('update:activeTab', tabId)
   emit('selectTab', tabId)
 }
@@ -124,7 +144,7 @@ const handleLogout = () => {
             v-for="item in adminNavItems"
             :key="item.id"
             type="button"
-            @click="handleTabClick(item.id)"
+            @click="handleTabClick(item)"
             :class="[
               'w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-semibold transition-all cursor-pointer text-left',
               activeTab === item.id

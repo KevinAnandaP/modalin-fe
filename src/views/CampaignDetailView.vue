@@ -531,6 +531,13 @@ onMounted(() => {
                 >
                   {{ isPledging ? 'Memproses...' : 'Danai Sekarang' }}
                 </BaseButton>
+
+                <RouterLink
+                  :to="`/disputes/create?campaign_id=${campaign.id}&campaign_title=${encodeURIComponent(campaign.title)}`"
+                  class="block text-center mt-3 text-xs text-status-error-main hover:underline font-semibold cursor-pointer"
+                >
+                  🚩 Temukan kejanggalan? Laporkan Sengketa
+                </RouterLink>
               </form>
             </BaseCard>
           </div>

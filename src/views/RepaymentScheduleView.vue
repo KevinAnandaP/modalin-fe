@@ -147,11 +147,18 @@ onMounted(() => {
               </p>
             </div>
 
-            <RouterLink to="/business/detail">
-              <BaseButton variant="secondary" size="md">
-                ← Kembali ke Profil Usaha
-              </BaseButton>
-            </RouterLink>
+            <div class="flex items-center gap-3">
+              <RouterLink :to="`/borrower/restructuring/create?campaign_id=${campaignId}&campaign_title=${encodeURIComponent(campaignDetail?.title || '')}&tenor=${campaignDetail?.tenor_months || 6}`">
+                <BaseButton variant="secondary" size="md">
+                  📑 Ajukan Restrukturisasi
+                </BaseButton>
+              </RouterLink>
+              <RouterLink to="/business/detail">
+                <BaseButton variant="outline" size="md" class="!bg-white/10 !text-white !border-white/30 hover:!bg-white/20">
+                  ← Kembali ke Profil Usaha
+                </BaseButton>
+              </RouterLink>
+            </div>
           </div>
 
           <!-- Summary Stats Grid -->
